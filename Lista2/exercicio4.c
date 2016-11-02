@@ -1,9 +1,3 @@
-/*
-  Nome: Reinaldo Apolin�rio Junior
-  Compilador: Dev-C++ 4.9.9.2
-  Data: 01/11/2016
-*/
-
 #include<stdio.h>
 #include<stdlib.h>
 
@@ -32,7 +26,7 @@ int mdcGeral(int *vet, int n){
 	for(x = 2; x < n; x++){
 		resultado = mdc(resultado, vet[x]);
 	}
-	
+
 	return resultado;
 }
 

@@ -1,8 +1,3 @@
-/*
-  Nome: Reinaldo Apolinário Junior
-  Compilador: Dev-C++ 4.9.9.2
-  Data: 01/11/2016
-*/
 #include<stdio.h>
 #include<stdlib.h>
 
@@ -49,4 +44,3 @@ int main(){
     printf("Resultado = %i\n", result);
     system("pause");
 }
-
