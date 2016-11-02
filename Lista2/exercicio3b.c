@@ -4,7 +4,7 @@
 int sumCousin(int a){
     int x, soma = 0, primos[a], w = 0;
 
-    for(x = 1; w < a; x++){
+    for(x = 2; w < a; x++){
           int count = 0, y;
           for(y = 0; y < w || primos[y] > x/2 + 1; y++){
                 if(x%primos[y] == 0)count++;

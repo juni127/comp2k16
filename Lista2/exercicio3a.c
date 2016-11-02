@@ -3,6 +3,7 @@
 
 int isCousin(int a){
     int x, count = 0;
+    if(a == 1)return 0;
     for(x = 1; x < a/2 + 1; x++){
              if(a%x == 0)count++;
     }
