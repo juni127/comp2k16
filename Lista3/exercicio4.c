@@ -13,27 +13,32 @@ float somaDeVetores(int *a, int *b, int n){
 }
 
 int main(){
-  int s, x;
+  int s, x, y, m;
   printf("Digite o tamanho dos vetores:");
   scanf("%i", &s);
-  int a[s], b[s];
+  printf("Digite a quantidade de pares de vetores:");
+  scanf("%i", &m);
+  int v[m*2][s];
+  float r[m];
 
-  for(x = 0; x < s; x++){
-    printf("VET-A[%i]=", x+1);
-    scanf("%i", &a[x]);
+  for(y = 0; y < m*2; y++){
+    for(x = 0; x < s; x++){
+      printf("VET-%i-%i[%i]=", y+1, 1, x+1);
+      scanf("%i", &v[y][x]);
+    }
+
+    system("cls");
+    y++;
+
+    for(x = 0; x < s; x++){
+      printf("VET-%i-%i[%i]=", y+1, 2, x+1);
+      scanf("%i", &v[y][x]);
+    }
+    r[y/2] = somaDeVetores(v[y-1], v[y], s);
+    system("cls");
   }
 
-  system("cls");
-
-  for(x = 0; x < s; x++){
-    printf("VET-B[%i]=", x+1);
-    scanf("%i", &b[x]);
-  }
-
-  system("cls");
-
-  float resultado = somaDeVetores(a, b, s);
-  printf("A distancia entre os vetores e: %f\n", resultado);
+  for(x = 0; x < m; x++)printf("Resultado par %i: %f\n", x+1, r[x]);
 
   system("pause");
   return 0;
