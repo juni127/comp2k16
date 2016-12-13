@@ -3,6 +3,13 @@
 
 void sub(char *a, char *b, char *c){
 	int pos = slocate(a, b);
+	printf("pos = %i\n", pos);
+	while(pos != -1){
+		sremove(a, pos, slen(c));
+		printf("%s\n", a);
+		sinsert(a, c, pos);
+		pos = slocate(a, b);
+	}
 }
 
 int main(){
@@ -14,7 +21,9 @@ int main(){
 	printf("Digite a palavra substituta:");
 	scanf("%[^\n]%*c", c);
 	
-	printf("%i", slocate(a, b));
+	sub(a, b, c);
+
+	printf("%s\n", a);
 
 	return 0;
 }

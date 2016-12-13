@@ -38,6 +38,6 @@ void sremove(char str[], int i, int s){
 
 void sinsert(char str1[], char str2[], int p){
 	int sl1 = slen(str1), sl2 = slen(str2), x;
-	for(x = sl1 + sl2; x > p + sl2; x++)str1[x] = str1[x - sl2];
+	for(x = sl1 + sl2; x > p + sl2; x--)str1[x] = str1[x - sl2];
 	for(x = p; x < sl2 + p; x++)str1[x] = str2[x-p];
 }
