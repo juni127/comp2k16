@@ -1,7 +1,7 @@
 int slen(char str[]){
 	int size;
 	for(size = 0; str[size] != '\0'; size++);
-	return size;
+	return size+1;
 }
 
 int scmp(char str1[], char str2[]){
