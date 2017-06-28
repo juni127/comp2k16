@@ -1,0 +1,11 @@
+O aluno joga LoL?;1;
+Eh homem?;1;
+Jaque;0;
+Snow;0;
+Eh homem?;1;
+Berna;0;
+Eh fdp?;1;
+Comeca com R?;1;
+Felix;0;
+Roberto;0;
+Jorge;0;
