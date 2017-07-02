@@ -1,1 +1,13 @@
 CLIENTES
+Peter Parker
+0123456789
+21/10/1996
+1234.50
+Rua Baker;123;England
+0
+Edward Snowden
+9876543210
+12/01/1969
+4321.50
+Rua Algo;321;Stalingrado
+5

@@ -5,8 +5,10 @@ import java.util.*;
  * @author Reinaldo
  */
 public class Login extends javax.swing.JFrame {
-    
-    private static List<Funcionario> funcionarios = new ArrayList<Funcionario>();
+   
+    private static List<Gerente> gerentes;
+    private static List<VendedorS> vendedoresSenior;
+    private static List<VendedorJr> vendedoresJunior;
 
     /**
      * Creates new form Login
@@ -99,13 +101,53 @@ public class Login extends javax.swing.JFrame {
         user = userField.getText().toString();
         password = String.valueOf(passwordField.getPassword());        
         
-        for(Funcionario funcionario : funcionarios){                  
-            if(funcionario.getUsuario().equals(user) && funcionario.getSenha().equals(password)){
-                Main main = new Main();
+        //Checar se eh gerente
+        for(Gerente gerente : gerentes){                  
+            if(gerente.getUsuario().equals(user) && gerente.getSenha().equals(password)){
+                //Instancia o formulario do gerente
+                MainGerente main = new MainGerente();
                 //Passa os funcionarios carregados para não carregar de novo
-                main.setFuncionarios(funcionarios);
+                main.setGerentes(gerentes);
+                main.setVendedoresS(vendedoresSenior);
+                main.setVendedoresJr(vendedoresJunior);
                 //Passa o usuario que foi logado
-                main.setUsuario(funcionario);
+                main.setUsuario(gerente);
+                //Começa o formulario principal
+                main.setVisible(true);
+                //Termina esse formulario
+                this.setVisible(false);
+            }
+        }
+        
+        //Checar se eh vendedor
+        for(VendedorS vendedorSenior : vendedoresSenior){                  
+            if(vendedorSenior.getUsuario().equals(user) && vendedorSenior.getSenha().equals(password)){
+                //Instancia o formulario do vendedor
+                MainGerente main = new MainGerente();
+                //Passa os funcionarios carregados para não carregar de novo
+                main.setGerentes(gerentes);
+                main.setVendedoresS(vendedoresSenior);
+                main.setVendedoresJr(vendedoresJunior);
+                //Passa o usuario que foi logado
+                main.setUsuario(vendedorSenior);
+                //Começa o formulario principal
+                main.setVisible(true);
+                //Termina esse formulario
+                this.setVisible(false);
+            }
+        }
+        
+        //Checar se eh vendedor
+        for(VendedorJr vendedorJunior : vendedoresJunior){                  
+            if(vendedorJunior.getUsuario().equals(user) && vendedorJunior.getSenha().equals(password)){
+                //Instancia o formulario do vendedor
+                MainGerente main = new MainGerente();
+                //Passa os funcionarios carregados para não carregar de novo
+                main.setGerentes(gerentes);
+                main.setVendedoresS(vendedoresSenior);
+                main.setVendedoresJr(vendedoresJunior);
+                //Passa o usuario que foi logado
+                main.setUsuario(vendedorJunior);
                 //Começa o formulario principal
                 main.setVisible(true);
                 //Termina esse formulario
@@ -143,23 +185,15 @@ public class Login extends javax.swing.JFrame {
         
         //Carregar funcionarios do arquivo
         FilesIO gerenteFile = new FilesIO(Dados.GERENTES_PATH);
-        List<Gerente> gerentes = gerenteFile.read();
+        gerentes = gerenteFile.read();
         FilesIO seniorFile = new FilesIO(Dados.SENIORS_PATH);
-        List<VendedorS> seniors = seniorFile.read();
+        vendedoresSenior = seniorFile.read();
         FilesIO juniorFile = new FilesIO(Dados.JUNIORS_PATH);
-        List<VendedorJr> juniors = juniorFile.read();
+        vendedoresJunior = juniorFile.read();
         //Apontar o ponteiro de gerente responsavel pro gerente correto
-        for(VendedorJr junior : juniors)
+        for(VendedorJr junior : vendedoresJunior)
             if(!junior.atualizaGerente(gerentes))
                 System.out.println("GERENTE RESPONSAVEL DE " + junior.getNome().toUpperCase() + " NAO ENCONTRADO!");
-        
-        //Inserir dados dos arquivos na lista
-        for(Gerente gerente : gerentes)
-            funcionarios.add(gerente);
-        for(VendedorS senior : seniors)
-            funcionarios.add(senior);
-        for(VendedorJr junior : juniors)
-            funcionarios.add(junior);
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
