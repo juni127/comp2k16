@@ -47,11 +47,6 @@ public class Login extends javax.swing.JFrame {
         jLabel3.setText("Senha");
 
         loginButton.setText("Entrar");
-        loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                loginButtonMouseClicked(evt);
-            }
-        });
         loginButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginButtonActionPerformed(evt);
@@ -99,10 +94,6 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_userFieldActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_loginButtonActionPerformed
-
-    private void loginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseClicked
         //Logar
         String user, password;
         user = userField.getText().toString();
@@ -121,7 +112,7 @@ public class Login extends javax.swing.JFrame {
                 this.setVisible(false);
             }
         }
-    }//GEN-LAST:event_loginButtonMouseClicked
+    }//GEN-LAST:event_loginButtonActionPerformed
 
     /**
      * @param args the command line arguments
