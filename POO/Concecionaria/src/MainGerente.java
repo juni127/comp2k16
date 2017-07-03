@@ -57,8 +57,9 @@ public class MainGerente extends javax.swing.JFrame {
         if(carros.isEmpty()){
             deletarCarroButton.setEnabled(false);
             editarCarrosButton.setEnabled(false);
+            mudarCarroAtual(-1);
         }else{
-            
+            mudarCarroAtual(0);
         }
     }
 
@@ -80,6 +81,32 @@ public class MainGerente extends javax.swing.JFrame {
         modeloCarroLabel = new javax.swing.JLabel();
         marcaCarroLabel = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        anoCarroLabel = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        chassiCarroLabel = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        pesoCarroLabel = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        combCarroLabel = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        kmCarroLabel = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        potenciaCarroLabel = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        cilindrosCarroLabel = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        ocupantesCarroLabel = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        tipoCarroLabel = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        alturaCarroLabel = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        statusCarroLabel = new javax.swing.JLabel();
+        jLabel32 = new javax.swing.JLabel();
+        larguraCarroLabel = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        comprimentoCarroLabel = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         carrosList = new javax.swing.JList<>();
         salvarCarrosButton = new javax.swing.JButton();
@@ -159,6 +186,32 @@ public class MainGerente extends javax.swing.JFrame {
 
         jLabel22.setText("Marca:");
 
+        jLabel20.setText("Chassi:");
+
+        jLabel21.setText("Ano");
+
+        jLabel23.setText("Peso:");
+
+        jLabel24.setText("Combustivel:");
+
+        jLabel25.setText("Kilometragem:");
+
+        jLabel26.setText("Potencia:");
+
+        jLabel27.setText("Cilindros:");
+
+        jLabel28.setText("Ocupantes:");
+
+        jLabel29.setText("Tipo:");
+
+        jLabel30.setText("Status:");
+
+        jLabel31.setText("Altura:");
+
+        jLabel32.setText("Largura:");
+
+        jLabel33.setText("Comprimento:");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -168,10 +221,76 @@ public class MainGerente extends javax.swing.JFrame {
                 .addComponent(jLabel19)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(modeloCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addComponent(jLabel22)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(marcaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(chassiCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel24)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(combCarroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel21)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(anoCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel23)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pesoCarroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel25)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(kmCarroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel29)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tipoCarroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel26)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(potenciaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel27)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel30)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(cilindrosCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel28)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ocupantesCarroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(statusCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel31)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(alturaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel32)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(larguraCarroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comprimentoCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,6 +300,42 @@ public class MainGerente extends javax.swing.JFrame {
                     .addComponent(modeloCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(marcaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel22))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel20)
+                    .addComponent(anoCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel21)
+                    .addComponent(chassiCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel23)
+                    .addComponent(pesoCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel24)
+                    .addComponent(combCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel25)
+                    .addComponent(kmCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel26)
+                    .addComponent(potenciaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel27)
+                    .addComponent(cilindrosCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel28)
+                    .addComponent(ocupantesCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel29)
+                    .addComponent(tipoCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel30)
+                    .addComponent(statusCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel31)
+                    .addComponent(alturaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel32)
+                    .addComponent(larguraCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel33)
+                    .addComponent(comprimentoCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(editarCarrosButton))
         );
@@ -190,12 +345,43 @@ public class MainGerente extends javax.swing.JFrame {
         carrosList.setModel(motosListModel);
         carrosList.setModel(carrosListModel);
         jScrollPane3.setViewportView(carrosList);
+        carrosList.addListSelectionListener(
+            new ListSelectionListener(){
+                public void valueChanged(ListSelectionEvent ev){
+                    //Algo
+                    int index = carrosList.getSelectedIndex();
+                    if(index >= 0 && index < motos.size()){
+                        selectedCarroIndex = index;
+                        mudarCarroAtual(index);
+                    }else{
+                        selectedCarroIndex = -1;
+                        mudarCarroAtual(-1);
+                    }
+                }
+            }
+
+        );
 
         salvarCarrosButton.setText("Salvar");
+        salvarCarrosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salvarCarrosButtonActionPerformed(evt);
+            }
+        });
 
         novoCarroButton.setText("Novo");
+        novoCarroButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                novoCarroButtonActionPerformed(evt);
+            }
+        });
 
         deletarCarroButton.setText("Deletar");
+        deletarCarroButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deletarCarroButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -211,7 +397,7 @@ public class MainGerente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deletarCarroButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -220,7 +406,7 @@ public class MainGerente extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(novoCarroButton)
@@ -697,6 +883,24 @@ public class MainGerente extends javax.swing.JFrame {
         new EditarMoto(motos.get(selectedMotoIndex), selectedMotoIndex, this, true).show();
     }//GEN-LAST:event_editarMotosButtonActionPerformed
 
+    private void novoCarroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_novoCarroButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_novoCarroButtonActionPerformed
+
+    private void deletarCarroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletarCarroButtonActionPerformed
+        // TODO add your handling code here:
+        int indices[] = carrosList.getSelectedIndices();
+        for(int x = 0; x < indices.length; x++)
+            carros.remove(indices[x] - x);
+        atualizaCarrosList();
+    }//GEN-LAST:event_deletarCarroButtonActionPerformed
+
+    private void salvarCarrosButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvarCarrosButtonActionPerformed
+        // TODO add your handling code here:
+        FilesIO<Carro> carroLoader = new FilesIO(Dados.CARROS_PATH);
+        carroLoader.write(carros);
+    }//GEN-LAST:event_salvarCarrosButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -814,6 +1018,19 @@ public class MainGerente extends javax.swing.JFrame {
     }
     
     private void atualizaCarrosList(){
+        carrosListModel.removeAllElements();
+        for(Carro carro : carros)
+            carrosListModel.addElement(carro.getMarca() + ", " + carro.getModelo());
+        if(carros.isEmpty()){
+            deletarCarroButton.setEnabled(false);
+            editarCarrosButton.setEnabled(false);
+            mudarCarroAtual(-1);
+        }else{
+            deletarCarroButton.setEnabled(true);
+            editarCarrosButton.setEnabled(true);
+            mudarCarroAtual(0);
+            
+        }
         
     }
     
@@ -868,15 +1085,58 @@ public class MainGerente extends javax.swing.JFrame {
             statusMotoLabel.setText("");            
         }
     }
+    
+    private void mudarCarroAtual(int index){
+        if(index >= 0){
+            Carro carro = carros.get(index);
+            chassiCarroLabel.setText(carro.getChassi() + "");
+            marcaCarroLabel.setText(carro.getMarca());
+            modeloCarroLabel.setText(carro.getModelo());
+            anoCarroLabel.setText(carro.getAno() + "");
+            kmCarroLabel.setText(carro.getKm() + "");
+            combCarroLabel.setText(carro.getComb());
+            pesoCarroLabel.setText(carro.getPeso() + "");
+            statusCarroLabel.setText(carro.getStatus().toString().replaceAll("_", " ").toLowerCase());
+            potenciaCarroLabel.setText(carro.getPotencia() + "");
+            cilindrosCarroLabel.setText(carro.getCilindros() + "");
+            ocupantesCarroLabel.setText(carro.getOcupantes() + "");
+            tipoCarroLabel.setText(carro.getTipo().toString().toLowerCase());
+            alturaCarroLabel.setText(carro.getDimensoes().getAltura() + "");
+            larguraCarroLabel.setText(carro.getDimensoes().getLargura() + "");
+            comprimentoCarroLabel.setText(carro.getDimensoes().getComprimento() + "");
+        }else{
+            chassiCarroLabel.setText("");
+            marcaCarroLabel.setText("");
+            modeloCarroLabel.setText("");
+            anoCarroLabel.setText("");
+            kmCarroLabel.setText("");
+            combCarroLabel.setText("");
+            pesoCarroLabel.setText("");
+            statusCarroLabel.setText("");
+            potenciaCarroLabel.setText("");
+            cilindrosCarroLabel.setText("");
+            ocupantesCarroLabel.setText("");
+            tipoCarroLabel.setText("");
+            alturaCarroLabel.setText("");
+            larguraCarroLabel.setText("");
+            comprimentoCarroLabel.setText("");
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel alturaCarroLabel;
+    private javax.swing.JLabel anoCarroLabel;
     private javax.swing.JLabel anoMotoLabel;
     private javax.swing.JList<String> carrosList;
+    private javax.swing.JLabel chassiCarroLabel;
     private javax.swing.JLabel chassiMotoLabel;
     private javax.swing.JLabel cidadeLabel;
     private javax.swing.JLabel cilindradasLabel;
+    private javax.swing.JLabel cilindrosCarroLabel;
     private javax.swing.JList<String> clientesList;
+    private javax.swing.JLabel combCarroLabel;
     private javax.swing.JLabel combMotoLabel;
+    private javax.swing.JLabel comprimentoCarroLabel;
     private javax.swing.JButton deletarCarroButton;
     private javax.swing.JButton deletarClienteButton;
     private javax.swing.JButton deletarMotosButton;
@@ -896,8 +1156,21 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -914,7 +1187,9 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel kmCarroLabel;
     private javax.swing.JLabel kmMotoLabel;
+    private javax.swing.JLabel larguraCarroLabel;
     private javax.swing.JLabel marcaCarroLabel;
     private javax.swing.JLabel marcaMotoLabel;
     private javax.swing.JLabel modeloCarroLabel;
@@ -926,15 +1201,20 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JButton novoClienteButton;
     private javax.swing.JButton novoMotosButton;
     private javax.swing.JLabel numeroLabel;
+    private javax.swing.JLabel ocupantesCarroLabel;
+    private javax.swing.JLabel pesoCarroLabel;
     private javax.swing.JLabel pesoMotoLabel;
+    private javax.swing.JLabel potenciaCarroLabel;
     private javax.swing.JLabel rendaLabel;
     private javax.swing.JLabel rgLabel;
     private javax.swing.JLabel ruaLabel;
     private javax.swing.JButton salvarButton;
     private javax.swing.JButton salvarCarrosButton;
     private javax.swing.JButton salvarMotosButton;
+    private javax.swing.JLabel statusCarroLabel;
     private javax.swing.JLabel statusMotoLabel;
     private javax.swing.JTabbedPane tab;
+    private javax.swing.JLabel tipoCarroLabel;
     private javax.swing.JLabel tipoMotoLabel;
     // End of variables declaration//GEN-END:variables
 }

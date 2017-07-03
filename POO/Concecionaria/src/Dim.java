@@ -10,6 +10,9 @@ public class Dim {
     
     public Dim(String entrada){
         String v[] = entrada.split(";");
+        this.altura = Double.parseDouble(v[0]);
+        this.largura = Double.parseDouble(v[1]);
+        this.comprimento = Double.parseDouble(v[2]);
     }
     
     public String string(){

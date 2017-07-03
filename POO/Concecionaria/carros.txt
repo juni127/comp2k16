@@ -1,1 +1,14 @@
 CARROS
+1324354
+Chevrolet
+Cobalt
+2015
+462.2
+Gasolina
+1000.0
+A_VENDA
+150
+8
+5
+SEDAN
+2.0;2.0;2.0

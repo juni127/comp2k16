@@ -5,7 +5,7 @@ import java.util.*;
 public class FilesIO<T> {
     
     private File arquivo;
-    private final static String lineEnding = "\n"; // \n\r no windows
+    private final static String lineEnding = "\r\n"; // \r\n no windows \n no linux
     
     public FilesIO(String path){
         try{
