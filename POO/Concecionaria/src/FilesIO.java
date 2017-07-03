@@ -5,6 +5,7 @@ import java.util.*;
 public class FilesIO<T> {
     
     private File arquivo;
+    private final static String lineEnding = "\n"; // \n\r no windows
     
     public FilesIO(String path){
         try{
@@ -29,74 +30,74 @@ public class FilesIO<T> {
             
             //Escreve o cabeçalho do arquivo
             if(data.get(0) instanceof Gerente)
-                fileWriter.write("GERENTES");
+                fileWriter.write("GERENTES" + lineEnding);
             else if(data.get(0) instanceof VendedorS)
-                fileWriter.write("SENIORS");
+                fileWriter.write("SENIORS" + lineEnding);
             else if(data.get(0) instanceof VendedorJr)
-                fileWriter.write("JUNIORS");
+                fileWriter.write("JUNIORS" + lineEnding);
             else if(data.get(0) instanceof Cliente)
-                fileWriter.write("CLIENTES");
+                fileWriter.write("CLIENTES" + lineEnding);
             else if(data.get(0) instanceof Carro)
-                fileWriter.write("CARROS");
+                fileWriter.write("CARROS" + lineEnding);
             else if(data.get(0) instanceof Motocicleta)
-                fileWriter.write("MOTOCICLETAS");
+                fileWriter.write("MOTOCICLETAS" + lineEnding);
             else if(data.get(0) instanceof Prazo)
-                fileWriter.write("PRAZO");
+                fileWriter.write("PRAZO" + lineEnding);
             else if(data.get(0) instanceof Vista)
-                fileWriter.write("VISTA");
+                fileWriter.write("VISTA" + lineEnding);
             
             //Escreve os dados no arquivo
             for(T d : data){
                 if(d instanceof Pessoa){
                     Pessoa pessoa = (Pessoa)d;
-                    fileWriter.write(pessoa.getNome() + "\n\r");
-                    fileWriter.write(pessoa.getDocumento() + "\n\r");
-                    fileWriter.write(pessoa.getNasc().string() + "\n\r");
-                    fileWriter.write(pessoa.getRenda() + "\n\r");
+                    fileWriter.write(pessoa.getNome() + lineEnding);
+                    fileWriter.write(pessoa.getDocumento() + lineEnding);
+                    fileWriter.write(pessoa.getNasc().string() + lineEnding);
+                    fileWriter.write(pessoa.getRenda() + lineEnding);
                     
                     if(pessoa instanceof Funcionario){
                         Funcionario funcionario = (Funcionario)pessoa;
-                        fileWriter.write(funcionario.getUsuario() + "\n\r");
-                        fileWriter.write(funcionario.getSenha() + "\n\r");
-                        fileWriter.write(funcionario.getAdmissao().string() + "\n\r");
+                        fileWriter.write(funcionario.getUsuario() + lineEnding);
+                        fileWriter.write(funcionario.getSenha() + lineEnding);
+                        fileWriter.write(funcionario.getAdmissao().string() + lineEnding);
                         
                         if(funcionario instanceof VendedorJr){
                             VendedorJr vendedorJr = (VendedorJr)funcionario;
-                            fileWriter.write(vendedorJr.getTempoTrabalho() + "\n\r");
-                            fileWriter.write(vendedorJr.getGerenteResponsavel().getDocumento() + "\n\r");                            
+                            fileWriter.write(vendedorJr.getTempoTrabalho() + lineEnding);
+                            fileWriter.write(vendedorJr.getGerenteResponsavel().getDocumento() + lineEnding);                            
                         }else if(funcionario instanceof VendedorS){
                             VendedorS vendedorS = (VendedorS)funcionario;
-                            fileWriter.write(vendedorS.getAnosTrabalho() + "\n\r");
+                            fileWriter.write(vendedorS.getAnosTrabalho() + lineEnding);
                         }
                         
                     }else{
                         Cliente cliente = (Cliente)pessoa;
-                        fileWriter.write(cliente.getEndereco().string() + "\n\r");
-                        fileWriter.write(cliente.getDependentes() + "\n\r");
+                        fileWriter.write(cliente.getEndereco().string() + lineEnding);
+                        fileWriter.write(cliente.getDependentes() + lineEnding);
                     }
                 }
                 else if(d instanceof Veiculo){
                     Veiculo veiculo = (Veiculo)d;
-                    fileWriter.write(veiculo.getChassi() + "\n\r");
-                    fileWriter.write(veiculo.getMarca() + "\n\r");
-                    fileWriter.write(veiculo.getModelo() + "\n\r");
-                    fileWriter.write(veiculo.getAno() + "\n\r");
-                    fileWriter.write(veiculo.getKm() + "\n\r");
-                    fileWriter.write(veiculo.getComb() + "\n\r");
-                    fileWriter.write(veiculo.getPeso() + "\n\r");
-                    fileWriter.write(veiculo.getStatus() + "\n\r");
+                    fileWriter.write(veiculo.getChassi() + lineEnding);
+                    fileWriter.write(veiculo.getMarca() + lineEnding);
+                    fileWriter.write(veiculo.getModelo() + lineEnding);
+                    fileWriter.write(veiculo.getAno() + lineEnding);
+                    fileWriter.write(veiculo.getKm() + lineEnding);
+                    fileWriter.write(veiculo.getComb() + lineEnding);
+                    fileWriter.write(veiculo.getPeso() + lineEnding);
+                    fileWriter.write(veiculo.getStatus() + lineEnding);
                     if(veiculo instanceof Carro){
                         Carro carro = (Carro)veiculo;
-                        fileWriter.write(carro.getPotencia() + "\n\r");
-                        fileWriter.write(carro.getCilindros() + "\n\r");
-                        fileWriter.write(carro.getOcupantes() + "\n\r");
-                        fileWriter.write(carro.getTipo() + "\n\r");
-                        fileWriter.write(carro.getDimensoes().string() + "\n\r");
+                        fileWriter.write(carro.getPotencia() + lineEnding);
+                        fileWriter.write(carro.getCilindros() + lineEnding);
+                        fileWriter.write(carro.getOcupantes() + lineEnding);
+                        fileWriter.write(carro.getTipo() + lineEnding);
+                        fileWriter.write(carro.getDimensoes().string() + lineEnding);
                     }
                     if(veiculo instanceof Motocicleta){
                         Motocicleta moto = (Motocicleta)veiculo;
-                        fileWriter.write(moto.getCilindradas() + "\n\r");
-                        fileWriter.write(moto.getTipo() + "\n\r");
+                        fileWriter.write(moto.getCilindradas() + lineEnding);
+                        fileWriter.write(moto.getTipo() + lineEnding);
                     }
                 }
             }

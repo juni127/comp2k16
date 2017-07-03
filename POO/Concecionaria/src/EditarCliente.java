@@ -1,18 +1,31 @@
 
 
-public class NovoCliente extends javax.swing.JDialog {
+public class EditarCliente extends javax.swing.JDialog {
     
     MainGerente mainGerente;
-
-    /**
-     * Creates new form NovoCliente
-     */
-    public NovoCliente(java.awt.Frame parent, boolean modal) {
+    
+    Cliente cliente;
+    int index;
+    
+    public EditarCliente(java.awt.Frame parent, boolean modal, Cliente c, int index) {
         super(parent, modal);
         if(parent instanceof MainGerente)
             this.mainGerente = (MainGerente)parent;
-        this.setTitle("Novo cliente");
+        
+        this.cliente = c;
+        this.index = index;
+        this.setTitle(c.getNome());
+        
         initComponents();
+        
+        nomeField.setText(c.getNome());
+        rgField.setText(c.getDocumento());
+        nascField.setText(c.getNasc().string());
+        rendaField.setText(c.getRenda() + "");
+        dpField.setText(c.getDependentes() + "");
+        ruaField.setText(c.getEndereco().getLogradouro());
+        numeroField.setText(c.getEndereco().getNumero() + "");
+        cidadeField.setText(c.getEndereco().getCidade());
     }
 
     /**
@@ -78,7 +91,7 @@ public class NovoCliente extends javax.swing.JDialog {
 
         jLabel8.setText("Cidade:");
 
-        criarButton.setText("Criar");
+        criarButton.setText("Pronto");
         criarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 criarButtonActionPerformed(evt);
@@ -178,31 +191,25 @@ public class NovoCliente extends javax.swing.JDialog {
 
     private void criarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_criarButtonActionPerformed
         // TODO add your handling code here:
-        //Verificar se tudo foi preenchido
-        if(
-             nomeField.getText().equals("") ||
-             rgField.getText().equals("") ||
-             nascField.getText().equals("") ||
-             rendaField.getText().equals("") ||
-             dpField.getText().equals("") ||
-             ruaField.getText().equals("") ||
-             numeroField.getText().equals("") ||
-             cidadeField.getText().equals("")
-          )
-            System.out.print("Falta algo!");
-        else{
-            Cliente novoCliente = new Cliente(
-                    nomeField.getText(),
-                    rgField.getText(),
-                    new Data(nascField.getText()),
-                    Double .parseDouble(rendaField.getText().replaceAll(",", ".")),
-                    new Endereco(ruaField.getText() + ";" + numeroField.getText() + ";" + cidadeField.getText()),
-                    Integer.parseInt(dpField.getText())
-            );
-            
-            mainGerente.addCliente(novoCliente);
-            this.setVisible(false);
-        }
+        if(!nomeField.getText().equals(cliente.getNome()))
+            cliente.setNome(nomeField.getText());
+        if(!nascField.getText().equals(cliente.getNasc().string()))
+            cliente.setNasc(new Data(nascField.getText()));
+        if(!rgField.getText().equals(cliente.getDocumento()))
+            cliente.setDocumento(rgField.getText());
+        if(!rendaField.getText().equals(Double.toString(cliente.getRenda()).replaceAll(",", ".")))
+            cliente.setRenda(Double.parseDouble(rendaField.getText().replaceAll(",", ".")));
+        if(!dpField.getText().equals(Integer.toString(cliente.getDependentes())))
+            cliente.setDepend(Integer.parseInt(dpField.getText()));
+        if(!ruaField.getText().equals(cliente.getEndereco().getLogradouro()))
+            cliente.getEndereco().setLogradouro(ruaField.getText());
+        if(!numeroField.getText().equals(Integer.toString(cliente.getEndereco().getNumero())))
+            cliente.getEndereco().setNumero(Integer.parseInt(numeroField.getText()));
+        if(!cidadeField.getText().equals(cliente.getEndereco().getCidade()))
+            cliente.getEndereco().setCidade(cidadeField.getText());
+                     
+        mainGerente.editCliente(cliente, index);
+        this.setVisible(false);
     }//GEN-LAST:event_criarButtonActionPerformed
 
     /**

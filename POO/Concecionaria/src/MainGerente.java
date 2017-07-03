@@ -13,14 +13,20 @@ public class MainGerente extends javax.swing.JFrame {
     private static List<Carro> carros;
     private static List<Motocicleta> motos;
     private static Funcionario user;
+    private static DefaultListModel<String> clientesListModel = new DefaultListModel<String>();
+    private static DefaultListModel<String> motosListModel = new DefaultListModel<String>();
+    private static DefaultListModel<String> carrosListModel = new DefaultListModel<String>();
     
+    private static int selectedClientIndex;
+    private static int selectedMotoIndex;
+    private static int selectedCarroIndex;
 
     /**
      * Creates new form Main
      */
     public MainGerente() {
-        //Output test
-        System.out.println("Hey listen!");
+        
+        this.setTitle("Gerente");
         
         //Load files
         FilesIO<Cliente> clienteLoader = new FilesIO(Dados.CLIENTES_PATH);
@@ -31,6 +37,29 @@ public class MainGerente extends javax.swing.JFrame {
         motos = motoLoader.read();
         
         initComponents();
+        
+        if(clientes.isEmpty()){
+            deletarClienteButton.setEnabled(false);
+            editarClienteButton.setEnabled(false);
+            mudarClienteAtual(-1);
+        }else{
+            mudarClienteAtual(0);            
+        }
+        
+        if(motos.isEmpty()){
+            deletarMotosButton.setEnabled(false);
+            editarMotosButton.setEnabled(false);
+            mudarMotoAtual(-1);
+        }else{
+            mudarMotoAtual(0);
+        }
+        
+        if(carros.isEmpty()){
+            deletarCarroButton.setEnabled(false);
+            editarCarrosButton.setEnabled(false);
+        }else{
+            
+        }
     }
 
     /**
@@ -42,13 +71,52 @@ public class MainGerente extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        tab = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        editarCarrosButton = new javax.swing.JButton();
+        jLabel19 = new javax.swing.JLabel();
+        modeloCarroLabel = new javax.swing.JLabel();
+        marcaCarroLabel = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        carrosList = new javax.swing.JList<>();
+        salvarCarrosButton = new javax.swing.JButton();
+        novoCarroButton = new javax.swing.JButton();
+        deletarCarroButton = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        motosList = new javax.swing.JList<>();
+        salvarMotosButton = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        editarMotosButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        modeloMotoLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        marcaMotoLabel = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        chassiMotoLabel = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        anoMotoLabel = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        pesoMotoLabel = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        combMotoLabel = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        kmMotoLabel = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        cilindradasLabel = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        tipoMotoLabel = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        statusMotoLabel = new javax.swing.JLabel();
+        novoMotosButton = new javax.swing.JButton();
+        deletarMotosButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         clientesList = new javax.swing.JList<>();
-        jButton1 = new javax.swing.JButton();
+        novoClienteButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
@@ -56,7 +124,7 @@ public class MainGerente extends javax.swing.JFrame {
         rgLabel = new javax.swing.JLabel();
         nascLabel = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        editarClienteButton = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         rendaLabel = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -65,8 +133,10 @@ public class MainGerente extends javax.swing.JFrame {
         numeroLabel = new javax.swing.JLabel();
         cidadeLabel = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        dpLabel = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        salvarButton = new javax.swing.JButton();
+        deletarClienteButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,50 +148,322 @@ public class MainGerente extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 453, Short.MAX_VALUE)
+            .addGap(0, 467, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Vender", jPanel1);
+        tab.addTab("Vender", jPanel1);
+
+        editarCarrosButton.setText("Editar");
+
+        jLabel19.setText("Modelo:");
+
+        jLabel22.setText("Marca:");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(editarCarrosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addComponent(jLabel19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(modeloCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel22)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(marcaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(modeloCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(marcaCarroLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel22))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(editarCarrosButton))
+        );
+
+        for(Carro c : carros)
+        carrosListModel.addElement(c.getMarca() + ", " + c.getModelo());
+        carrosList.setModel(motosListModel);
+        carrosList.setModel(carrosListModel);
+        jScrollPane3.setViewportView(carrosList);
+
+        salvarCarrosButton.setText("Salvar");
+
+        novoCarroButton.setText("Novo");
+
+        deletarCarroButton.setText("Deletar");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 815, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                    .addComponent(salvarCarrosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(novoCarroButton, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deletarCarroButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 453, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(novoCarroButton)
+                            .addComponent(deletarCarroButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(salvarCarrosButton))
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Veiculos", jPanel2);
+        tab.addTab("Carros", jPanel2);
 
-        DefaultListModel<String> defaultModel = new DefaultListModel<String>();
+        for(Motocicleta m : motos)
+        motosListModel.addElement(m.getMarca() + ", " + m.getModelo());
+        motosList.setModel(motosListModel);
+        jScrollPane2.setViewportView(motosList);
+        motosList.addListSelectionListener(
+            new ListSelectionListener(){
+                public void valueChanged(ListSelectionEvent ev){
+                    //Algo
+                    int index = motosList.getSelectedIndex();
+                    if(index >= 0 && index < motos.size()){
+                        selectedMotoIndex = index;
+                        mudarMotoAtual(index);
+                    }else{
+                        selectedMotoIndex = -1;
+                        mudarMotoAtual(-1);
+                    }
+                }
+            }
+
+        );
+
+        salvarMotosButton.setText("Salvar");
+        salvarMotosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salvarMotosButtonActionPerformed(evt);
+            }
+        });
+
+        editarMotosButton.setText("Editar");
+        editarMotosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editarMotosButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Modelo:");
+
+        jLabel5.setText("Marca:");
+
+        jLabel8.setText("Chassi:");
+
+        jLabel10.setText("Ano:");
+
+        jLabel12.setText("Peso:");
+
+        jLabel13.setText("Combustivel:");
+
+        jLabel15.setText("Kilometragem:");
+
+        jLabel16.setText("Cilindradas:");
+
+        jLabel17.setText("Tipo:");
+
+        jLabel18.setText("Status:");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(editarMotosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(modeloMotoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(combMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(chassiMotoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel10)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(anoMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel15)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cilindradasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tipoMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(marcaMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pesoMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(kmMotoLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(statusMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(modeloMotoLabel))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(marcaMotoLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel8)
+                        .addComponent(chassiMotoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel10)
+                        .addComponent(anoMotoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(pesoMotoLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel13)
+                        .addComponent(combMotoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(kmMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel16)
+                        .addComponent(cilindradasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel17)
+                        .addComponent(tipoMotoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel18)
+                        .addComponent(statusMotoLabel)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(editarMotosButton))
+        );
+
+        novoMotosButton.setText("Novo");
+        novoMotosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                novoMotosButtonActionPerformed(evt);
+            }
+        });
+
+        deletarMotosButton.setText("Deletar");
+        deletarMotosButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deletarMotosButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                    .addComponent(salvarMotosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(novoMotosButton, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deletarMotosButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(novoMotosButton)
+                            .addComponent(deletarMotosButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(salvarMotosButton)))
+                .addContainerGap())
+        );
+
+        tab.addTab("Motos", jPanel5);
+
         for(Cliente c : clientes)
-        defaultModel.addElement(c.getNome());
-        clientesList.setModel(defaultModel);
+        clientesListModel.addElement(c.getNome());
+        clientesList.setModel(clientesListModel);
         jScrollPane1.setViewportView(clientesList);
         clientesList.addListSelectionListener(
             new ListSelectionListener(){
                 public void valueChanged(ListSelectionEvent ev){
                     //Algo
                     int index = clientesList.getSelectedIndex();
-                    Cliente cliente = clientes.get(index);
-                    nameLabel.setText(cliente.getNome());
-                    rgLabel.setText(cliente.getDocumento());
-                    nascLabel.setText(cliente.getNasc().string());
-                    rendaLabel.setText(Double.toString(cliente.getRenda()));
-                    ruaLabel.setText(cliente.getEndereco().getLogradouro());
-                    numeroLabel.setText(cliente.getEndereco().getNumero() + "");
-                    cidadeLabel.setText(cliente.getEndereco().getCidade());
+                    if(index >= 0 && index < clientes.size()){
+                        selectedClientIndex = index;
+                        Cliente cliente = clientes.get(index);
+                        nameLabel.setText(cliente.getNome());
+                        rgLabel.setText(cliente.getDocumento());
+                        nascLabel.setText(cliente.getNasc().string());
+                        rendaLabel.setText(Double.toString(cliente.getRenda()));
+                        dpLabel.setText(cliente.getDependentes() + "");
+                        ruaLabel.setText(cliente.getEndereco().getLogradouro());
+                        numeroLabel.setText(cliente.getEndereco().getNumero() + "");
+                        cidadeLabel.setText(cliente.getEndereco().getCidade());
+                    }
                 }
             }
         );
 
-        jButton1.setText("Novo");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        novoClienteButton.setText("Novo");
+        novoClienteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                novoClienteButtonActionPerformed(evt);
             }
         });
 
@@ -137,10 +479,10 @@ public class MainGerente extends javax.swing.JFrame {
 
         jLabel6.setText("Data de nascimento:");
 
-        jButton3.setText("Editar");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        editarClienteButton.setText("Editar");
+        editarClienteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                editarClienteButtonActionPerformed(evt);
             }
         });
 
@@ -160,11 +502,15 @@ public class MainGerente extends javax.swing.JFrame {
 
         jLabel14.setText("Cidade:");
 
+        dpLabel.setText("0");
+
+        jLabel4.setText("Dependentes:");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(editarClienteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,15 +527,9 @@ public class MainGerente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ruaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(nameLabel))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(rendaLabel)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nameLabel)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel11)
@@ -198,7 +538,15 @@ public class MainGerente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cidadeLabel)))
+                        .addComponent(cidadeLabel))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rendaLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -217,7 +565,9 @@ public class MainGerente extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(rendaLabel))
+                    .addComponent(rendaLabel)
+                    .addComponent(dpLabel)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -229,20 +579,20 @@ public class MainGerente extends javax.swing.JFrame {
                     .addComponent(cidadeLabel)
                     .addComponent(jLabel14))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3))
+                .addComponent(editarClienteButton))
         );
 
-        jButton2.setText("Salvar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        salvarButton.setText("Salvar");
+        salvarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                salvarButtonActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Deletar");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        deletarClienteButton.setText("Deletar");
+        deletarClienteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                deletarClienteButtonActionPerformed(evt);
             }
         });
 
@@ -253,11 +603,11 @@ public class MainGerente extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(salvarButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(novoClienteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))
+                        .addComponent(deletarClienteButton, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -270,50 +620,82 @@ public class MainGerente extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jButton4))
+                            .addComponent(novoClienteButton)
+                            .addComponent(deletarClienteButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(salvarButton)))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Clientes", jPanel3);
+        tab.addTab("Clientes", jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(tab)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(tab)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void salvarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvarButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        FilesIO<Cliente> clienteLoader = new FilesIO(Dados.CLIENTES_PATH);
+        clienteLoader.write(clientes);
+    }//GEN-LAST:event_salvarButtonActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void editarClienteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarClienteButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        new EditarCliente(this, true, clientes.get(selectedClientIndex), selectedClientIndex).show();
+    }//GEN-LAST:event_editarClienteButtonActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void deletarClienteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletarClienteButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+        int indices[] = clientesList.getSelectedIndices();
+        for(int x = 0; x < indices.length; x++)
+            clientes.remove(indices[x] - x);
+        atualizaClientesList();
+    }//GEN-LAST:event_deletarClienteButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void novoClienteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_novoClienteButtonActionPerformed
         // TODO add your handling code here:
         //Use jDialog or this.setEnabled(false); whatever work best :V
         new NovoCliente(this, true)
                 .show();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_novoClienteButtonActionPerformed
+
+    private void novoMotosButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_novoMotosButtonActionPerformed
+        // TODO add your handling code here:
+        new NovaMoto(this, true)
+                .show();
+    }//GEN-LAST:event_novoMotosButtonActionPerformed
+
+    private void salvarMotosButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salvarMotosButtonActionPerformed
+        // TODO add your handling code here:
+        FilesIO<Motocicleta> motoLoader = new FilesIO(Dados.MOTOS_PATH);
+        motoLoader.write(motos);
+    }//GEN-LAST:event_salvarMotosButtonActionPerformed
+
+    private void deletarMotosButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletarMotosButtonActionPerformed
+        // TODO add your handling code here:
+        int indices[] = motosList.getSelectedIndices();
+        for(int x = 0; x < indices.length; x++)
+            motos.remove(indices[x] - x);
+        atualizaMotosList();
+    }//GEN-LAST:event_deletarMotosButtonActionPerformed
+
+    private void editarMotosButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarMotosButtonActionPerformed
+        // TODO add your handling code here:
+        new EditarMoto(motos.get(selectedMotoIndex), selectedMotoIndex, this, true).show();
+    }//GEN-LAST:event_editarMotosButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -370,32 +752,189 @@ public class MainGerente extends javax.swing.JFrame {
     public void setUsuario(Funcionario user){
         this.user = user;
     }
+    
+    public void addCliente(Cliente c){
+        clientes.add(c);
+        atualizaClientesList();
+    }
+    
+    public void addMoto(Motocicleta m){
+        motos.add(m);
+        atualizaMotosList();
+    }
+    
+    public void addCarro(Carro c){
+        carros.add(c);
+        atualizaCarrosList();
+    }
+    
+    public void editCliente(Cliente c, int index){
+        clientes.set(index, c);
+        atualizaClientesList();
+    }
+    
+    public void editMoto(Motocicleta m, int index){
+        motos.set(index, m);
+        atualizaMotosList();
+    }
+    
+    public void editCarro(Carro c, int index){
+        carros.set(index, c);
+        atualizaCarrosList();
+    }
+    
+    private void atualizaClientesList(){
+        clientesListModel.removeAllElements();
+        for(Cliente cliente : clientes)
+            clientesListModel.addElement(cliente.getNome());
+        if(clientes.isEmpty()){
+            deletarClienteButton.setEnabled(false);
+            editarClienteButton.setEnabled(false);
+            mudarClienteAtual(-1);
+        }else{
+            deletarClienteButton.setEnabled(true);
+            editarClienteButton.setEnabled(true);
+            mudarClienteAtual(0);            
+        }
+    }
+    
+    private void atualizaMotosList(){
+        motosListModel.removeAllElements();
+        for(Motocicleta moto : motos)
+            motosListModel.addElement(moto.getMarca() + ", " + moto.getModelo());
+        if(motos.isEmpty()){
+            deletarMotosButton.setEnabled(false);
+            editarMotosButton.setEnabled(false);
+            mudarMotoAtual(-1);
+        }else{
+            deletarMotosButton.setEnabled(true);
+            editarMotosButton.setEnabled(true);
+            mudarMotoAtual(0);            
+        }
+    }
+    
+    private void atualizaCarrosList(){
+        
+    }
+    
+    private void mudarClienteAtual(int index){
+        if(index >= 0){
+            Cliente cliente = clientes.get(index);
+            nameLabel.setText(cliente.getNome());
+            rgLabel.setText(cliente.getDocumento());
+            nascLabel.setText(cliente.getNasc().string());
+            rendaLabel.setText(Double.toString(cliente.getRenda()));
+            dpLabel.setText(cliente.getDependentes() + "");
+            ruaLabel.setText(cliente.getEndereco().getLogradouro());
+            numeroLabel.setText(cliente.getEndereco().getNumero() + "");
+            cidadeLabel.setText(cliente.getEndereco().getCidade());
+        }else{
+            
+            nameLabel.setText("");
+            rgLabel.setText("");
+            nascLabel.setText("");
+            rendaLabel.setText("");
+            dpLabel.setText("");
+            ruaLabel.setText("");
+            numeroLabel.setText("");
+            cidadeLabel.setText("");
+            
+        }
+    }
+    
+    private void mudarMotoAtual(int index){
+        if(index >= 0){
+            Motocicleta moto = motos.get(index);
+            marcaMotoLabel.setText(moto.getMarca());
+            modeloMotoLabel.setText(moto.getModelo());
+            chassiMotoLabel.setText(Integer.toString(moto.getChassi()));
+            anoMotoLabel.setText(moto.getAno() + "");
+            pesoMotoLabel.setText(moto.getPeso() + "");
+            combMotoLabel.setText(moto.getComb());
+            kmMotoLabel.setText(moto.getKm() + "");
+            cilindradasLabel.setText(moto.getCilindradas() + "");
+            tipoMotoLabel.setText(moto.getTipo().toString().toLowerCase());
+            statusMotoLabel.setText(moto.getStatus().toString().replaceAll("_", " ").toLowerCase());
+        }else{
+            marcaMotoLabel.setText("");
+            modeloMotoLabel.setText("");
+            chassiMotoLabel.setText("");
+            anoMotoLabel.setText("");
+            pesoMotoLabel.setText("");
+            combMotoLabel.setText("");
+            kmMotoLabel.setText("");
+            cilindradasLabel.setText("");
+            tipoMotoLabel.setText("");
+            statusMotoLabel.setText("");            
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel anoMotoLabel;
+    private javax.swing.JList<String> carrosList;
+    private javax.swing.JLabel chassiMotoLabel;
     private javax.swing.JLabel cidadeLabel;
+    private javax.swing.JLabel cilindradasLabel;
     private javax.swing.JList<String> clientesList;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel combMotoLabel;
+    private javax.swing.JButton deletarCarroButton;
+    private javax.swing.JButton deletarClienteButton;
+    private javax.swing.JButton deletarMotosButton;
+    private javax.swing.JLabel dpLabel;
+    private javax.swing.JButton editarCarrosButton;
+    private javax.swing.JButton editarClienteButton;
+    private javax.swing.JButton editarMotosButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel kmMotoLabel;
+    private javax.swing.JLabel marcaCarroLabel;
+    private javax.swing.JLabel marcaMotoLabel;
+    private javax.swing.JLabel modeloCarroLabel;
+    private javax.swing.JLabel modeloMotoLabel;
+    private javax.swing.JList<String> motosList;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel nascLabel;
+    private javax.swing.JButton novoCarroButton;
+    private javax.swing.JButton novoClienteButton;
+    private javax.swing.JButton novoMotosButton;
     private javax.swing.JLabel numeroLabel;
+    private javax.swing.JLabel pesoMotoLabel;
     private javax.swing.JLabel rendaLabel;
     private javax.swing.JLabel rgLabel;
     private javax.swing.JLabel ruaLabel;
+    private javax.swing.JButton salvarButton;
+    private javax.swing.JButton salvarCarrosButton;
+    private javax.swing.JButton salvarMotosButton;
+    private javax.swing.JLabel statusMotoLabel;
+    private javax.swing.JTabbedPane tab;
+    private javax.swing.JLabel tipoMotoLabel;
     // End of variables declaration//GEN-END:variables
 }

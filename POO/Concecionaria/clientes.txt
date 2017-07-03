@@ -2,12 +2,24 @@ CLIENTES
 Peter Parker
 0123456789
 21/10/1996
-1234.50
+1234.5
 Rua Baker;123;England
 0
 Edward Snowden
 9876543210
-12/01/1969
-4321.50
+12/1/1969
+4321.5
 Rua Algo;321;Stalingrado
 5
+Red
+468972
+1/1/1995
+1234.0
+Rota 01;1;Pallet
+0
+Alberto Roberto Gomes e Silva
+1234567890
+10/10/1996
+12345.0
+Rua Ricardo Carlos Marcelo;150;Sao Paulo
+2

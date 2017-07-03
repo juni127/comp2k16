@@ -186,7 +186,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="criarButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Criar"/>
+        <Property name="text" type="java.lang.String" value="Pronto"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="criarButtonActionPerformed"/>
