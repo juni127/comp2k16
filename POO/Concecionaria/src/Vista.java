@@ -8,6 +8,6 @@
  *
  * @author Reinaldo
  */
-public class Vista extends Vendas{
+public class Vista{
     
 }

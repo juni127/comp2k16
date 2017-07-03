@@ -8,6 +8,7 @@ public abstract class Veiculo
 	private String combustivel;
 	private double peso;
 	private Status status;
+        private int id;
 	
 	public Veiculo(int Chassi, String marca, String modelo, int ano, double km, String comb, double p, Status s)
 	{

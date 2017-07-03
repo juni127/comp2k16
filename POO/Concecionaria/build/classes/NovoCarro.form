@@ -235,7 +235,7 @@
     <Component class="javax.swing.JFormattedTextField" name="alturaCarroField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format format="" subtype="-1" type="0"/>
+          <Format format="#0.000" subtype="-1" type="0"/>
         </Property>
       </Properties>
     </Component>
@@ -350,7 +350,7 @@
     <Component class="javax.swing.JFormattedTextField" name="larguraCarroField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format format="" subtype="-1" type="0"/>
+          <Format format="#0.00" subtype="-1" type="0"/>
         </Property>
       </Properties>
     </Component>
@@ -362,7 +362,7 @@
     <Component class="javax.swing.JFormattedTextField" name="pesoCarroField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format format="" subtype="-1" type="0"/>
+          <Format format="#0.00" subtype="-1" type="0"/>
         </Property>
       </Properties>
     </Component>
@@ -374,7 +374,7 @@
     <Component class="javax.swing.JFormattedTextField" name="comprimentoCarroField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format format="" subtype="-1" type="0"/>
+          <Format format="#0.00" subtype="-1" type="0"/>
         </Property>
       </Properties>
     </Component>

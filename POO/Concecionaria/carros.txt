@@ -12,3 +12,16 @@ A_VENDA
 5
 SEDAN
 2.0;2.0;2.0
+434354
+Lamborghini
+Aventator
+2011
+0.0
+Gasolina
+1.575
+A_VENDA
+720
+12
+5
+ESPORTIVO
+1.136;2.265;4.78

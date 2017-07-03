@@ -19,6 +19,29 @@ public class FilesIO<T> {
         }
     }
     
+    public void write(String m){
+        try{
+            FileWriter fileWriter = new FileWriter(arquivo, true);
+            fileWriter.append(m + lineEnding);
+            fileWriter.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public List<String> load(){
+        List<String> output = new ArrayList<String>();
+        try{
+            BufferedReader bReader = new BufferedReader(new FileReader(arquivo));
+            String line;
+            while((line = bReader.readLine()) != null)
+                output.add(line);
+            bReader.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return output;
+    }
+    
     public boolean write(List<T> data){
         boolean output = false;
         
@@ -41,7 +64,7 @@ public class FilesIO<T> {
                 fileWriter.write("CARROS" + lineEnding);
             else if(data.get(0) instanceof Motocicleta)
                 fileWriter.write("MOTOCICLETAS" + lineEnding);
-            else if(data.get(0) instanceof Prazo)
+            else if(data.get(0) instanceof VendaPrazo)
                 fileWriter.write("PRAZO" + lineEnding);
             else if(data.get(0) instanceof Vista)
                 fileWriter.write("VISTA" + lineEnding);
@@ -99,6 +122,42 @@ public class FilesIO<T> {
                         fileWriter.write(moto.getCilindradas() + lineEnding);
                         fileWriter.write(moto.getTipo() + lineEnding);
                     }
+                }else if(d instanceof Vendas){
+                    Vendas venda = (Vendas)d;
+                    fileWriter.write(venda.getId() + lineEnding);
+                    fileWriter.write(venda.getVendedor().getDocumento()+ lineEnding);
+                    fileWriter.write(venda.getCliente().getDocumento() + lineEnding);
+                    //Salvando o veiculo
+                    Veiculo veiculo = venda.getVeiculo();
+                    //Antes uma linha pra saber o tipo do veiculo
+                    if(veiculo instanceof Carro)
+                        fileWriter.write("CARRO");
+                    else
+                        fileWriter.write("MOTO");
+                    fileWriter.write(veiculo.getChassi() + lineEnding);
+                    fileWriter.write(veiculo.getMarca() + lineEnding);
+                    fileWriter.write(veiculo.getModelo() + lineEnding);
+                    fileWriter.write(veiculo.getAno() + lineEnding);
+                    fileWriter.write(veiculo.getKm() + lineEnding);
+                    fileWriter.write(veiculo.getComb() + lineEnding);
+                    fileWriter.write(veiculo.getPeso() + lineEnding);
+                    fileWriter.write(veiculo.getStatus() + lineEnding);
+                    if(veiculo instanceof Carro){
+                        Carro carro = (Carro)veiculo;
+                        fileWriter.write(carro.getPotencia() + lineEnding);
+                        fileWriter.write(carro.getCilindros() + lineEnding);
+                        fileWriter.write(carro.getOcupantes() + lineEnding);
+                        fileWriter.write(carro.getTipo() + lineEnding);
+                        fileWriter.write(carro.getDimensoes().string() + lineEnding);
+                    }
+                    if(veiculo instanceof Motocicleta){
+                        Motocicleta moto = (Motocicleta)veiculo;
+                        fileWriter.write(moto.getCilindradas() + lineEnding);
+                        fileWriter.write(moto.getTipo() + lineEnding);
+                    }
+                    fileWriter.write(venda.getValor() + lineEnding);
+                    fileWriter.write(venda.getData().string() + lineEnding);
+                    fileWriter.write(venda.getDesconto() + lineEnding);
                 }
             }
             
@@ -140,6 +199,9 @@ public class FilesIO<T> {
                     break;
                 case "CLIENTES":
                     type = 5;
+                    break;
+                case "VENDAS":
+                    type = 6;
                     break;
             }
             
@@ -309,8 +371,102 @@ public class FilesIO<T> {
                                 dependentes
                         ));
                         break;
+                    //Vendas
+                    case 6:
+                        //Line = id
+                        String vendedorDocumento, clienteDocumento, dataDaVenda;
+                        double valor, desconto;
+                        int parcelas;
+                        vendedorDocumento = bReader.readLine();
+                        clienteDocumento = bReader.readLine();
+                        Veiculo veiculo;
+                        switch(bReader.readLine()){
+                            case "CARRO":
+                                int potenciaV, cilindrosV, ocupantesV;
+                                Carro.Tipo tipoV;
+                                String dimensoesV;
+                        
+                                chassi = Integer.parseInt(line);
+                                marca = bReader.readLine();
+                                modelo = bReader.readLine();
+                                ano = Integer.parseInt(bReader.readLine());
+                                km = Double.parseDouble(bReader.readLine());
+                                comb = bReader.readLine();
+                                peso = Double.parseDouble(bReader.readLine());
+                                status = Veiculo.parseStatus(bReader.readLine());
+                        
+                                potenciaV = Integer.parseInt(bReader.readLine());
+                                cilindrosV = Integer.parseInt(bReader.readLine());
+                                ocupantesV = Integer.parseInt(bReader.readLine());
+                                tipoV = Carro.parseTipo(bReader.readLine());
+                                dimensoesV = bReader.readLine();
+                        
+                                veiculo =  new Carro(
+                                    chassi,
+                                    marca,
+                                    modelo,
+                                    ano,
+                                    km,
+                                    comb,
+                                    peso,
+                                    status,
+                                    potenciaV,
+                                    cilindrosV,
+                                    ocupantesV,
+                                    tipoV,
+                                    new Dim(dimensoesV)
+                                );
+                                break;
+                            default:
+                                int cilindradasV;
+                                Motocicleta.Tipo tipoMV;
+                        
+                                chassi = Integer.parseInt(line);
+                                marca = bReader.readLine();
+                                modelo = bReader.readLine();
+                                ano = Integer.parseInt(bReader.readLine());
+                                km = Double.parseDouble(bReader.readLine());
+                                comb = bReader.readLine();
+                                peso = Double.parseDouble(bReader.readLine());
+                                status = Veiculo.parseStatus(bReader.readLine());
+                        
+                                cilindradasV = Integer.parseInt(bReader.readLine());
+                                tipoMV = Motocicleta.parseTipo(bReader.readLine());
+                        
+                                veiculo = new Motocicleta(
+                                    chassi,
+                                    marca,
+                                    modelo,
+                                    ano,
+                                    km,
+                                    comb,
+                                    peso,
+                                    status,
+                                    cilindradasV,
+                                    tipoMV
+                                );
+                                
+                                break;
+                        }
+                        valor = Double.parseDouble(bReader.readLine());
+                        dataDaVenda = bReader.readLine();
+                        desconto = Double.parseDouble(bReader.readLine());
+                        parcelas = Integer.parseInt(bReader.readLine());
+                        
+                        output.add((T) new VendaPrazo(
+                                parcelas,
+                                Integer.parseInt(line),
+                                veiculo,
+                                valor,
+                                new Data(dataDaVenda),
+                                desconto,
+                                vendedorDocumento,
+                                clienteDocumento
+                        ));
+                        break;
                 }
             }
+            bReader.close();
         
         }catch(IOException e){
             e.printStackTrace();

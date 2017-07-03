@@ -9,3 +9,13 @@ Gasolina
 A_VENDA
 1500
 CUSTOM
+21354
+Honda
+CG 150
+2016
+158.0
+Gasolina
+150.0
+A_VENDA
+300
+CUSTOM
