@@ -65,9 +65,7 @@ public class FilesIO<T> {
             else if(data.get(0) instanceof Motocicleta)
                 fileWriter.write("MOTOCICLETAS" + lineEnding);
             else if(data.get(0) instanceof VendaPrazo)
-                fileWriter.write("PRAZO" + lineEnding);
-            else if(data.get(0) instanceof Vista)
-                fileWriter.write("VISTA" + lineEnding);
+                fileWriter.write("VENDAS" + lineEnding);
             
             //Escreve os dados no arquivo
             for(T d : data){
@@ -122,8 +120,8 @@ public class FilesIO<T> {
                         fileWriter.write(moto.getCilindradas() + lineEnding);
                         fileWriter.write(moto.getTipo() + lineEnding);
                     }
-                }else if(d instanceof Vendas){
-                    Vendas venda = (Vendas)d;
+                }else if(d instanceof VendaPrazo){
+                    VendaPrazo venda = (VendaPrazo)d;
                     fileWriter.write(venda.getId() + lineEnding);
                     fileWriter.write(venda.getVendedor().getDocumento()+ lineEnding);
                     fileWriter.write(venda.getCliente().getDocumento() + lineEnding);
@@ -131,9 +129,9 @@ public class FilesIO<T> {
                     Veiculo veiculo = venda.getVeiculo();
                     //Antes uma linha pra saber o tipo do veiculo
                     if(veiculo instanceof Carro)
-                        fileWriter.write("CARRO");
+                        fileWriter.write("CARRO" + lineEnding);
                     else
-                        fileWriter.write("MOTO");
+                        fileWriter.write("MOTO" + lineEnding);
                     fileWriter.write(veiculo.getChassi() + lineEnding);
                     fileWriter.write(veiculo.getMarca() + lineEnding);
                     fileWriter.write(veiculo.getModelo() + lineEnding);
@@ -158,6 +156,7 @@ public class FilesIO<T> {
                     fileWriter.write(venda.getValor() + lineEnding);
                     fileWriter.write(venda.getData().string() + lineEnding);
                     fileWriter.write(venda.getDesconto() + lineEnding);
+                    fileWriter.write(venda.getParcelas() + lineEnding);
                 }
             }
             
@@ -386,7 +385,7 @@ public class FilesIO<T> {
                                 Carro.Tipo tipoV;
                                 String dimensoesV;
                         
-                                chassi = Integer.parseInt(line);
+                                chassi = Integer.parseInt(bReader.readLine());
                                 marca = bReader.readLine();
                                 modelo = bReader.readLine();
                                 ano = Integer.parseInt(bReader.readLine());
@@ -421,7 +420,7 @@ public class FilesIO<T> {
                                 int cilindradasV;
                                 Motocicleta.Tipo tipoMV;
                         
-                                chassi = Integer.parseInt(line);
+                                chassi = Integer.parseInt(bReader.readLine());
                                 marca = bReader.readLine();
                                 modelo = bReader.readLine();
                                 ano = Integer.parseInt(bReader.readLine());

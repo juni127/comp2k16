@@ -8,6 +8,8 @@ import javax.swing.event.ListSelectionListener;
 
 public class MainGerente extends javax.swing.JFrame {
     
+    private static List<Funcionario> funcionarios;
+    
     private static List<Gerente> gerentes;
     private static List<VendedorS> vendedoresSenior;
     private static List<VendedorJr> vendedoresJunior;
@@ -35,9 +37,10 @@ public class MainGerente extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    public MainGerente() {
+    public MainGerente(List<Funcionario> f) {
         
         this.setTitle("Gerente");
+        this.funcionarios = f;
         
         //Load files
         FilesIO<Cliente> clienteLoader = new FilesIO(Dados.CLIENTES_PATH);
@@ -47,7 +50,10 @@ public class MainGerente extends javax.swing.JFrame {
         FilesIO<Motocicleta> motoLoader = new FilesIO(Dados.MOTOS_PATH);
         motos = motoLoader.read();
         FilesIO<VendaPrazo> vendasLoader = new FilesIO(Dados.VENDAS_PATH);
-        vendasPrazo = vendasLoader.read();
+        vendasPrazo = vendasLoader.read(); 
+        
+        for(VendaPrazo v : vendasPrazo)
+            v.atualizar(clientes, f);
         
         initComponents();
         
@@ -74,6 +80,14 @@ public class MainGerente extends javax.swing.JFrame {
         }else{
             mudarCarroAtual(0);
         }
+        
+        if(vendasPrazo.isEmpty()){
+            deletarVenda.setEnabled(false);
+            editarVenda.setEnabled(false);
+            mudarVendaAtual(-1);
+        }else{
+            mudarVendaAtual(0);
+        }
     }
 
     /**
@@ -88,7 +102,7 @@ public class MainGerente extends javax.swing.JFrame {
         tab = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        editarVenda = new javax.swing.JButton();
         jLabel34 = new javax.swing.JLabel();
         jLabel35 = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
@@ -108,7 +122,7 @@ public class MainGerente extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        deletarVenda = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         editarCarrosButton = new javax.swing.JButton();
@@ -204,7 +218,7 @@ public class MainGerente extends javax.swing.JFrame {
 
         jPanel8.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton3.setText("Editar");
+        editarVenda.setText("Editar");
 
         jLabel34.setText("Vendedor:");
 
@@ -224,7 +238,7 @@ public class MainGerente extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(editarVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,13 +309,29 @@ public class MainGerente extends javax.swing.JFrame {
                         .addComponent(jLabel46)
                         .addComponent(dataVendaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
-                .addComponent(jButton3))
+                .addComponent(editarVenda))
         );
 
         for(VendaPrazo v : vendasPrazo)
         vendasListModel.addElement(v.getVeiculo().getModelo() + " para " + v.getCliente().getNome());
         jList1.setModel(vendasListModel);
         jScrollPane4.setViewportView(jList1);
+        jList1.addListSelectionListener(
+            new ListSelectionListener(){
+                public void valueChanged(ListSelectionEvent ev){
+                    //Algo
+                    int index = jList1.getSelectedIndex();
+                    if(index >= 0 && index < carros.size()){
+                        selectedVendaIndex = index;
+                        mudarVendaAtual(index);
+                    }else{
+                        selectedVendaIndex = -1;
+                        mudarVendaAtual(-1);
+                    }
+                }
+            }
+
+        );
 
         jButton1.setText("Nova venda");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -310,7 +340,12 @@ public class MainGerente extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Apagar");
+        deletarVenda.setText("Apagar");
+        deletarVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deletarVendaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -323,7 +358,7 @@ public class MainGerente extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)))
+                        .addComponent(deletarVenda, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -338,7 +373,7 @@ public class MainGerente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
-                            .addComponent(jButton2)))
+                            .addComponent(deletarVenda)))
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1109,6 +1144,17 @@ public class MainGerente extends javax.swing.JFrame {
         new NovaVenda(veiculos , clientes, user, this, true).show();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void deletarVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletarVendaActionPerformed
+        // TODO add your handling code here:
+        int indices[] = jList1.getSelectedIndices();
+        date = new Date();
+        for(int x = 0; x < indices.length; x++){
+            log.write("Venda: " + vendasListModel.getElementAt(indices[x] - x) + ". Apagada por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
+            vendasPrazo.remove(indices[x] - x);
+        }
+        atualizaVendasList();
+    }//GEN-LAST:event_deletarVendaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1143,7 +1189,7 @@ public class MainGerente extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainGerente().setVisible(true);
+                new MainGerente(funcionarios).setVisible(true);
                 
             }
         });
@@ -1159,19 +1205,6 @@ public class MainGerente extends javax.swing.JFrame {
             
     public void setVendedoresJr(List<VendedorJr> vendedoresJunior){
         this.vendedoresJunior = vendedoresJunior;
-        
-        //Maior gambiarra da historia
-        
-        List<Funcionario> f = new ArrayList<Funcionario>();
-        for(Funcionario p : gerentes)
-            f.add(p);
-        for(Funcionario p : vendedoresSenior)
-            f.add(p);
-        for(Funcionario p : vendedoresJunior)
-            f.add(p);
-        
-        for(VendaPrazo v : vendasPrazo)
-            v.atualizar(clientes, f);
     }
     
     public void setUsuario(Funcionario user){
@@ -1197,6 +1230,15 @@ public class MainGerente extends javax.swing.JFrame {
         date = new Date();
         log.write("Carro: " + c.getMarca() + ", " + c.getModelo() + ". Adicionado por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
         atualizaCarrosList();
+    }
+    
+    public void addVenda(VendaPrazo v){
+        vendasPrazo.add(v);
+        date = new Date();
+        log.write("Venda realizada por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
+        atualizaVendasList();
+        FilesIO<VendaPrazo> vendaLoader = new FilesIO(Dados.VENDAS_PATH);
+        vendaLoader.write(vendasPrazo);
     }
     
     public void editCliente(Cliente c, int index){
@@ -1265,6 +1307,45 @@ public class MainGerente extends javax.swing.JFrame {
             
         }
         
+    }
+    
+    private void atualizaVendasList(){
+        vendasListModel.removeAllElements();
+        for(VendaPrazo v : vendasPrazo)
+            vendasListModel.addElement(v.getVeiculo().getModelo() + " para " + v.getCliente().getNome());
+        if(vendasPrazo.isEmpty()){
+            editarVenda.setEnabled(false);
+            deletarVenda.setEnabled(false);
+            mudarVendaAtual(-1);
+        }else{
+            editarVenda.setEnabled(true);
+            deletarVenda.setEnabled(true);
+            mudarVendaAtual(0);
+        }
+    }
+    
+    private void mudarVendaAtual(int index){
+        if(index >= 0){
+            VendaPrazo venda = vendasPrazo.get(index);
+            vendedorVendaLabel.setText(venda.getVendedor().getNome());
+            clienteVendaLabel.setText(venda.getCliente().getNome());
+            veiculoVendaLabel.setText(venda.getVeiculo().getMarca() + ", " + venda.getVeiculo().getModelo());
+            if(venda.getVeiculo() instanceof Carro)
+                tipoVendaLabel.setText("Carro");
+            else
+                tipoVendaLabel.setText("Motocicleta");
+            valorVendaLabel.setText(venda.getValor() + "");
+            descontoVendaLabel.setText(venda.getDesconto() + "");
+            dataVendaLabel.setText(venda.getData().string());
+        }else{
+            vendedorVendaLabel.setText("");
+            clienteVendaLabel.setText("");
+            veiculoVendaLabel.setText("");
+            tipoVendaLabel.setText("");
+            valorVendaLabel.setText("");
+            descontoVendaLabel.setText("");
+            dataVendaLabel.setText("");            
+        }
     }
     
     private void mudarClienteAtual(int index){
@@ -1375,14 +1456,14 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JButton deletarCarroButton;
     private javax.swing.JButton deletarClienteButton;
     private javax.swing.JButton deletarMotosButton;
+    private javax.swing.JButton deletarVenda;
     private javax.swing.JLabel descontoVendaLabel;
     private javax.swing.JLabel dpLabel;
     private javax.swing.JButton editarCarrosButton;
     private javax.swing.JButton editarClienteButton;
     private javax.swing.JButton editarMotosButton;
+    private javax.swing.JButton editarVenda;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

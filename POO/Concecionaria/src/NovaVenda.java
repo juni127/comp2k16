@@ -29,13 +29,18 @@ public class NovaVenda extends javax.swing.JDialog {
     private int selectedCliente;
     private int selectedVeiculo;
     
+    private java.awt.Frame pai;
+    
     public NovaVenda(List<Veiculo> veiculos, List<Cliente> clientes, Funcionario funcionario, java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         
         this.veiculos = veiculos;
         this.clientes = clientes;
         this.funcionario = funcionario;
+        this.pai = parent;
         
+        vList.removeAllElements();
+        cList.removeAllElements();
         for(Veiculo v : veiculos)
             vList.addElement(v.getModelo() + " " + v.getAno());
         for(Cliente c : clientes)
@@ -128,7 +133,7 @@ public class NovaVenda extends javax.swing.JDialog {
             }
         });
 
-        valorField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
+        valorField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -196,6 +201,10 @@ public class NovaVenda extends javax.swing.JDialog {
     private void clienteBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clienteBoxActionPerformed
         // TODO add your handling code here:
         selectedCliente = clienteBox.getSelectedIndex();
+        if(clientes.get(selectedCliente).getRenda() <= 15000 && clientes.get(selectedCliente).getRenda() >= 5000)
+            descontoLabel.setText(clientes.get(selectedCliente).getRenda()/1000 + "");
+        else
+            descontoLabel.setText("0");
     }//GEN-LAST:event_clienteBoxActionPerformed
 
     private void vendidoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vendidoButtonActionPerformed
@@ -207,11 +216,19 @@ public class NovaVenda extends javax.swing.JDialog {
                 funcionario,
                 clientes.get(selectedCliente),
                 veiculos.get(selectedVeiculo),
-                Double.parseDouble(valorField.getText().replaceAll(".", "").replace(",", ".")),
+                Double.parseDouble(valorField.getText().replaceAll(",", ".")),
                 new Data(dataLabel.getText()),
                 Double.parseDouble(descontoLabel.getText())
         );
         
+        veiculos.get(selectedVeiculo).setStatus(Veiculo.Status.VENDIDO);
+        
+        if(pai instanceof MainGerente){
+            MainGerente g = (MainGerente)pai;
+            g.addVenda(venda);
+        }
+        
+        this.show(false);
     }//GEN-LAST:event_vendidoButtonActionPerformed
 
     private void veiculoBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_veiculoBoxActionPerformed

@@ -99,13 +99,20 @@ public class Login extends javax.swing.JFrame {
         //Logar
         String user, password;
         user = userField.getText().toString();
-        password = String.valueOf(passwordField.getPassword());        
+        password = String.valueOf(passwordField.getPassword()); 
+        List<Funcionario> f = new ArrayList<Funcionario>();
+        for(Funcionario p : gerentes)
+            f.add(p);
+        for(Funcionario p : vendedoresSenior)
+            f.add(p);
+        for(Funcionario p : vendedoresJunior)
+            f.add(p);
         
         //Checar se eh gerente
         for(Gerente gerente : gerentes){                  
             if(gerente.getUsuario().equals(user) && gerente.getSenha().equals(password)){
                 //Instancia o formulario do gerente
-                MainGerente main = new MainGerente();
+                MainGerente main = new MainGerente(f);
                 //Passa os funcionarios carregados para não carregar de novo
                 main.setGerentes(gerentes);
                 main.setVendedoresS(vendedoresSenior);
@@ -123,7 +130,7 @@ public class Login extends javax.swing.JFrame {
         for(VendedorS vendedorSenior : vendedoresSenior){                  
             if(vendedorSenior.getUsuario().equals(user) && vendedorSenior.getSenha().equals(password)){
                 //Instancia o formulario do vendedor
-                MainGerente main = new MainGerente();
+                MainGerente main = new MainGerente(f);
                 //Passa os funcionarios carregados para não carregar de novo
                 main.setGerentes(gerentes);
                 main.setVendedoresS(vendedoresSenior);
@@ -141,7 +148,7 @@ public class Login extends javax.swing.JFrame {
         for(VendedorJr vendedorJunior : vendedoresJunior){                  
             if(vendedorJunior.getUsuario().equals(user) && vendedorJunior.getSenha().equals(password)){
                 //Instancia o formulario do vendedor
-                MainGerente main = new MainGerente();
+                MainGerente main = new MainGerente(f);
                 //Passa os funcionarios carregados para não carregar de novo
                 main.setGerentes(gerentes);
                 main.setVendedoresS(vendedoresSenior);

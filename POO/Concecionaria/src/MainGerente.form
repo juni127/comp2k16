@@ -56,7 +56,7 @@
                           <Group type="102" attributes="0">
                               <Component id="jButton1" min="-2" pref="164" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton2" pref="118" max="32767" attributes="0"/>
+                              <Component id="deletarVenda" pref="118" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -75,7 +75,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="deletarVenda" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="jPanel8" max="32767" attributes="0"/>
@@ -98,7 +98,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton3" alignment="0" max="32767" attributes="0"/>
+                      <Component id="editarVenda" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -185,13 +185,13 @@
                               </Group>
                           </Group>
                           <EmptySpace pref="331" max="32767" attributes="0"/>
-                          <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editarVenda" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="jButton3">
+                <Component class="javax.swing.JButton" name="editarVenda">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Editar"/>
                   </Properties>
@@ -265,6 +265,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jList1.addListSelectionListener(&#xa;    new ListSelectionListener(){&#xa;        public void valueChanged(ListSelectionEvent ev){&#xa;            //Algo&#xa;            int index = jList1.getSelectedIndex();&#xa;            if(index &gt;= 0 &amp;&amp; index &lt; carros.size()){&#xa;                selectedVendaIndex = index;&#xa;                mudarVendaAtual(index);&#xa;            }else{&#xa;                selectedVendaIndex = -1;&#xa;                mudarVendaAtual(-1);&#xa;            }&#xa;        }&#xa;    }&#xa;&#xa;);"/>
                     <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="for(VendaPrazo v : vendasPrazo)&#xa;    vendasListModel.addElement(v.getVeiculo().getModelo() + &quot; para &quot; + v.getCliente().getNome());"/>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
@@ -279,10 +280,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="deletarVenda">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Apagar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deletarVendaActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -1,7 +1,7 @@
 public class VendaPrazo extends Vendas{
     private int parcelas;
 
-    public VendaPrazo(int parcelas, int id, Vendedor vendedor, Cliente cliente, Veiculo veiculo, double valor, Data data, double desconto) {
+    public VendaPrazo(int parcelas, int id, Funcionario vendedor, Cliente cliente, Veiculo veiculo, double valor, Data data, double desconto) {
         super(id, vendedor, cliente, veiculo, valor, data, desconto);
         this.parcelas = parcelas;
     }
