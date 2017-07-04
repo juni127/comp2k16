@@ -2,7 +2,8 @@
 
 public class EditarCarro extends javax.swing.JDialog {
     
-    MainGerente mainGerente;
+    MainGerente mainGerente = null;
+    MainVendedor mainVendedor = null;
     Carro carro;
     int index;
 
@@ -14,6 +15,9 @@ public class EditarCarro extends javax.swing.JDialog {
         
         if(parent instanceof MainGerente)
             this.mainGerente = (MainGerente)parent;
+        if(parent instanceof MainVendedor)
+            this.mainVendedor = (MainVendedor)parent;
+        
         this.setTitle("Editar carro");
         this.index = index;
         this.carro = c;
@@ -381,7 +385,9 @@ public class EditarCarro extends javax.swing.JDialog {
             carro.setTipo(getTipo(tipoCarroBox.getSelectedIndex()));
             
             
-        mainGerente.editCarro(carro, index);
+        if(mainGerente != null)mainGerente.editCarro(carro, index);
+        if(mainVendedor != null)mainVendedor.editCarro(carro, index);
+        
         this.setVisible(false);
     }//GEN-LAST:event_criarButtonActionPerformed
 

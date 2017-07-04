@@ -17,16 +17,20 @@ public class MainGerente extends javax.swing.JFrame {
     private static List<Carro> carros;
     private static List<Motocicleta> motos;
     private static List<VendaPrazo> vendasPrazo;
+    private static List<String> logs;
     private static Funcionario user;
     private static DefaultListModel<String> clientesListModel = new DefaultListModel<String>();
     private static DefaultListModel<String> motosListModel = new DefaultListModel<String>();
     private static DefaultListModel<String> carrosListModel = new DefaultListModel<String>();
     private static DefaultListModel<String> vendasListModel = new DefaultListModel<String>();
+    private static DefaultListModel<String> logListModel = new DefaultListModel<String>();
+    private static DefaultListModel<String> funcionariosListModel = new DefaultListModel<String>();
     
     private static int selectedClientIndex;
     private static int selectedMotoIndex;
     private static int selectedCarroIndex;
     private static int selectedVendaIndex;
+    private static int selectedFuncionarioIndex;
     
     private static FilesIO log = new FilesIO(Dados.LOG_PATH);
     
@@ -51,6 +55,9 @@ public class MainGerente extends javax.swing.JFrame {
         motos = motoLoader.read();
         FilesIO<VendaPrazo> vendasLoader = new FilesIO(Dados.VENDAS_PATH);
         vendasPrazo = vendasLoader.read(); 
+        
+        logs = log.load();
+        
         
         for(VendaPrazo v : vendasPrazo)
             v.atualizar(clientes, f);
@@ -87,6 +94,14 @@ public class MainGerente extends javax.swing.JFrame {
             mudarVendaAtual(-1);
         }else{
             mudarVendaAtual(0);
+        }
+        
+        if(funcionarios.isEmpty()){
+            funcionarioEditar.setEnabled(false);
+            funcionarioDeletar.setEnabled(false);
+            mudarFuncionarioAtual(-1);
+        }else{
+            mudarFuncionarioAtual(0);
         }
     }
 
@@ -213,6 +228,34 @@ public class MainGerente extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         salvarButton = new javax.swing.JButton();
         deletarClienteButton = new javax.swing.JButton();
+        jPanel9 = new javax.swing.JPanel();
+        jPanel11 = new javax.swing.JPanel();
+        funcionarioEditar = new javax.swing.JButton();
+        jLabel37 = new javax.swing.JLabel();
+        nomeFuncLabel = new javax.swing.JLabel();
+        jLabel39 = new javax.swing.JLabel();
+        usuarioFuncLabel = new javax.swing.JLabel();
+        jLabel43 = new javax.swing.JLabel();
+        docFuncLabel = new javax.swing.JLabel();
+        jLabel45 = new javax.swing.JLabel();
+        salarioFuncLabel = new javax.swing.JLabel();
+        jLabel47 = new javax.swing.JLabel();
+        admissaoFuncLabel = new javax.swing.JLabel();
+        jLabel48 = new javax.swing.JLabel();
+        nascFuncLabel = new javax.swing.JLabel();
+        jLabel49 = new javax.swing.JLabel();
+        cargoFuncLabel = new javax.swing.JLabel();
+        jLabel50 = new javax.swing.JLabel();
+        grFuncLabel = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        funcionarioList = new javax.swing.JList<>();
+        funcionarioSalvar = new javax.swing.JButton();
+        funcionarioNovo = new javax.swing.JButton();
+        funcionarioDeletar = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        logList = new javax.swing.JList<>();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -293,10 +336,11 @@ public class MainGerente extends javax.swing.JFrame {
                     .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(veiculoVendaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel40)
-                        .addComponent(jLabel41)
-                        .addComponent(tipoVendaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tipoVendaLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel40)
+                            .addComponent(jLabel41))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -321,7 +365,7 @@ public class MainGerente extends javax.swing.JFrame {
                 public void valueChanged(ListSelectionEvent ev){
                     //Algo
                     int index = jList1.getSelectedIndex();
-                    if(index >= 0 && index < carros.size()){
+                    if(index >= 0 && index < vendasPrazo.size()){
                         selectedVendaIndex = index;
                         mudarVendaAtual(index);
                     }else{
@@ -734,7 +778,7 @@ public class MainGerente extends javax.swing.JFrame {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel18)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(statusMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
+                        .addComponent(statusMotoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -776,7 +820,7 @@ public class MainGerente extends javax.swing.JFrame {
                     .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel18)
                         .addComponent(statusMotoLabel)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(editarMotosButton))
         );
 
@@ -818,8 +862,8 @@ public class MainGerente extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(novoMotosButton)
                             .addComponent(deletarMotosButton))
@@ -1029,6 +1073,204 @@ public class MainGerente extends javax.swing.JFrame {
 
         tab.addTab("Clientes", jPanel3);
 
+        jPanel11.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        funcionarioEditar.setText("Editar");
+
+        jLabel37.setText("Nome:");
+
+        jLabel39.setText("Usuario:");
+
+        jLabel43.setText("Documento:");
+
+        jLabel45.setText("Salario:");
+
+        jLabel47.setText("Admissão:");
+
+        jLabel48.setText("Nascimento:");
+
+        jLabel49.setText("Cargo:");
+
+        jLabel50.setText("Gerente responsavel:");
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(funcionarioEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(jLabel37)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nomeFuncLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(jLabel39)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(usuarioFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel43)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(docFuncLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(jLabel45)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(salarioFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel47)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(admissaoFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel48)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nascFuncLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(jLabel49)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cargoFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel50)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(grFuncLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel37)
+                    .addComponent(nomeFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel39)
+                        .addComponent(usuarioFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel43)
+                        .addComponent(docFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel45)
+                        .addComponent(salarioFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel47)
+                        .addComponent(admissaoFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel48)
+                        .addComponent(nascFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel49)
+                        .addComponent(cargoFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel50)
+                        .addComponent(grFuncLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                .addComponent(funcionarioEditar)
+                .addContainerGap())
+        );
+
+        for(Funcionario f : funcionarios)
+        funcionariosListModel.addElement(f.getNome());
+        funcionarioList.setModel(funcionariosListModel);
+        jScrollPane6.setViewportView(funcionarioList);
+        funcionarioList.addListSelectionListener(
+            new ListSelectionListener(){
+                public void valueChanged(ListSelectionEvent ev){
+                    //Algo
+                    int index = funcionarioList.getSelectedIndex();
+                    if(index >= 0 && index < funcionarios.size()){
+                        selectedFuncionarioIndex = index;
+                        mudarFuncionarioAtual(index);
+                    }else{
+                        selectedFuncionarioIndex = -1;
+                        mudarFuncionarioAtual(-1);
+                    }
+                }
+            }
+
+        );
+
+        funcionarioSalvar.setText("Salvar");
+
+        funcionarioNovo.setText("Novo");
+
+        funcionarioDeletar.setText("Deletar");
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                    .addComponent(funcionarioSalvar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(funcionarioNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(funcionarioDeletar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(funcionarioNovo)
+                            .addComponent(funcionarioDeletar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(funcionarioSalvar))
+                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        tab.addTab("Funcionarios", jPanel9);
+
+        for(String s : logs)
+        logListModel.addElement(s);
+        logList.setModel(logListModel);
+        jScrollPane5.setViewportView(logList);
+
+        jButton2.setText("Atualizar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap(685, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(jScrollPane5)
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap())
+        );
+
+        tab.addTab("Log", jPanel10);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1155,6 +1397,14 @@ public class MainGerente extends javax.swing.JFrame {
         atualizaVendasList();
     }//GEN-LAST:event_deletarVendaActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        logListModel.removeAllElements();
+        logs = log.load();
+        for(String s : logs)
+            logListModel.addElement(s);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1241,6 +1491,13 @@ public class MainGerente extends javax.swing.JFrame {
         vendaLoader.write(vendasPrazo);
     }
     
+    public void addFuncionario(Funcionario f){
+        funcionarios.add(f);
+        date = new Date();
+        log.write("Funcionario: " + f.getNome() + ". Adicionado por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
+        atualizaFuncionariosList();
+    }
+    
     public void editCliente(Cliente c, int index){
         clientes.set(index, c);
         date = new Date();
@@ -1260,6 +1517,32 @@ public class MainGerente extends javax.swing.JFrame {
         date = new Date();
         log.write("Carro: " + c.getMarca() + ", " + c.getModelo() + ". Editado por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
         atualizaCarrosList();
+    }
+    
+    public void editFuncionario(Funcionario f, int index){
+        funcionarios.set(index, f);
+        if(f instanceof Gerente){
+            gerentes.clear();
+            for(Funcionario a : funcionarios)
+                if(a instanceof Gerente)
+                    gerentes.add((Gerente) a);
+        }
+        if(f instanceof VendedorJr){
+            vendedoresJunior.clear();
+            for(Funcionario a : funcionarios)
+                if(a instanceof VendedorJr)
+                    vendedoresJunior.add((VendedorJr) a);
+        }
+        if(f instanceof VendedorS){
+            vendedoresSenior.clear();
+            for(Funcionario a : funcionarios)
+                if(a instanceof VendedorS)
+                    vendedoresSenior.add((VendedorS) a);
+        }
+            
+        date = new Date();
+        log.write("Funcionario: " + f.getNome() + ". Editado por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
+        atualizaFuncionariosList();
     }
     
     private void atualizaClientesList(){
@@ -1321,6 +1604,21 @@ public class MainGerente extends javax.swing.JFrame {
             editarVenda.setEnabled(true);
             deletarVenda.setEnabled(true);
             mudarVendaAtual(0);
+        }
+    }
+    
+    private void atualizaFuncionariosList(){
+        funcionariosListModel.removeAllElements();
+        for(Funcionario f : funcionarios)
+            funcionariosListModel.addElement(f.getNome());
+        if(funcionarios.isEmpty()){
+            funcionarioEditar.setEnabled(false);
+            funcionarioDeletar.setEnabled(false);
+            mudarFuncionarioAtual(-1);
+        }else{
+            funcionarioEditar.setEnabled(true);
+            funcionarioDeletar.setEnabled(true);
+            mudarFuncionarioAtual(0);
         }
     }
     
@@ -1436,11 +1734,44 @@ public class MainGerente extends javax.swing.JFrame {
             comprimentoCarroLabel.setText("");
         }
     }
+    
+    private void mudarFuncionarioAtual(int index){
+        if(index >= 0){
+            Funcionario f = funcionarios.get(index);
+            nomeFuncLabel.setText(f.getNome());
+            usuarioFuncLabel.setText(f.getUsuario());
+            docFuncLabel.setText(f.getDocumento());
+            salarioFuncLabel.setText(f.getRenda() + "");
+            admissaoFuncLabel.setText(f.getAdmissao().string());
+            nascFuncLabel.setText(f.getNasc().string());
+            if(f instanceof Gerente)
+                cargoFuncLabel.setText("Gerente");
+            if(f instanceof VendedorS)
+                cargoFuncLabel.setText("Vendedor Senior");
+            if(f instanceof VendedorJr){
+                cargoFuncLabel.setText("Vendedor Junior");
+                grFuncLabel.setText(((VendedorJr)f).getGerenteResponsavel().getNome());
+            }else
+                grFuncLabel.setText("NA");
+            
+        }else{
+            nomeFuncLabel.setText("");
+            usuarioFuncLabel.setText("");
+            docFuncLabel.setText("");
+            salarioFuncLabel.setText("");
+            admissaoFuncLabel.setText("");
+            nascFuncLabel.setText("");
+            cargoFuncLabel.setText("");
+            grFuncLabel.setText("");
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel admissaoFuncLabel;
     private javax.swing.JLabel alturaCarroLabel;
     private javax.swing.JLabel anoCarroLabel;
     private javax.swing.JLabel anoMotoLabel;
+    private javax.swing.JLabel cargoFuncLabel;
     private javax.swing.JList<String> carrosList;
     private javax.swing.JLabel chassiCarroLabel;
     private javax.swing.JLabel chassiMotoLabel;
@@ -1458,12 +1789,20 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JButton deletarMotosButton;
     private javax.swing.JButton deletarVenda;
     private javax.swing.JLabel descontoVendaLabel;
+    private javax.swing.JLabel docFuncLabel;
     private javax.swing.JLabel dpLabel;
     private javax.swing.JButton editarCarrosButton;
     private javax.swing.JButton editarClienteButton;
     private javax.swing.JButton editarMotosButton;
     private javax.swing.JButton editarVenda;
+    private javax.swing.JButton funcionarioDeletar;
+    private javax.swing.JButton funcionarioEditar;
+    private javax.swing.JList<String> funcionarioList;
+    private javax.swing.JButton funcionarioNovo;
+    private javax.swing.JButton funcionarioSalvar;
+    private javax.swing.JLabel grFuncLabel;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1494,20 +1833,30 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel50;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1515,20 +1864,26 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JLabel kmCarroLabel;
     private javax.swing.JLabel kmMotoLabel;
     private javax.swing.JLabel larguraCarroLabel;
+    private javax.swing.JList<String> logList;
     private javax.swing.JLabel marcaCarroLabel;
     private javax.swing.JLabel marcaMotoLabel;
     private javax.swing.JLabel modeloCarroLabel;
     private javax.swing.JLabel modeloMotoLabel;
     private javax.swing.JList<String> motosList;
     private javax.swing.JLabel nameLabel;
+    private javax.swing.JLabel nascFuncLabel;
     private javax.swing.JLabel nascLabel;
+    private javax.swing.JLabel nomeFuncLabel;
     private javax.swing.JButton novoCarroButton;
     private javax.swing.JButton novoClienteButton;
     private javax.swing.JButton novoMotosButton;
@@ -1540,6 +1895,7 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JLabel rendaLabel;
     private javax.swing.JLabel rgLabel;
     private javax.swing.JLabel ruaLabel;
+    private javax.swing.JLabel salarioFuncLabel;
     private javax.swing.JButton salvarButton;
     private javax.swing.JButton salvarCarrosButton;
     private javax.swing.JButton salvarMotosButton;
@@ -1549,6 +1905,7 @@ public class MainGerente extends javax.swing.JFrame {
     private javax.swing.JLabel tipoCarroLabel;
     private javax.swing.JLabel tipoMotoLabel;
     private javax.swing.JLabel tipoVendaLabel;
+    private javax.swing.JLabel usuarioFuncLabel;
     private javax.swing.JLabel valorVendaLabel;
     private javax.swing.JLabel veiculoVendaLabel;
     private javax.swing.JLabel vendedorVendaLabel;

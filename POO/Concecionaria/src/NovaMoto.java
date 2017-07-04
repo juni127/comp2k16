@@ -2,7 +2,8 @@
 
 public class NovaMoto extends javax.swing.JDialog {
     
-    MainGerente mainGerente;
+    private MainGerente mainGerente = null;
+    private MainVendedor mainVendedor = null;
 
     /**
      * Creates new form NovoCliente
@@ -11,6 +12,8 @@ public class NovaMoto extends javax.swing.JDialog {
         super(parent, modal);
         if(parent instanceof MainGerente)
             this.mainGerente = (MainGerente)parent;
+        if(parent instanceof MainVendedor)
+            this.mainVendedor = (MainVendedor)parent;
         this.setTitle("Nova moto");
         initComponents();
     }
@@ -233,7 +236,8 @@ public class NovaMoto extends javax.swing.JDialog {
                     Motocicleta.parseTipo(((String)tipoMotoBox.getSelectedItem()))
             );
             
-            mainGerente.addMoto(novaMoto);
+            if(mainGerente != null)mainGerente.addMoto(novaMoto);
+            if(mainVendedor != null)mainVendedor.addMoto(novaMoto);
             this.setVisible(false);
         }
     }//GEN-LAST:event_criarButtonActionPerformed

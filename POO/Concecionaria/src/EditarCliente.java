@@ -2,7 +2,8 @@
 
 public class EditarCliente extends javax.swing.JDialog {
     
-    MainGerente mainGerente;
+    MainGerente mainGerente = null;
+    MainVendedor mainVendedor = null;
     
     Cliente cliente;
     int index;
@@ -11,6 +12,8 @@ public class EditarCliente extends javax.swing.JDialog {
         super(parent, modal);
         if(parent instanceof MainGerente)
             this.mainGerente = (MainGerente)parent;
+        if(parent instanceof MainVendedor)
+            this.mainVendedor = (MainVendedor)parent;
         
         this.cliente = c;
         this.index = index;
@@ -208,7 +211,9 @@ public class EditarCliente extends javax.swing.JDialog {
         if(!cidadeField.getText().equals(cliente.getEndereco().getCidade()))
             cliente.getEndereco().setCidade(cidadeField.getText());
                      
-        mainGerente.editCliente(cliente, index);
+        if(mainGerente != null)mainGerente.editCliente(cliente, index);
+        if(mainVendedor != null)mainVendedor.editCliente(cliente, index);
+        
         this.setVisible(false);
     }//GEN-LAST:event_criarButtonActionPerformed
 

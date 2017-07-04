@@ -2,9 +2,10 @@
 
 public class EditarMoto extends javax.swing.JDialog {
     
-    MainGerente mainGerente;
-    Motocicleta moto;
-    int index;
+    private MainGerente mainGerente = null;
+    private MainVendedor mainVendedor = null;
+    private Motocicleta moto;
+    private int index;
 
     /**
      * Creates new form NovoCliente
@@ -13,7 +14,10 @@ public class EditarMoto extends javax.swing.JDialog {
         super(parent, modal);
         
         if(parent instanceof MainGerente)
-            this.mainGerente = (MainGerente)parent;
+            this.mainGerente = (MainGerente)parent;        
+        if(parent instanceof MainVendedor)
+            this.mainVendedor = (MainVendedor)parent;
+        
         this.moto = m;
         this.index = index;
         this.setTitle(moto.getMarca() + ", " + moto.getModelo());
@@ -285,7 +289,9 @@ public class EditarMoto extends javax.swing.JDialog {
         if(getTipo(tipoMotoBox.getSelectedIndex()) != moto.getTipo())
             moto.setTipo(getTipo(tipoMotoBox.getSelectedIndex()));
             
-        mainGerente.editMoto(moto, index);
+        if(mainGerente != null)mainGerente.editMoto(moto, index);
+        if(mainVendedor != null)mainVendedor.editMoto(moto, index);
+        
         this.setVisible(false);
     }//GEN-LAST:event_criarButtonActionPerformed
 

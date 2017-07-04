@@ -2,7 +2,8 @@
 
 public class NovoCliente extends javax.swing.JDialog {
     
-    MainGerente mainGerente;
+    MainGerente mainGerente = null;
+    MainVendedor mainVendedor = null;
 
     /**
      * Creates new form NovoCliente
@@ -11,6 +12,8 @@ public class NovoCliente extends javax.swing.JDialog {
         super(parent, modal);
         if(parent instanceof MainGerente)
             this.mainGerente = (MainGerente)parent;
+        if(parent instanceof MainVendedor)
+            this.mainVendedor = (MainVendedor)parent;
         this.setTitle("Novo cliente");
         initComponents();
     }
@@ -200,7 +203,8 @@ public class NovoCliente extends javax.swing.JDialog {
                     Integer.parseInt(dpField.getText())
             );
             
-            mainGerente.addCliente(novoCliente);
+            if(mainGerente != null)mainGerente.addCliente(novoCliente);
+            if(mainVendedor != null)mainVendedor.addCliente(novoCliente);
             this.setVisible(false);
         }
     }//GEN-LAST:event_criarButtonActionPerformed
