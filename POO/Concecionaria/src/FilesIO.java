@@ -52,19 +52,19 @@ public class FilesIO<T> {
                 return output;
             
             //Escreve o cabeçalho do arquivo
-            if(data.get(0) instanceof Gerente)
+            if(data.get(0) instanceof Gerente || arquivo.getName() == Dados.GERENTES_PATH)
                 fileWriter.write("GERENTES" + lineEnding);
-            else if(data.get(0) instanceof VendedorS)
+            else if(data.get(0) instanceof VendedorS || arquivo.getName() == Dados.SENIORS_PATH)
                 fileWriter.write("SENIORS" + lineEnding);
-            else if(data.get(0) instanceof VendedorJr)
+            else if(data.get(0) instanceof VendedorJr || arquivo.getName() == Dados.JUNIORS_PATH)
                 fileWriter.write("JUNIORS" + lineEnding);
-            else if(data.get(0) instanceof Cliente)
+            else if(data.get(0) instanceof Cliente || arquivo.getName() == Dados.CLIENTES_PATH)
                 fileWriter.write("CLIENTES" + lineEnding);
-            else if(data.get(0) instanceof Carro)
+            else if(data.get(0) instanceof Carro || arquivo.getName() == Dados.CARROS_PATH)
                 fileWriter.write("CARROS" + lineEnding);
-            else if(data.get(0) instanceof Motocicleta)
+            else if(data.get(0) instanceof Motocicleta || arquivo.getName() == Dados.MOTOS_PATH)
                 fileWriter.write("MOTOCICLETAS" + lineEnding);
-            else if(data.get(0) instanceof VendaPrazo)
+            else if(data.get(0) instanceof VendaPrazo || arquivo.getName() == Dados.VENDAS_PATH)
                 fileWriter.write("VENDAS" + lineEnding);
             
             //Escreve os dados no arquivo

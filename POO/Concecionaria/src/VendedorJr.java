@@ -16,7 +16,7 @@ public class VendedorJr extends Vendedor {
         super(usuario, senha, nome, documento, nascimento, admissao, renda);
         this.tempoTrabalho = tempoTrabalho;
         this.gerenteResponsavel = null;
-        this.documentoGerente = gerenteResponsavel.getDocumento();
+        this.documentoGerente = gerente;
         
     }
 

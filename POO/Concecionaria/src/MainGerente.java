@@ -1076,6 +1076,11 @@ public class MainGerente extends javax.swing.JFrame {
         jPanel11.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         funcionarioEditar.setText("Editar");
+        funcionarioEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                funcionarioEditarActionPerformed(evt);
+            }
+        });
 
         jLabel37.setText("Nome:");
 
@@ -1196,10 +1201,25 @@ public class MainGerente extends javax.swing.JFrame {
         );
 
         funcionarioSalvar.setText("Salvar");
+        funcionarioSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                funcionarioSalvarActionPerformed(evt);
+            }
+        });
 
         funcionarioNovo.setText("Novo");
+        funcionarioNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                funcionarioNovoActionPerformed(evt);
+            }
+        });
 
         funcionarioDeletar.setText("Deletar");
+        funcionarioDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                funcionarioDeletarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -1405,6 +1425,39 @@ public class MainGerente extends javax.swing.JFrame {
             logListModel.addElement(s);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void funcionarioDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_funcionarioDeletarActionPerformed
+        // TODO add your handling code here:
+        int indices[] = funcionarioList.getSelectedIndices();
+        date = new Date();
+        for(int x = 0; x < indices.length; x++){
+            log.write("Funcionario: " + funcionarios.get(indices[x] - x).getNome() + ". Apagado por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
+            funcionarios.remove(indices[x] - x);
+        }
+        atualizaFuncionariosList();
+    }//GEN-LAST:event_funcionarioDeletarActionPerformed
+
+    private void funcionarioNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_funcionarioNovoActionPerformed
+        // TODO add your handling code here:
+        new NovoFuncionario(gerentes, this, true)
+                .show();
+    }//GEN-LAST:event_funcionarioNovoActionPerformed
+
+    private void funcionarioSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_funcionarioSalvarActionPerformed
+        // TODO add your handling code here:
+        FilesIO<Gerente> gerenteLoader = new FilesIO(Dados.GERENTES_PATH);
+        FilesIO<VendedorS> seniorLoader = new FilesIO(Dados.SENIORS_PATH);
+        FilesIO<VendedorJr> juniorLoader = new FilesIO(Dados.JUNIORS_PATH);
+        
+        gerenteLoader.write(gerentes);
+        seniorLoader.write(vendedoresSenior);
+        juniorLoader.write(vendedoresJunior);
+    }//GEN-LAST:event_funcionarioSalvarActionPerformed
+
+    private void funcionarioEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_funcionarioEditarActionPerformed
+        // TODO add your handling code here:
+        new EditarFuncionario(funcionarios.get(selectedFuncionarioIndex), gerentes, selectedFuncionarioIndex, this, true).show();
+    }//GEN-LAST:event_funcionarioEditarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1493,6 +1546,12 @@ public class MainGerente extends javax.swing.JFrame {
     
     public void addFuncionario(Funcionario f){
         funcionarios.add(f);
+        if(f instanceof Gerente)
+            gerentes.add((Gerente)f);
+        if(f instanceof VendedorJr)
+            vendedoresJunior.add((VendedorJr)f);
+        if(f instanceof VendedorS)
+            vendedoresSenior.add((VendedorS)f);
         date = new Date();
         log.write("Funcionario: " + f.getNome() + ". Adicionado por: " + user.getNome() + ". As " + horasDateFormat.format(date) + ".");
         atualizaFuncionariosList();

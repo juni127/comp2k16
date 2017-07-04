@@ -13,3 +13,8 @@ Venda realizada por: Peter Parker. As 21:35:10.
 Venda realizada por: Peter Parker. As 21:38:08.
 Venda realizada por: Peter Parker. As 00:59:53.
 Venda: Cobalt para Ricardito Antunes. Apagada por: Peter Parker. As 01:03:50.
+Funcionario: Ricardito Roberto Gomes. Adicionado por: Peter Parker. As 10:16:45.
+Funcionario: Ricardito Roberto Gomes. Apagado por: Peter Parker. As 10:17:00.
+Funcionario: Ricc. Adicionado por: Peter Parker. As 10:22:43.
+Cliente: Antedeguemon. Adicionado por: Peter Parker. As 11:04:43.
+Clientes salvos no arquivo por: Peter Parker. As 11:04:54.
