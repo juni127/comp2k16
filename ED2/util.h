@@ -2,9 +2,11 @@
 
 unsigned short idDisponiveis[65536];
 
+//1 inicio, 2 pronto, 3 em execução, 4 bloqueado, 5 encerrado
+
 typedef struct PCB{
     unsigned short id;
-    //Estado do processo 8bits -> vamos usar só 2 mas é isso ae
+    //Estado do processo 8bits
     unsigned char PS;
     //Contador de programa
     unsigned char PC;
@@ -32,9 +34,8 @@ PROC *queueRemove(PROC *target){
     if(target == NULL)
         return target;
     //Cria variavel auxiliar
-    PROC *aux = target;
+    PROC *aux = target->p;
     //Desligar nó da fila
-    aux = target->p;
     target->p = NULL;
     return aux;
 }
@@ -76,17 +77,24 @@ int queueSize(PROC *queue){
     return result;
 }
 
+void queuePrintID(PROC *queue){
+    printf("[");
+    for ( ; queue->p != NULL; queue = queue->p)
+        printf("%d, ", queue->id);
+    printf("%d]\n", queue->id);
+}
+
 PCB *getPCB(PCB *pcb, unsigned short id){
     if(pcb == NULL)
         return NULL;
     if(pcb->id == id)
         return pcb;
-    while(pcb->p != NULL){
+    while(pcb != NULL){
         if(pcb->id == id)
             return pcb;
         pcb = pcb->p;
     }
-    return NULL;
+    return pcb;
 }
 
 PCB *purgePCB(PCB *PCBT, PCB *pcb){
@@ -106,6 +114,11 @@ PCB *purgePCB(PCB *PCBT, PCB *pcb){
 PCB *addPCB(PCB *pcb, PCB PCBT){
     PCB *novo = (PCB*)malloc(sizeof(PCB)), *aux = pcb;
     *novo = PCBT;
+    //Isso eh igual a *novo = PCBT?
+    novo->id = PCBT.id;
+    novo->PS = PCBT.PS;
+    novo->PC = PCBT.PC;
+    novo->T = PCBT.T;
     novo->p = NULL;
     if(pcb == NULL)
         return novo;
