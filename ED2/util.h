@@ -33,14 +33,6 @@ PROC *queueRemove(PROC *target){
         return target;
     //Cria variavel auxiliar
     PROC *aux = target;
-    //Lidar com lista circular
-    while (aux->p != NULL) {
-        if(aux->p == target){
-            aux->p = target->p;
-            break;
-        }
-        aux = aux->p;
-    }
     //Desligar nó da fila
     aux = target->p;
     target->p = NULL;
@@ -54,12 +46,8 @@ PROC *queueAdd(PROC *queue, PROC *target){
     //Criar variavel auxiliar
     PROC *aux = queue;
     //Ir até o ultimo elemento da fila
-    while (aux->p != NULL) {
-        if(aux->p == queue){
-            break;
-        }
+    while (aux->p != NULL)
         aux = aux->p;
-    }
     //Adicionar o novo elemento
     target->p = aux->p;
     aux->p = target;
@@ -69,17 +57,11 @@ PROC *queueAdd(PROC *queue, PROC *target){
 PROC *queuePurge(PROC *target){
     if(target == NULL)
         return NULL;
-    if(target == target->p)
+    if(target == target->p){
+        free(target);
         return NULL;
-    PROC *aux = target;
-    while(aux->p != NULL){
-        if(aux->p == target){
-            aux->p = target->p;
-            break;
-        }
-        aux = aux->p;
     }
-    aux = target->p;
+    PROC *aux = target->p;
     free(target);
     return aux;
 }
@@ -88,15 +70,9 @@ int queueSize(PROC *queue){
     //Fila vazia
     if(queue == NULL)
         return 0;
-    int result = 1;
-    PROC *aux = queue;
-    while (aux->p != NULL) {
-        result++;
-        if(aux->p == queue){
-            break;
-        }
-        aux = aux->p;
-    }
+    int result;
+    for (result = 1; queue->p != NULL; result++)
+        queue = queue->p;
     return result;
 }
 

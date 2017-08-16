@@ -7,6 +7,12 @@
 #define MAX_READY_SIZE 5
 #define MAX_QUANTUM_SIZE 20
 
+struct LAST_DATA{
+    unsigned short id;
+    unsigned char PS;
+    int T;
+}dados;
+
 int main(int argc, char *args[]){
     //Variavel para todos os usos
     int x;
@@ -25,14 +31,13 @@ int main(int argc, char *args[]){
 
     //Loop principal
     for (;;) {
+        puts("EH O JORGEM");
         /*
             Flags
             0x01 -> Interrupção
             0x02 -> Encerrado
         */
         char f = 0;
-
-        puts("1");
 
         //ALEATORIEDADES
         //Adicionar um processo
@@ -67,8 +72,6 @@ int main(int argc, char *args[]){
             jobs = queueAdd(jobs, novo);
         }
 
-        puts("2");
-
         //A fila de programas prontos não está cheia
         if(queueSize(ready) < MAX_READY_SIZE){
             //Adicionar trabalho da fila de espera a fila de programas prontos
@@ -76,43 +79,31 @@ int main(int argc, char *args[]){
             aux->p = NULL;
             jobs = queueRemove(jobs);
             pcb = addPCB(pcb, aux->pcb);
-            if(ready != NULL)
-                ready = queueAdd(ready, aux);
-            else{
-                ready = aux;
-                ready->p = aux;
-            }
+            ready = queueAdd(ready, aux);
         }
-
-        puts("3");
-
 
         char quantum = 0;
         if(queueSize(ready) > 0){
             //RODAR
-            //Ir para o próximo ready
-            ready = ready->p;
             //Pegar mover PCBT para o PCB relacionado ao processo rodando agora
             PCBT = getPCB(pcb, ready->id);
-            printf("%p\n", PCBT);
             //Executar as instruções do processo a menos que, o seu quantum tenha se esgotado ou suas instruções tenham acabado
             while (quantum < 20 && ready->text[PCBT->PC] != 0xFF){
-                puts("A");
                 //Aumenta a posição do contador de programa
                 PCBT->PC++;
-                puts("B");
                 //Aumenta o tempo de execução do programa
                 PCBT->T++;
-                puts("C");
                 //Aumenta o quantum do programa
                 quantum++;
-                puts("D");
                 //Copiar o PCBT de volta pro PCB no processo
                 ready->pcb = *PCBT;
                 ready->pcb.p = NULL;
-                puts("E");
                 //Interrupção
                 if(ready->text[PCBT->PC] == 0xFD){
+                    //Setar dados
+                    dados.id = ready->id;
+                    dados.PS = PCBT->PS;
+                    dados.T = PCBT->T;
                     //Setar flag
                     f |= 0x01;
                     //Adicionar o processo atual a fila de dispositivos
@@ -123,7 +114,13 @@ int main(int argc, char *args[]){
                     pcb = purgePCB(PCBT, pcb);
                     break;
                 }
-                puts("D");
+            }
+
+            if(!(f & 0x01)){
+                //Setar dados
+                dados.id = ready->id;
+                dados.PS = PCBT->PS;
+                dados.T = PCBT->T;
             }
 
             //Verificar se o processo foi encerrado (Caso ele não tenha ido pra fila de dispositivos)
@@ -131,12 +128,17 @@ int main(int argc, char *args[]){
                 //Setar flag
                 f |= 0x02;
                 //Eliminar processo
+                purgePCB(getPCB(pcb, ready->id), pcb);
                 ready = queuePurge(ready);
             }
 
+            //Mudar pro próximo processo
+            if(!(f & 0x01) && !(f & 0x01)){
+                PROC *aux = ready;
+                ready = queueRemove(ready);
+                ready = queueAdd(ready, aux);
+            }
         }
-
-        puts("4");
 
         //Printar os dados da rodada
         puts("Dados:");
