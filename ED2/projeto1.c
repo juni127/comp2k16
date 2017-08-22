@@ -2,18 +2,62 @@
 #include<stdio.h>
 #include<time.h>
 
-#include"util.h"
+typedef struct PCB{
+    unsigned short id;
+    //Estado do processo 8bits
+    unsigned char PS;
+    //Contador de programa
+    unsigned char PC;
+    //Tempo utilizado de CPU
+    int T;
+}pcb;
 
-#define MAX_READY_SIZE 5
-#define MAX_QUANTUM_SIZE 20
-#define PROBA_INTERRUPTION 10
-#define GENERATION_FACTOR 1000
+#define TYPE pcb
+#include "ed.h"
+#undef TYPE
+
+typedef struct proc{
+    //SHORT 16bits -> 65.536 proc no maximo
+    unsigned short id;
+    //Instruções
+    unsigned char text[256];
+}proc;
+
+#define TYPE proc
+#include "ed.h"
+#undef TYPE
 
 struct LAST_DATA{
     unsigned short id;
     unsigned char PS;
     int T;
 }dados;
+
+#define MAX_READY_SIZE 5
+#define MAX_QUANTUM_SIZE 20
+#define PROBA_INTERRUPTION 25
+#define GENERATION_FACTOR 1000
+
+unsigned short idDisponiveis[65536];
+
+unsigned short getId(){
+    unsigned short result = idDisponiveis[0], c, i;
+    for(c = 0; idDisponiveis[c] != 65535; c++){
+        idDisponiveis[c] = idDisponiveis[c + 1];
+    }
+    return result;
+}
+
+void returnId(unsigned short id){
+    unsigned short a = 0, c, i;
+    for(c = 0; idDisponiveis[c] != 65535; c++)
+        if(idDisponiveis[c] < id)
+            a++;
+    a++;
+    for(i = c; i > a; i--)
+        idDisponiveis[i] = idDisponiveis[i - 1];
+    idDisponiveis[a] = id;
+}
 
 int main(int argc, char *args[]){
     //Variavel para todos os usos
@@ -27,8 +71,11 @@ int main(int argc, char *args[]){
         idDisponiveis[x] = x;
 
     //Filas
-    PROC *jobs = NULL, *ready = NULL, *device = NULL;
-    PCB *PCBT = NULL, *pcb = NULL;
+    queue_proc jobs, ready, device;
+    jobs = queue_init_proc();
+    ready = queue_init_proc();
+    device = queue_init_proc();
+    list_pcb *PCBT = NULL, *pcb = NULL;
 
 
     //Loop principal
@@ -42,8 +89,8 @@ int main(int argc, char *args[]){
 
         //ALEATORIEDADES
         //Adicionar um processo
-        if(rand()%60000 < 60000-(queueSize(jobs) * GENERATION_FACTOR)){
-            PROC *novo = (PROC*)malloc(sizeof(PROC));
+        if(rand()%60000 < 60000-(queue_size_proc(jobs) * GENERATION_FACTOR)){
+            proc *novo = (proc*)malloc(sizeof(proc));
             //Criar instruções
             unsigned char pointer = 0;
             do{
@@ -60,150 +107,74 @@ int main(int argc, char *args[]){
                 novo->text[pointer] = 0xFF;
             //Atribuir id valido
             novo->id = getId();
-            //Prencher PCB
-            novo->pcb.id = novo->id;
-            novo->pcb.PS = 1;
-            novo->pcb.PC = 0;
-            novo->pcb.T = 0;
-            novo->pcb.p = NULL;
-            //O novo programa ainda não tem próximo
-            novo->p = NULL;
-
             //Adicionar na fila de trabalhos
-            jobs = queueAdd(jobs, novo);
+            queue_add_proc(&jobs, novo);
         }
 
         //A fila de programas prontos não está cheia
-        if(queueSize(ready) < MAX_READY_SIZE){
+        if(queue_size_proc(ready) < MAX_READY_SIZE){
             //Verificar se alguma interrupção terminou
-            if(queueSize(device) > 0 && rand()%100 < PROBA_INTERRUPTION){
-                PROC *aux = device;
-                device = queueRemove(device);
-                aux->pcb.PS = 2;
-                pcb = addPCB(pcb, aux->pcb);
-                ready = queueAdd(ready, aux);
-            }
+            if(queue_size_proc(device) > 0 && rand()%100 < PROBA_INTERRUPTION)
+                queue_add_proc(&ready, queue_remove_proc(&device));
             //Se não, adicionar trabalho da fila de espera a fila de programas prontos
-            else{
-                PROC *aux = jobs;
-                jobs = queueRemove(jobs);
-                aux->pcb.PS = 2;
-                pcb = addPCB(pcb, aux->pcb);
-                ready = queueAdd(ready, aux);
-            }
+            else
+                queue_add_proc(&ready, queue_remove_proc(&jobs));
         }
 
 
         char quantum = 0;
-        if(queueSize(ready) > 0){
+        if(queue_size_proc(ready) > 0){
             //RODAR
 
-            //Mudar pro próximo processo
-            if(ready->pcb.PS == 3){
-                PROC *aux = ready;
-                aux->pcb.PS = 2;
-                ready = queueRemove(ready);
-                ready = queueAdd(ready, aux);
-            }
-            //Pegar mover PCBT para o PCB relacionado ao processo rodando agora
-            PCBT = getPCB(pcb, ready->id);
-            PCBT->PS = 3;
             //Executar as instruções do processo a menos que, o seu quantum tenha se esgotado ou suas instruções tenham acabado
-            while (quantum < 20 && ready->text[PCBT->PC] != 0xFF){
+            while (quantum < 20 && queue_get_proc(ready)->text[PCBT->DATA->PC] != 0xFF){
                 //Aumenta a posição do contador de programa
-                PCBT->PC++;
+                PCBT->DATA->PC++;
                 //Aumenta o tempo de execução do programa
-                PCBT->T++;
+                PCBT->DATA->T++;
                 //Aumenta o quantum do programa
                 quantum++;
-                //Copiar o PCBT de volta pro PCB no processo
-                ready->pcb = *PCBT;
-                ready->pcb.p = NULL;
                 //Interrupção
-                if(ready->text[PCBT->PC] == 0xFD){
+                if(queue_get_proc(ready)->text[PCBT->DATA->PC] == 0xFD){
                     //Setar dados
-                    dados.id = ready->id;
+                    dados.id = queue_get_proc(ready)->id;
                     dados.PS = 4;
-                    dados.T = PCBT->T;
+                    dados.T = PCBT->DATA->T;
                     //Setar flag
                     f |= 0x01;
                     //Adicionar o processo atual a fila de dispositivos
-                    PROC *aux = ready;
-                    aux->pcb.PS = 4;
-                    ready = queueRemove(ready);
-                    device = queueAdd(device, aux);
-                    //Remover o PCB associado da PCBT
-                    pcb = purgePCB(PCBT, pcb);
+                    queue_add_proc(&device, queue_remove_proc(&ready));
                     break;
                 }
             }
 
             if(!(f & 0x01)){
                 //Setar dados
-                dados.id = ready->id;
-                dados.PS = PCBT->PS;
-                dados.T = PCBT->T;
+                dados.id = queue_get_proc(ready)->id;
+                dados.PS = PCBT->DATA->PS;
+                dados.T = PCBT->DATA->T;
             }
 
             //Verificar se o processo foi encerrado (Caso ele não tenha ido pra fila de dispositivos)
-            if(!(f & 0x01) && (ready->text[PCBT->PC] == 0xFF || ready->text[PCBT->PC + 1] == 0xFF)){
+            if(
+                !(f & 0x01) &&
+                (queue_get_proc(ready)->text[PCBT->DATA->PC] == 0xFF ||
+                    queue_get_proc(ready)->text[PCBT->DATA->PC + 1] == 0xFF)
+            ){
                 //Setar flag
                 f |= 0x02;
                 //Setar status de encerrado
                 dados.PS = 5;
                 //Retornar o id
-                returnId(ready->id);
+                returnId(queue_get_proc(ready)->id);
                 //Eliminar processo
-                pcb = purgePCB(getPCB(pcb, ready->id), pcb);
-                ready = queuePurge(ready);
+                queue_purge_proc(&ready);
             }
 
         }
 
         //Printar os dados da rodada
         system("cls");
-        puts("Dados:");
-        printf("Id do ultimo processo: %d\n", dados.id);
-        printf("Estado do ultimo processo: %d\n", dados.PS);
-        printf("Quantum total do ultimo processo: %d\n", dados.T);
-        printf("Quantum utilizado: %d\n", quantum);
-        printf("Processos na fila de jobs: %d\n", queueSize(jobs));
-        if(queueSize(jobs) > 0){
-            printf("JOBS = ");
-            queuePrintID(jobs);
-        }
-        printf("Processos na fila de prontos: %d\n", queueSize(ready));
-        if(queueSize(ready) > 0){
-            printf("PRONTOS = ");
-            queuePrintID(ready);
-        }
-        printf("Processos na fila de dispositivos: %d\n", queueSize(device));
-        if(queueSize(device) > 0){
-            printf("DISPOSITIVOS = ");
-            queuePrintID(device);
-        }
-        if(f & 0x01)
-            puts("Processo interrompido.");
-        if(f & 0x02)
-            puts("Processo concluido.");
-        switch (dados.PS) {
-            case 1:
-                puts("Status: inicio");
-                break;
-            case 2:
-                puts("Status: pronto");
-                break;
-            case 3:
-                puts("Status: em execucao");
-                break;
-            case 4:
-                puts("Status: bloqueado");
-                break;
-            case 5:
-                puts("Status: encerrado");
-                break;
-        }
-
         system("pause");
     }
 }
