@@ -20,6 +20,39 @@ typedef struct QUEUE (TYPE){
 	LIST (TYPE) * LAST;
 }QUEUE (TYPE);
 
+#define SIZE(T) TOKENPASTE(size_, T)
+int SIZE (TYPE) (LIST (TYPE) * list){
+	int x = 0;
+	for( ; list != NULL; x++, list = list->NEXT);
+	return x;
+}
+
+#define GET(T) TOKENPASTE(get_, T)
+LIST (TYPE) * GET (TYPE) (LIST (TYPE) * list, int index){
+	int x;
+	for(x = 0; list != NULL && x < index; x++, list = list->NEXT);
+	return list;
+}
+
+#define GET_LAST(T) TOKENPASTE(get_last_, T)
+LIST (TYPE) * GET_LAST (TYPE) (LIST (TYPE) * list){
+	return GET (TYPE) (list, SIZE (TYPE) (list) - 1);
+}
+
+#define GET_DATA(T) TOKENPASTE(get_data_, T)
+TYPE * GET_DATA (TYPE) (LIST (TYPE) * list, int index){
+	int x;
+	for(x = 0; list != NULL && x < index; x++, list = list->NEXT);
+	if(list == NULL)
+		return list;
+	return list->DATA;
+}
+
+#define GET_LAST_DATA(T) TOKENPASTE(get_last_data_, T)
+TYPE * GET_LAST_DATA (TYPE) (LIST (TYPE) * list){
+	return GET (TYPE) (list, SIZE(TYPE) (list) - 1);
+}
+
 #define ADD_AT_END(T) TOKENPASTE(add_end_, T)
 LIST (TYPE) *ADD_AT_END (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	LIST (TYPE) *novo = (LIST (TYPE)*) malloc(sizeof(LIST (TYPE)));
@@ -34,6 +67,14 @@ LIST (TYPE) *ADD_AT_END (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	return list;
 }
 
+#define ADD_AT_BEGIN(T) TOKENPASTE(add_begin_, T)
+LIST (TYPE) *ADD_AT_BEGIN (TYPE) (LIST (TYPE) * list, TYPE* DATA){
+	LIST (TYPE) *novo = (LIST (TYPE) *) malloc(sizeof(LIST (TYPE)));
+	novo->DATA = DATA;
+	novo->NEXT = list;
+	return novo;
+}
+
 #define REMOVE(T) TOKENPASTE(remove_, T)
 LIST (TYPE) *REMOVE (TYPE) (LIST (TYPE) * list, int index){
 	int x;
@@ -45,6 +86,20 @@ LIST (TYPE) *REMOVE (TYPE) (LIST (TYPE) * list, int index){
 		return list;
 	aux->NEXT = aux->NEXT->NEXT;
 	return list;
+}
+
+#define PURGE(T) TOKENPASTE(purge_, T)
+void PURGE (TYPE) (LIST (TYPE) * list, int index){
+	int x;
+	LIST (TYPE) *aux = list;
+	for(x = 0; x < index-1 && aux != NULL; x++, aux = aux->NEXT);
+	if(aux == NULL)
+		return;
+	if(aux->NEXT == NULL)
+		return;
+	list = aux->NEXT;
+	aux->NEXT = aux->NEXT->NEXT;
+	free(list);
 }
 
 #define REMOVE_FIRST(T) TOKENPASTE(remove_first_, T)
@@ -77,15 +132,17 @@ QUEUE (TYPE) QUEUE_INIT (TYPE) (){
 
 #define QUEUE_SIZE(T) TOKENPASTE(queue_size_, T)
 int QUEUE_SIZE (TYPE) (QUEUE (TYPE) queue){
-	LIST (TYPE) * aux = queue.FIRST;
-	int x = 0;
-	for(; aux != NULL; x++, aux = aux->NEXT);
-	return x;
+	return SIZE (TYPE) (queue.FIRST);
 }
 
-#define QUEUE_GET(T) TOKENPASTE(queue_get_, T)
-TYPE * QUEUE_GET (TYPE) (QUEUE (TYPE) queue){
+#define QUEUE_GET_FIRST(T) TOKENPASTE(queue_get_first_, T)
+TYPE * QUEUE_GET_FIRST (TYPE) (QUEUE (TYPE) queue){
 	return queue.FIRST->DATA;
+}
+
+#define QUEUE_GET_LAST(T) TOKENPASTE(queue_get_last_, T)
+TYPE * QUEUE_GET_LAST (TYPE) (QUEUE (TYPE) queue){
+	return queue.LAST->DATA;
 }
 
 #define QUEUE_ADD(T) TOKENPASTE(queue_add_, T)

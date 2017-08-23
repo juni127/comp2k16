@@ -1,5 +1,6 @@
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<time.h>
 
 typedef struct PCB{
@@ -8,6 +9,8 @@ typedef struct PCB{
     unsigned char PS;
     //Contador de programa
     unsigned char PC;
+    //Quantum maximo
+    unsigned char QM;
     //Tempo utilizado de CPU
     int T;
 }pcb;
@@ -59,6 +62,55 @@ void returnId(unsigned short id){
     idDisponiveis[a] = id;
 }
 
+list_pcb *getPCB(list_pcb *PCB, int id){
+    for(; PCB->DATA->id != id && PCB->NEXT != NULL; PCB = PCB->NEXT);
+    if(PCB->NEXT == NULL && PCB->DATA->id != id)
+        return NULL;
+    return PCB;
+}
+
+int getPCBIndex(list_pcb *PCB, int id){
+    int x;
+    for(x = 0; PCB->DATA->id != id && PCB->NEXT != NULL; PCB = PCB->NEXT, x++);
+    if(PCB->NEXT == NULL && PCB->DATA->id != id)
+        return -1;
+    return x;
+}
+
+int getPCBIndexByPCB(list_pcb *PCB, pcb *target){
+    int x;
+    for(x = 0; PCB->DATA != target && PCB->NEXT != NULL; PCB = PCB->NEXT, x++);
+    if(PCB->NEXT == NULL && PCB->DATA != target)
+        return -1;
+    return x;
+}
+
+pcb *gerarPCB(proc *processo){
+    pcb *novo = (pcb*)malloc(sizeof(pcb));
+    novo->id = processo->id;
+    novo->PC = 0;
+    novo->PS = 2;
+    novo->T = 0;
+    int x;
+    for(x = 0; processo->text[x] != 0xFF; x++);
+    novo->QM = x;
+    return novo;
+}
+
+//Estados: 1 inicio, 2 pronto, 3 em execução, 4 bloqueado, 5 encerrado
+
+void printarFilas(queue_proc queue){
+    list_proc *aux = queue.FIRST;
+    printf("[");
+    if(aux == NULL){
+        puts("]");
+        return;
+    }
+    for( ; aux->NEXT != NULL; aux = aux->NEXT)
+        printf("%i, ", aux->DATA->id);
+    if(aux != NULL)printf("%i]\n", aux->DATA->id);
+}
+
 int main(int argc, char *args[]){
     //Variavel para todos os usos
     int x;
@@ -75,7 +127,7 @@ int main(int argc, char *args[]){
     jobs = queue_init_proc();
     ready = queue_init_proc();
     device = queue_init_proc();
-    list_pcb *PCBT = NULL, *pcb = NULL;
+    list_pcb *PCBT = NULL, *PCB = NULL;
 
 
     //Loop principal
@@ -107,6 +159,7 @@ int main(int argc, char *args[]){
                 novo->text[pointer] = 0xFF;
             //Atribuir id valido
             novo->id = getId();
+            printf("%i\n", novo->id);
             //Adicionar na fila de trabalhos
             queue_add_proc(&jobs, novo);
         }
@@ -115,58 +168,67 @@ int main(int argc, char *args[]){
         if(queue_size_proc(ready) < MAX_READY_SIZE){
             //Verificar se alguma interrupção terminou
             if(queue_size_proc(device) > 0 && rand()%100 < PROBA_INTERRUPTION)
-                queue_add_proc(&ready, queue_remove_proc(&device));
+                queue_add_proc(&ready, queue_remove_proc(&device)->DATA);
             //Se não, adicionar trabalho da fila de espera a fila de programas prontos
-            else
-                queue_add_proc(&ready, queue_remove_proc(&jobs));
+            else{
+                queue_add_proc(&ready, queue_remove_proc(&jobs)->DATA);
+                //Gerar PCB para tabela
+                PCBT = add_end_pcb(PCBT, gerarPCB(queue_get_last_proc(ready)));
+            }
         }
-
 
         char quantum = 0;
         if(queue_size_proc(ready) > 0){
             //RODAR
+            queue_add_proc(&ready, queue_remove_proc(&ready)->DATA);
 
+            //Pegar pcb do processo atual
+            PCB = getPCB(PCBT, queue_get_first_proc(ready)->id);
             //Executar as instruções do processo a menos que, o seu quantum tenha se esgotado ou suas instruções tenham acabado
-            while (quantum < 20 && queue_get_proc(ready)->text[PCBT->DATA->PC] != 0xFF){
+            while (quantum < 20 && queue_get_first_proc(ready)->text[PCB->DATA->PC] != 0xFF){
                 //Aumenta a posição do contador de programa
-                PCBT->DATA->PC++;
+                PCB->DATA->PC++;
                 //Aumenta o tempo de execução do programa
-                PCBT->DATA->T++;
+                PCB->DATA->T++;
                 //Aumenta o quantum do programa
                 quantum++;
                 //Interrupção
-                if(queue_get_proc(ready)->text[PCBT->DATA->PC] == 0xFD){
+                if(queue_get_first_proc(ready)->text[PCB->DATA->PC] == 0xFD){
                     //Setar dados
-                    dados.id = queue_get_proc(ready)->id;
+                    dados.id = queue_get_first_proc(ready)->id;
                     dados.PS = 4;
-                    dados.T = PCBT->DATA->T;
+                    dados.T = PCB->DATA->T;
                     //Setar flag
                     f |= 0x01;
                     //Adicionar o processo atual a fila de dispositivos
-                    queue_add_proc(&device, queue_remove_proc(&ready));
+                    queue_add_proc(&device, queue_remove_proc(&ready)->DATA);
                     break;
                 }
             }
 
+
+
             if(!(f & 0x01)){
                 //Setar dados
-                dados.id = queue_get_proc(ready)->id;
-                dados.PS = PCBT->DATA->PS;
-                dados.T = PCBT->DATA->T;
+                dados.id = queue_get_first_proc(ready)->id;
+                dados.PS = PCB->DATA->PS;
+                dados.T = PCB->DATA->T;
             }
 
             //Verificar se o processo foi encerrado (Caso ele não tenha ido pra fila de dispositivos)
             if(
                 !(f & 0x01) &&
-                (queue_get_proc(ready)->text[PCBT->DATA->PC] == 0xFF ||
-                    queue_get_proc(ready)->text[PCBT->DATA->PC + 1] == 0xFF)
+                (queue_get_first_proc(ready)->text[PCB->DATA->PC] == 0xFF ||
+                    queue_get_first_proc(ready)->text[PCB->DATA->PC + 1] == 0xFF)
             ){
                 //Setar flag
                 f |= 0x02;
                 //Setar status de encerrado
                 dados.PS = 5;
+                //Purge pcb
+                purge_pcb(PCBT, getPCB(PCBT, queue_get_first_proc(ready)->id));
                 //Retornar o id
-                returnId(queue_get_proc(ready)->id);
+                returnId(queue_get_first_proc(ready)->id);
                 //Eliminar processo
                 queue_purge_proc(&ready);
             }
@@ -175,6 +237,15 @@ int main(int argc, char *args[]){
 
         //Printar os dados da rodada
         system("cls");
+
+        printf("JOBS = ");
+        printarFilas(jobs);
+        printf("READY = ");
+        printarFilas(ready);
+        printf("DEVICES = ");
+        printarFilas(device);
+
+        //Impedir o avanço automatico
         system("pause");
     }
 }
