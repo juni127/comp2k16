@@ -12,6 +12,7 @@
 typedef struct LIST (TYPE){
 	TYPE* DATA;
 	struct LIST (TYPE)* NEXT;
+	struct LIST (TYPE)* PREV;
 }LIST (TYPE);
 
 #define QUEUE(T) TOKENPASTE(queue_, T)
@@ -58,12 +59,14 @@ LIST (TYPE) *ADD_AT_END (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	LIST (TYPE) *novo = (LIST (TYPE)*) malloc(sizeof(LIST (TYPE)));
 	novo->DATA = DATA;
 	novo->NEXT = NULL;
+	novo->PREV = NULL;
 	if(list == NULL)
 		return novo;
 	LIST (TYPE) *aux = list;
 	while(aux->NEXT != NULL)
 		aux = aux->NEXT;
 	aux->NEXT = novo;
+	novo->PREV = aux;
 	return list;
 }
 
@@ -72,6 +75,8 @@ LIST (TYPE) *ADD_AT_BEGIN (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	LIST (TYPE) *novo = (LIST (TYPE) *) malloc(sizeof(LIST (TYPE)));
 	novo->DATA = DATA;
 	novo->NEXT = list;
+	novo->PREV = NULL;
+	list->PREV = novo;
 	return novo;
 }
 
@@ -85,6 +90,7 @@ LIST (TYPE) *REMOVE (TYPE) (LIST (TYPE) * list, int index){
 	if(aux->NEXT == NULL)
 		return list;
 	aux->NEXT = aux->NEXT->NEXT;
+	aux->NEXT->PREV = aux;
 	return list;
 }
 
@@ -99,6 +105,7 @@ void PURGE (TYPE) (LIST (TYPE) * list, int index){
 		return;
 	list = aux->NEXT;
 	aux->NEXT = aux->NEXT->NEXT;
+	aux->NEXT->PREV = aux;
 	free(list);
 }
 
@@ -106,9 +113,11 @@ void PURGE (TYPE) (LIST (TYPE) * list, int index){
 LIST (TYPE) *REMOVE_FIRST (TYPE) (LIST (TYPE) * list){
 	if(list == NULL)
 		return NULL;
-	LIST (TYPE) * aux = list;
 	list = list->NEXT;
-	aux->NEXT = NULL;
+	if(list != NULL){
+		list->PREV->NEXT = NULL;
+		list->PREV = NULL;
+	}
 	return list;
 }
 
@@ -118,6 +127,8 @@ LIST (TYPE) *PURGE_FIRST (TYPE) (LIST (TYPE) * list){
 		return NULL;
 	LIST (TYPE) * aux = list;
 	list = list->NEXT;
+	if(list != NULL)
+		list->PREV = NULL;
 	free(aux);
 	return list;
 }

@@ -4,6 +4,10 @@
 #include<time.h>
 #include<conio.h>
 
+#define MAX_PROCESS_SIZE 128
+
+
+//Declaração da estrutura PCB e inclusão das suas funções
 typedef struct PCB{
     unsigned short id;
     //Estado do processo 8bits
@@ -20,11 +24,12 @@ typedef struct PCB{
 #include "ed.h"
 #undef TYPE
 
+//Declaração da estrutura Proccess e inclusão das suas funções
 typedef struct proc{
     //SHORT 16bits -> 65.536 proc no maximo
     unsigned short id;
-    //Instru��es
-    unsigned char text[256];
+    //Instruções
+    unsigned char text[MAX_PROCESS_SIZE];
 }proc;
 
 #define TYPE proc
@@ -137,7 +142,6 @@ int main(int argc, char *args[]){
     device = queue_init_proc();
     list_pcb *PCBT = NULL, *PCB = NULL;
 
-
     //Loop principal
     for (;;) {
         /*
@@ -146,7 +150,6 @@ int main(int argc, char *args[]){
             0x02 -> Encerrado
         */
         char f = 0;
-
         //ALEATORIEDADES
         //Adicionar um processo
         if(rand()%60000 < 60000-(queue_size_proc(jobs) * GENERATION_FACTOR)){
@@ -162,8 +165,8 @@ int main(int argc, char *args[]){
                 else
                     novo->text[pointer] = 0xFF;
                 pointer++;
-            }while(novo->text[pointer-1] != 0xFF && pointer < 255);
-            if(pointer == 255)
+            }while(novo->text[pointer-1] != 0xFF && pointer < MAX_PROCESS_SIZE);
+            if(pointer == MAX_PROCESS_SIZE - 1)
                 novo->text[pointer] = 0xFF;
             //Atribuir id valido
             novo->id = getId();
@@ -193,7 +196,7 @@ int main(int argc, char *args[]){
             //RODAR
             queue_add_proc(&ready, queue_remove_proc(&ready)->DATA);
 
-            //Pegar pcb do processo atual
+            //Pegar pcb do processo atual0
             PCB = getPCB(PCBT, queue_get_first_proc(ready)->id);
             //Executar as instru��es do processo a menos que, o seu quantum tenha se esgotado ou suas instru��es tenham acabado
             while (quantum < 20 && queue_get_first_proc(ready)->text[PCB->DATA->PC] != 0xFF){
