@@ -49,6 +49,13 @@ TYPE * GET_DATA (TYPE) (LIST (TYPE) * list, int index){
 	return list->DATA;
 }
 
+#define GET_FIRST_DATA(T) TOKENPASTE(get_first_data_, T)
+TYPE * GET_FIRST_DATA (TYPE) (LIST (TYPE) * list){
+	if(list == NULL)
+		return NULL;
+	return list->DATA;
+}
+
 #define GET_LAST_DATA(T) TOKENPASTE(get_last_data_, T)
 TYPE * GET_LAST_DATA (TYPE) (LIST (TYPE) * list){
 	return GET (TYPE) (list, SIZE(TYPE) (list) - 1);

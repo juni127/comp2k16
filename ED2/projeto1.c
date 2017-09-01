@@ -4,7 +4,12 @@
 #include<time.h>
 #include<conio.h>
 
+//Constantes
 #define MAX_PROCESS_SIZE 128
+#define MAX_READY_SIZE 5
+#define MAX_QUANTUM_SIZE 20
+#define PROBA_INTERRUPTION 25
+#define GENERATION_FACTOR 5
 
 
 //Declaração da estrutura PCB e inclusão das suas funções
@@ -36,6 +41,16 @@ typedef struct proc{
 #include "ed.h"
 #undef TYPE
 
+typedef struct mem{
+    proc *DATA;
+    unsigned short POS;
+    unsigned short SIZE;
+}mem;
+
+#define TYPE mem
+#include "ed.h"
+#undef TYPE
+
 struct LAST_DATA{
     unsigned short id;
     unsigned char PS;
@@ -43,11 +58,26 @@ struct LAST_DATA{
     int T;
 }dados;
 
-#define MAX_READY_SIZE 5
-#define MAX_QUANTUM_SIZE 20
-#define PROBA_INTERRUPTION 25
-#define GENERATION_FACTOR 1000
+//Miscellaneous
+void printarFilas(queue_proc queue){
+    list_proc *aux = queue.FIRST;
+    printf("[");
+    if(aux == NULL){
+        puts("]");
+        return;
+    }
+    for( ; aux->NEXT != NULL; aux = aux->NEXT)
+        printf("%i, ", aux->DATA->id);
+    if(aux != NULL)printf("%i]\n", aux->DATA->id);
+}
 
+unsigned char getSizeOfInstruction (proc *processo){
+	unsigned char res;
+	for(res = 0; processo->text[res] != 0xFF; res++);
+	return res;
+}
+
+//Id related
 unsigned short idDisponiveis[65536];
 
 unsigned short getId(){
@@ -58,12 +88,6 @@ unsigned short getId(){
     return result;
 }
 
-
-unsigned char getSizeOfInstruction (proc *processo){
-	unsigned char res;
-	for(res = 0; processo->text[res] != 0xFF; res++);
-	return res;
-}
 void returnId(unsigned short id){
     unsigned short a = 0, c, i;
     for(c = 0; idDisponiveis[c] != 65535; c++)
@@ -75,6 +99,8 @@ void returnId(unsigned short id){
     idDisponiveis[a] = id;
 }
 
+
+//PCB related
 list_pcb *getPCB(list_pcb *PCB, int id){
     for(; PCB->DATA->id != id && PCB->NEXT != NULL; PCB = PCB->NEXT);
     if(PCB->NEXT == NULL && PCB->DATA->id != id)
@@ -110,18 +136,62 @@ pcb *gerarPCB(proc *processo){
     return novo;
 }
 
-//Estados: 1 inicio, 2 pronto, 3 em execu��o, 4 bloqueado, 5 encerrado
+//Estados: 1 inicio, 2 pronto, 3 em execução, 4 bloqueado, 5 encerrado
 
-void printarFilas(queue_proc queue){
-    list_proc *aux = queue.FIRST;
-    printf("[");
-    if(aux == NULL){
-        puts("]");
+//Memory related
+list_mem *iniciaMemoria(){
+    list_mem *memoria = (list_mem*)malloc(sizeof(list_mem));
+    memoria->DATA = (mem*)malloc(sizeof(mem));
+    memoria->NEXT = NULL;
+    memoria->PREV = NULL;
+    get_first_data_mem(memoria)->DATA = NULL;
+    get_first_data_mem(memoria)->POS = 0;
+    get_first_data_mem(memoria)->SIZE = 512;
+    return memoria;
+}
+
+void liberarMemoria(list_mem *memoria, proc * processo){
+    for( ; memoria != NULL && memoria->DATA->DATA != processo; memoria = memoria->DATA);
+    if(memoria == NULL)
         return;
+    //Limpar esse chunk
+    memoria->DATA->DATA = NULL;
+    //Juntar os chunks
+    if(memoria->NEXT != NULL && memoria->NEXT->DATA->DATA == NULL){
+        memoria->DATA->SIZE += memoria->NEXT->DATA->SIZE;
+        memoria->NEXT = memoria->NEXT->NEXT;
+        free(memoria->NEXT->PREV);
+        memoria->NEXT->PREV = memoria;
     }
-    for( ; aux->NEXT != NULL; aux = aux->NEXT)
-        printf("%i, ", aux->DATA->id);
-    if(aux != NULL)printf("%i]\n", aux->DATA->id);
+    if(memoria->PREV != NULL && memoria->PREV->DATA->DATA == NULL){
+        memoria = memoria->PREV;
+        memoria->DATA->SIZE += memoria->NEXT->DATA->SIZE;
+        memoria->NEXT = memoria->NEXT->NEXT;
+        free(memoria->NEXT->PREV);
+        memoria->NEXT->PREV = memoria;
+    }
+}
+
+unsigned char alocaProcesso(list_mem *memoria, proc * processo){
+    unsigned char result = 0, size = getSizeOfInstruction(processo);
+    for( ;memoria != NULL; memoria = memoria->NEXT){
+        if(size <= memoria->DATA->SIZE && memoria->DATA->DATA == NULL){
+            result = 1;
+            memoria->DATA->DATA = processo;
+            if(size != memoria->DATA->SIZE){
+                list_mem *new_chunk = (list_mem*)malloc(sizeof(list_mem));
+                new_chunk->DATA = (mem*)malloc(sizeof(mem));
+                new_chunk->DATA->DATA = NULL;
+                new_chunk->DATA->POS = memoria->DATA->POS + size;
+                new_chunk->DATA->SIZE = memoria->DATA->SIZE - size;
+                new_chunk->NEXT = memoria->NEXT;
+                new_chunk->PREV = memoria;
+                memoria->NEXT = new_chunk;
+            }
+            break;
+        }
+    }
+    return result;
 }
 
 int main(int argc, char *args[]){
@@ -136,11 +206,12 @@ int main(int argc, char *args[]){
         idDisponiveis[x] = x;
 
     //Filas
-    queue_proc jobs, ready, device;
-    jobs = queue_init_proc();
+    queue_proc ready, device;
     ready = queue_init_proc();
     device = queue_init_proc();
+    //Listas
     list_pcb *PCBT = NULL, *PCB = NULL;
+    list_mem *MMEM = iniciaMemoria();
 
     //Loop principal
     for (;;) {
@@ -152,7 +223,7 @@ int main(int argc, char *args[]){
         char f = 0;
         //ALEATORIEDADES
         //Adicionar um processo
-        if(rand()%60000 < 60000-(queue_size_proc(jobs) * GENERATION_FACTOR)){
+        if(rand()%1000 < 1000 - ((size_mem(MMEM)-1)*GENERATION_FACTOR)){
             proc *novo = (proc*)malloc(sizeof(proc));
             //Criar instru��es
             unsigned char pointer = 0;
@@ -170,25 +241,20 @@ int main(int argc, char *args[]){
                 novo->text[pointer] = 0xFF;
             //Atribuir id valido
             novo->id = getId();
-            printf("Processo %i adicionado a fila de Jobs.\n", novo->id);
-            //Adicionar na fila de trabalhos
-            queue_add_proc(&jobs, novo);
+            if(alocaProcesso(MMEM, novo)){
+                queue_add_proc(&ready, novo);
+                PCBT = add_end_pcb(PCBT, gerarPCB(queue_get_last_proc(ready)));
+                printf("Processo %i alocado na memoria com sucesso.\n", novo->id);
+            }else{
+                printf("Erro ao alocar o processo %i! Provavelmente nao ha espaco na memoria.\n", novo->id);
+                returnId(novo->id);
+                free(novo);
+            }
         }
 
-        //A fila de programas prontos n�o est� cheia
-        if(queue_size_proc(ready) < MAX_READY_SIZE){
-            //Verificar se alguma interrup��o terminou
-            if(queue_size_proc(device) > 0 && rand()%100 < PROBA_INTERRUPTION){
-                queue_add_proc(&ready, queue_remove_proc(&device)->DATA);
-                printf("Processo %i movido da fila de Dispositivos para a fila Prontos.\n", queue_get_last_proc(ready)->id);
-            }
-            //Se n�o, adicionar trabalho da fila de espera a fila de programas prontos
-            else{
-                queue_add_proc(&ready, queue_remove_proc(&jobs)->DATA);
-                printf("Processo %i movido da fila de Jobs para a fila Prontos.\n", queue_get_last_proc(ready)->id);
-                //Gerar PCB para tabela
-                PCBT = add_end_pcb(PCBT, gerarPCB(queue_get_last_proc(ready)));
-            }
+        if(queue_size_proc(device) > 0 && rand()%100 < PROBA_INTERRUPTION){
+            queue_add_proc(&ready, queue_remove_proc(&device)->DATA);
+            printf("Processo %i movido da fila de Dispositivos para a fila Prontos.\n", queue_get_last_proc(ready)->id);
         }
 
         char quantum = 0;
@@ -222,8 +288,6 @@ int main(int argc, char *args[]){
                 }
             }
 
-
-
             if(!(f & 0x01)){
                 //Setar dados
                 dados.id = queue_get_first_proc(ready)->id;
@@ -246,6 +310,8 @@ int main(int argc, char *args[]){
                 purge_pcb(PCBT, getPCB(PCBT, queue_get_first_proc(ready)->id));
                 //Retornar o id
                 returnId(queue_get_first_proc(ready)->id);
+                //Liberar memoria
+                liberarMemoria(MMEM, queue_get_first_proc(ready));
                 //Eliminar processo
                 queue_purge_proc(&ready);
             }
@@ -264,29 +330,17 @@ int main(int argc, char *args[]){
             else
                 printf("Processo %i movido para o final da fila.\n", dados.id);
 			puts("DADOS:");
-	        printf("JOBS = ");
-	        printarFilas(jobs);
 	        printf("READY = ");
 	        printarFilas(ready);
 	        printf("DEVICES = ");
 	        printarFilas(device);
 
 	        //1 proc 2 jobs 3  backspace = 8 a = 97 enter = 13
-	        printf("Aperte:\n d para os dados do ultimo processo \nj para fila de Jobs \nr para a fila de Prontos \ns para fila de dispositivos \nQualquer outra tecla para continuar\n");
+	        printf("Aperte:\n d para os dados do ultimo processo \nr para a fila de Prontos \ns para fila de dispositivos \nQualquer outra tecla para continuar\n");
 	        int i;
 	        switch(getch()){
 	        	case 100:
 	        		printf("Dados do processo: \nId: %i\nStatus do processo: %i\nTempo total passado: %i\nTempo total: %i\nTempo restate: %i\nQuantum da ultima rodada: %i\n", dados.id,dados.PS,dados.T,dados.total,dados.total-dados.T,quantum);
-					printf("Aperte backspace par voltar ou qualquer tecla para continuar\n");
-					zyzz = getch();
-	        		break;
-	        	case 106:
-	        		printf("\nLista de processor na fila JOBS:\n");
-	        		printf("---------------------------------------------------------");
-	        		for(i = 0; i < queue_size_proc(jobs);i++){
-	        			printf("\nId do processo: %i\nTamanho do processo: %i\n", get_proc(jobs.FIRST, i)->DATA->id, getSizeOfInstruction(get_proc(jobs.FIRST, i)->DATA));
-	        			printf("---------------------------------------------------------\n");
-					}
 					printf("Aperte backspace par voltar ou qualquer tecla para continuar\n");
 					zyzz = getch();
 	        		break;
