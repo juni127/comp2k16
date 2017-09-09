@@ -83,7 +83,8 @@ LIST (TYPE) *ADD_AT_BEGIN (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	novo->DATA = DATA;
 	novo->NEXT = list;
 	novo->PREV = NULL;
-	list->PREV = novo;
+	if(list != NULL)
+		list->PREV = novo;
 	return novo;
 }
 
