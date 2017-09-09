@@ -92,8 +92,7 @@ void returnId(unsigned short id){
     unsigned short a = 0, c, i;
     for(c = 0; idDisponiveis[c] != 65535; c++)
         if(idDisponiveis[c] < id)
-            a++;
-    a++;
+            a = c;
     for(i = c; i > a; i--)
         idDisponiveis[i] = idDisponiveis[i - 1];
     idDisponiveis[a] = id;

@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<conio.h>
 
-#define HASH_SIZE 10
+#define HASH_SIZE 2
 
 typedef struct ALUNO{
     char nome[100], sexo;
@@ -37,6 +37,16 @@ aluno *retornarHash(list_aluno **hash, int matricula){
     return buscarAluno(hash[index], matricula);
 }
 
+void removerHash(list_aluno **hash, int matricula){
+    int index = matricula%HASH_SIZE;
+    list_aluno * alunos = hash[index];
+    if(alunos == NULL)
+        return;
+    for( ; alunos != NULL && alunos->DATA->matricula != matricula; alunos = alunos->NEXT);
+    if(alunos != NULL)
+        hash[index] = purge_node_aluno(alunos);
+}
+
 void printarTodos(list_aluno **hash){
     int x;
     list_aluno *aux;
@@ -69,8 +79,7 @@ void returnNumero(unsigned short id){
     unsigned short a = 0, c, i;
     for(c = 0; numerosDisponiveis[c] != 1000; c++)
         if(numerosDisponiveis[c] < id)
-            a++;
-    a++;
+            a = c;
     for(i = c; i > a; i--)
         numerosDisponiveis[i] = numerosDisponiveis[i - 1];
     numerosDisponiveis[a] = id;
@@ -84,12 +93,12 @@ int main(){
     iniciaNumeros();
 
     do{
-        system("cls");
-        puts("Aperte n para adicionar um novo aluno.\nAperte b para buscar um aluno.\nAperte l para listar os alunos.\nAperte s para sair.");
+        int nm;
+        puts("Aperte n para adicionar um novo aluno.\nAperte b para buscar um aluno.\nAperte l para listar os alunos.\nAperte r para remover um aluno.\nAperte s para sair.");
         e = getch();
         system("cls");
         switch (e) {
-            case 110:;
+            case 'n':;
                 //n
                 aluno *novo = (aluno*)malloc(sizeof(aluno));
                 printf("Nome: ");
@@ -106,21 +115,27 @@ int main(){
                 novo->matricula = nMatricula;
                 adicionaHash(novo, hash);
                 break;
-            case 98:;
+            case 'b':
                 //b
-                int nm;
                 printf("Numero da matricula: ");
                 scanf("%i", &nm);
                 aluno *buscado = retornarHash(hash, nm);
                 printf("Nome: %s\nSexo: %c\nIdade: %i\nNumero da matricula: %i\n\n\n", buscado->nome, buscado->sexo, buscado->idade, buscado->matricula);
                 break;
-            case 108:
+            case 'l':
                 //l
                 printarTodos(hash);
+                break;
+            case 'r':
+                printf("Numero da matricula: ");
+                scanf("%i", &nm);
+                returnNumero(nm);
+                removerHash(hash, nm);
                 break;
         }
         puts("Qualquer tecla para continuar.");
         getch();
+        system("cls");
     }while(e != 115);
 
     return 0;

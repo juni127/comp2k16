@@ -141,6 +141,26 @@ LIST (TYPE) *PURGE_FIRST (TYPE) (LIST (TYPE) * list){
 	return list;
 }
 
+#define PURGE_NODE(T) TOKENPASTE(purge_node_, T)
+LIST (TYPE) *PURGE_NODE (TYPE) (LIST (TYPE) * list){
+	if(list == NULL)
+		return NULL;
+	LIST (TYPE) * aux;
+	if(list->PREV == NULL){
+		aux = list->NEXT;
+		free(list);
+		if(aux != NULL)
+			aux->PREV = NULL;
+		return aux;
+	}
+	for(aux = list; aux->PREV != NULL; aux = aux->PREV);
+	list->PREV->NEXT = list->NEXT;
+	if(list->NEXT != NULL)
+		list->NEXT->PREV = list->PREV;
+	free(list);
+	return aux;
+}
+
 #define QUEUE_INIT(T) TOKENPASTE(queue_init_, T)
 QUEUE (TYPE) QUEUE_INIT (TYPE) (){
 	QUEUE(TYPE) result;
