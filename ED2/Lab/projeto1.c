@@ -335,8 +335,6 @@ int main(int argc, char *args[]){
 
 		do{
 
-	        //Printar os dados da rodada
-            printMem(MMEM);
             if(f & 0x01)
                 printf("Processo %i interompido.\n", dados.id);
             else if(f & 0x02)
