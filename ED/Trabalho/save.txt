@@ -27,5 +27,7 @@ Quitou do curso?;1;
 Rodolfo;0;
 Mancada;0;
 Eh funk lord?;1;
+Eh da bateria?;1;
 Kzual;0;
+Gui;0;
 Felix;0;

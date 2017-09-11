@@ -1,4 +1,6 @@
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 
@@ -212,6 +214,13 @@ public class NovoFuncionario extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_posFuncFieldActionPerformed
 
+    private int difReal(int a, int b){
+        if(a > b)
+            return 12 - a + b; 
+        else
+            return b - a;
+    }
+    
     private void criarFuncButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_criarFuncButtonActionPerformed
         // TODO add your handling code here:
         if(
@@ -245,6 +254,8 @@ public class NovoFuncionario extends javax.swing.JDialog {
             case 1:
                 if(anosFuncField.getText().equals(""))
                     return;
+                SimpleDateFormat sdf = new SimpleDateFormat("MM");
+                int mes = Integer.parseInt(sdf.format(new Date()));
                 funcionario = new VendedorS(
                         userFuncField.getText(),
                         senhaFuncField.getText(),
@@ -253,8 +264,13 @@ public class NovoFuncionario extends javax.swing.JDialog {
                         rgFuncField.getText(),
                         new Data(nascFuncField.getText()),
                         new Data(admFuncField.getText()),
-                        Double.parseDouble(salarioFuncField.getText().replaceAll(",", "."))
+                        Double.parseDouble(salarioFuncField.getText().replaceAll(",", ".")),
+                        mes
                 );
+                if(difReal(funcionario.getAdmissao().getMes(), 5) > 6){
+                    VendedorS v = (VendedorS)funcionario;
+                    v.darAumento();
+                }
                 break;
             default:
                 funcionario = new Gerente(

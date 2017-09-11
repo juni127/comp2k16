@@ -6,24 +6,6 @@ typedef struct TREE{
     struct TREE *e, *d;
 }Tree;
 
-
-Tree *insereArvore(char *conteudo){
-    //Cria um novo nó
-    Tree *novo = (Tree*)malloc(sizeof(Tree));
-    strcpy(novo->conteudo, conteudo);
-    novo->e = NULL;
-    novo->d = NULL;
-    return novo;
-}
-
-void imprimeArvore(Tree *raiz){
-  if(raiz == NULL)
-    return;
-  printf("%s\n", raiz->conteudo);
-  imprimeArvore(raiz->e);
-  imprimeArvore(raiz->d);
-}
-
 //Lê a arvore do arquivo
 Tree *leArvore(FILE *save){
   //Cria variaveis para armazenar os dados do próximo nó

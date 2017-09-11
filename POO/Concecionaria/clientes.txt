@@ -1,10 +1,4 @@
 CLIENTES
-Peter Parker
-0123456789
-21/10/1996
-1234.5
-Rua Baker;123;England
-0
 Edward Snowden
 9876543210
 12/1/1969
@@ -29,3 +23,9 @@ Antedeguemon
 0.0
 Todos os lugares;666;Todas
 7000000
+Felix
+54901487
+5/6/1998
+1000.0
+Rua Abilio Jorge Cury;458;São José do Rio Preto
+2

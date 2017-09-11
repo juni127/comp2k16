@@ -89,6 +89,7 @@ public class FilesIO<T> {
                         }else if(funcionario instanceof VendedorS){
                             VendedorS vendedorS = (VendedorS)funcionario;
                             fileWriter.write(vendedorS.getAnosTrabalho() + lineEnding);
+                            fileWriter.write(vendedorS.getUltimoAumento() + lineEnding);
                         }
                         
                     }else{
@@ -245,6 +246,7 @@ public class FilesIO<T> {
                         admissao = new Data(bReader.readLine());
                         //VendedorS
                         int anosTrabalho = Integer.parseInt(bReader.readLine());
+                        int ultimoAumento = Integer.parseInt(bReader.readLine());
                         
                         output.add((T) new VendedorS(
                                 usuario,
@@ -254,7 +256,8 @@ public class FilesIO<T> {
                                 documento,
                                 nascimento,
                                 admissao,
-                                renda
+                                renda,
+                                ultimoAumento
                         ));
                         break;
                     //Vendedor Junior

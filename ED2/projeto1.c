@@ -71,6 +71,14 @@ void printarFilas(queue_proc queue){
     if(aux != NULL)printf("%i]\n", aux->DATA->id);
 }
 
+void printMem(list_mem * mmem){
+    printf("MEMORIA = [");
+    for( ;mmem->NEXT != NULL; mmem = mmem->NEXT){
+        printf("(%i - %i), ", mmem->DATA->POS,mmem->DATA->SIZE);
+    }
+    printf("(%i - %i)]\n", mmem->DATA->POS,mmem->DATA->SIZE);
+}
+
 unsigned char getSizeOfInstruction (proc *processo){
 	unsigned char res;
 	for(res = 0; processo->text[res] != 0xFF; res++);
@@ -151,7 +159,7 @@ list_mem *iniciaMemoria(){
 }
 
 void liberarMemoria(list_mem *memoria, proc * processo){
-    for( ; memoria != NULL && memoria->DATA->DATA != processo; memoria = memoria->DATA);
+    for( ; memoria != NULL && memoria->DATA->DATA != processo; memoria = memoria->NEXT);
     if(memoria == NULL)
         return;
     //Limpar esse chunk
@@ -159,16 +167,20 @@ void liberarMemoria(list_mem *memoria, proc * processo){
     //Juntar os chunks
     if(memoria->NEXT != NULL && memoria->NEXT->DATA->DATA == NULL){
         memoria->DATA->SIZE += memoria->NEXT->DATA->SIZE;
+        list_mem *aux = memoria->NEXT;
         memoria->NEXT = memoria->NEXT->NEXT;
-        free(memoria->NEXT->PREV);
-        memoria->NEXT->PREV = memoria;
+        free(aux);
+        if(memoria->NEXT != NULL)
+            memoria->NEXT->PREV = memoria;
     }
     if(memoria->PREV != NULL && memoria->PREV->DATA->DATA == NULL){
         memoria = memoria->PREV;
         memoria->DATA->SIZE += memoria->NEXT->DATA->SIZE;
+        list_mem *aux = memoria->NEXT;
         memoria->NEXT = memoria->NEXT->NEXT;
-        free(memoria->NEXT->PREV);
-        memoria->NEXT->PREV = memoria;
+        free(aux);
+        if(memoria->NEXT != NULL)
+            memoria->NEXT->PREV = memoria;
     }
 }
 
@@ -186,6 +198,7 @@ unsigned char alocaProcesso(list_mem *memoria, proc * processo){
                 new_chunk->DATA->SIZE = memoria->DATA->SIZE - size;
                 new_chunk->NEXT = memoria->NEXT;
                 new_chunk->PREV = memoria;
+                memoria->DATA->SIZE = size;
                 memoria->NEXT = new_chunk;
             }
             break;
@@ -217,15 +230,16 @@ int main(int argc, char *args[]){
     for (;;) {
         /*
             Flags
-            0x01 -> Interrup��o
+            0x01 -> Interrupção
             0x02 -> Encerrado
         */
+
         char f = 0;
         //ALEATORIEDADES
         //Adicionar um processo
         if(rand()%1000 < 1000 - ((size_mem(MMEM)-1)*GENERATION_FACTOR)){
             proc *novo = (proc*)malloc(sizeof(proc));
-            //Criar instru��es
+            //Criar instruções
             unsigned char pointer = 0;
             do{
                 unsigned char teste = rand()%256;
@@ -236,7 +250,7 @@ int main(int argc, char *args[]){
                 else
                     novo->text[pointer] = 0xFF;
                 pointer++;
-            }while(novo->text[pointer-1] != 0xFF && pointer < MAX_PROCESS_SIZE);
+            }while(novo->text[pointer-1] != 0xFF && pointer < MAX_PROCESS_SIZE - 1);
             if(pointer == MAX_PROCESS_SIZE - 1)
                 novo->text[pointer] = 0xFF;
             //Atribuir id valido
@@ -323,6 +337,7 @@ int main(int argc, char *args[]){
 		do{
 
 	        //Printar os dados da rodada
+            printMem(MMEM);
             if(f & 0x01)
                 printf("Processo %i interompido.\n", dados.id);
             else if(f & 0x02)

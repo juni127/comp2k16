@@ -25,6 +25,7 @@ public class NovaVenda extends javax.swing.JDialog {
     
     private static DefaultComboBoxModel<String> vList = new DefaultComboBoxModel<String>();
     private static DefaultComboBoxModel<String> cList = new DefaultComboBoxModel<String>();
+    private static DefaultComboBoxModel<String> pList = new DefaultComboBoxModel<String>();
     
     private int selectedCliente;
     private int selectedVeiculo;
@@ -67,6 +68,22 @@ public class NovaVenda extends javax.swing.JDialog {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dataLabel.setText(dateFormat.format(date));
         
+        pList.removeAllElements();
+        int dp = clientes.get(selectedCliente).getDependentes();
+        pList.addElement("A vista");
+        if(dp >=1 )
+            pList.addElement("12");
+        if(dp >=2 )
+            pList.addElement("24");
+        if(dp >=3 )
+            pList.addElement("36");
+        if(dp >=4 )
+            pList.addElement("48");
+        
+        this.setTitle("Nova venda");
+        
+        parcelasBox.setSelectedIndex(0);
+        
     }
 
     /**
@@ -87,10 +104,10 @@ public class NovaVenda extends javax.swing.JDialog {
         dataLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        parcelasField = new javax.swing.JFormattedTextField();
         descontoLabel = new javax.swing.JLabel();
         vendidoButton = new javax.swing.JButton();
         valorField = new javax.swing.JFormattedTextField();
+        parcelasBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -122,8 +139,6 @@ public class NovaVenda extends javax.swing.JDialog {
 
         jLabel8.setText("Parcelas:");
 
-        parcelasField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-
         descontoLabel.setText("0");
 
         vendidoButton.setText("Vendido");
@@ -134,6 +149,8 @@ public class NovaVenda extends javax.swing.JDialog {
         });
 
         valorField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+
+        parcelasBox.setModel(pList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -151,23 +168,26 @@ public class NovaVenda extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(veiculoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(valorField, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(parcelasBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(valorField, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(dataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(descontoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(parcelasField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(vendidoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(vendidoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(dataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(descontoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -190,8 +210,8 @@ public class NovaVenda extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(parcelasField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(vendidoButton))
+                    .addComponent(vendidoButton)
+                    .addComponent(parcelasBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -201,24 +221,53 @@ public class NovaVenda extends javax.swing.JDialog {
     private void clienteBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clienteBoxActionPerformed
         // TODO add your handling code here:
         selectedCliente = clienteBox.getSelectedIndex();
-        if(clientes.get(selectedCliente).getRenda() <= 15000 && clientes.get(selectedCliente).getRenda() >= 5000)
-            descontoLabel.setText(clientes.get(selectedCliente).getRenda()/1000 + "");
+        if(clienteBox.getItemCount() <= 0)return;
+        if(clientes.get(selectedCliente).getRenda() <= 1000 && clientes.get(selectedCliente).getRenda() >= 500)
+            descontoLabel.setText(clientes.get(selectedCliente).getRenda()/100 + "");
         else
             descontoLabel.setText("0");
+        pList.removeAllElements();
+        int dp = clientes.get(selectedCliente).getDependentes();
+        pList.addElement("A vista");
+        if(dp >=1 )
+            pList.addElement("12");
+        if(dp >=2 )
+            pList.addElement("24");
+        if(dp >=3 )
+            pList.addElement("36");
+        if(dp >=4 )
+            pList.addElement("48");
     }//GEN-LAST:event_clienteBoxActionPerformed
 
+    private int getParcelas(int i){
+        switch(i){
+            case 0:
+                return 1;
+            case 1:
+                return 12;
+            case 2:
+                return 24;
+            case 3:
+                return 36;
+            default:
+                return 48;
+        }
+    }
+    
     private void vendidoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vendidoButtonActionPerformed
         // TODO add your handling code here:
         Random randomGenerator = new Random();
+        double valor = Double.parseDouble(valorField.getText().replaceAll(",", ".")),
+                desconto = Double.parseDouble(descontoLabel.getText());
         VendaPrazo venda = new VendaPrazo(
-                Integer.parseInt(parcelasField.getText()),
+                getParcelas(parcelasBox.getSelectedIndex()),
                 randomGenerator.nextInt(),
                 funcionario,
                 clientes.get(selectedCliente),
                 veiculos.get(selectedVeiculo),
-                Double.parseDouble(valorField.getText().replaceAll(",", ".")),
+                valor - ((valor*desconto)/100),
                 new Data(dataLabel.getText()),
-                Double.parseDouble(descontoLabel.getText())
+                desconto                
         );
         
         veiculos.get(selectedVeiculo).setStatus(Veiculo.Status.VENDIDO);
@@ -226,6 +275,10 @@ public class NovaVenda extends javax.swing.JDialog {
         if(pai instanceof MainGerente){
             MainGerente g = (MainGerente)pai;
             g.addVenda(venda);
+        }
+        if(pai instanceof MainVendedor){
+            MainVendedor v = (MainVendedor)pai;
+            v.addVenda(venda);
         }
         
         this.show(false);
@@ -288,7 +341,7 @@ public class NovaVenda extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JFormattedTextField parcelasField;
+    private javax.swing.JComboBox<String> parcelasBox;
     private javax.swing.JFormattedTextField valorField;
     private javax.swing.JComboBox<String> veiculoBox;
     private javax.swing.JButton vendidoButton;

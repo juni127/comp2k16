@@ -83,7 +83,6 @@ public class MainVendedor extends javax.swing.JFrame {
         
         if(vendasPrazo.isEmpty()){
             deletarVenda.setEnabled(false);
-            editarVenda.setEnabled(false);
             mudarVendaAtual(-1);
         }else{
             mudarVendaAtual(0);
@@ -102,7 +101,6 @@ public class MainVendedor extends javax.swing.JFrame {
         tab = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
-        editarVenda = new javax.swing.JButton();
         jLabel34 = new javax.swing.JLabel();
         jLabel35 = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
@@ -218,8 +216,6 @@ public class MainVendedor extends javax.swing.JFrame {
 
         jPanel8.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        editarVenda.setText("Editar");
-
         jLabel34.setText("Vendedor:");
 
         jLabel36.setText("Cliente:");
@@ -238,7 +234,6 @@ public class MainVendedor extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(editarVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,12 +304,9 @@ public class MainVendedor extends javax.swing.JFrame {
                     .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel46)
                         .addComponent(dataVendaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
-                .addComponent(editarVenda))
+                .addContainerGap(354, Short.MAX_VALUE))
         );
 
-        for(VendaPrazo v : vendasPrazo)
-        vendasListModel.addElement(v.getVeiculo().getModelo() + " para " + v.getCliente().getNome());
         jList1.setModel(vendasListModel);
         jScrollPane4.setViewportView(jList1);
         jList1.addListSelectionListener(
@@ -333,6 +325,8 @@ public class MainVendedor extends javax.swing.JFrame {
             }
 
         );
+        for(VendaPrazo v : vendasPrazo)
+        vendasListModel.addElement(v.getVeiculo().getModelo() + " para " + v.getCliente().getNome());
 
         jButton1.setText("Nova venda");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -1315,11 +1309,9 @@ public class MainVendedor extends javax.swing.JFrame {
         for(VendaPrazo v : vendasPrazo)
             vendasListModel.addElement(v.getVeiculo().getModelo() + " para " + v.getCliente().getNome());
         if(vendasPrazo.isEmpty()){
-            editarVenda.setEnabled(false);
             deletarVenda.setEnabled(false);
             mudarVendaAtual(-1);
         }else{
-            editarVenda.setEnabled(true);
             deletarVenda.setEnabled(true);
             mudarVendaAtual(0);
         }
@@ -1463,7 +1455,6 @@ public class MainVendedor extends javax.swing.JFrame {
     private javax.swing.JButton editarCarrosButton;
     private javax.swing.JButton editarClienteButton;
     private javax.swing.JButton editarMotosButton;
-    private javax.swing.JButton editarVenda;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

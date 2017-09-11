@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -95,11 +96,31 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_userFieldActionPerformed
 
+    private int difReal(int a, int b){
+        if(a > b)
+            return 12 - a + b; 
+        else
+            return b - a;
+    }
+    
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         //Logar
         String user, password;
         user = userField.getText().toString();
-        password = String.valueOf(passwordField.getPassword()); 
+        password = String.valueOf(passwordField.getPassword());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        int mes = Integer.parseInt(sdf.format(new Date()));
+        for(VendedorS v : vendedoresSenior){
+            if(difReal(v.getUltimoAumento(), mes) > 6 && v.getUltimoAumento() != mes){
+                v.darAumento();
+                v.setUltimoAumento(mes);
+            }
+        }
+        FilesIO seniorFile = new FilesIO(Dados.SENIORS_PATH);
+        seniorFile.write(vendedoresSenior);
+        
+        
         List<Funcionario> f = new ArrayList<Funcionario>();
         for(Funcionario p : gerentes)
             f.add(p);
