@@ -26,7 +26,7 @@ typedef struct PCB{
 }pcb;
 
 #define TYPE pcb
-#include "ed.h"
+#include "../ed.h"
 #undef TYPE
 
 //Declaração da estrutura Proccess e inclusão das suas funções
@@ -38,7 +38,7 @@ typedef struct proc{
 }proc;
 
 #define TYPE proc
-#include "ed.h"
+#include "../ed.h"
 #undef TYPE
 
 typedef struct mem{
@@ -48,7 +48,7 @@ typedef struct mem{
 }mem;
 
 #define TYPE mem
-#include "ed.h"
+#include "../ed.h"
 #undef TYPE
 
 struct LAST_DATA{
@@ -100,8 +100,7 @@ void returnId(unsigned short id){
     unsigned short a = 0, c, i;
     for(c = 0; idDisponiveis[c] != 65535; c++)
         if(idDisponiveis[c] < id)
-            a++;
-    a++;
+            a = c;
     for(i = c; i > a; i--)
         idDisponiveis[i] = idDisponiveis[i - 1];
     idDisponiveis[a] = id;

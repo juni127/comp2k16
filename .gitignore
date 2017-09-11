@@ -1,2 +1,4 @@
 /POO/Concecionaria/Concecionaria/nbproject/private/
 /POO/Concecionaria/Concecionaria/build/
+*.exe
+*/teste.c

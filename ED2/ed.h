@@ -83,7 +83,8 @@ LIST (TYPE) *ADD_AT_BEGIN (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	novo->DATA = DATA;
 	novo->NEXT = list;
 	novo->PREV = NULL;
-	list->PREV = novo;
+	if(list != NULL)
+		list->PREV = novo;
 	return novo;
 }
 
@@ -138,6 +139,26 @@ LIST (TYPE) *PURGE_FIRST (TYPE) (LIST (TYPE) * list){
 		list->PREV = NULL;
 	free(aux);
 	return list;
+}
+
+#define PURGE_NODE(T) TOKENPASTE(purge_node_, T)
+LIST (TYPE) *PURGE_NODE (TYPE) (LIST (TYPE) * list){
+	if(list == NULL)
+		return NULL;
+	LIST (TYPE) * aux;
+	if(list->PREV == NULL){
+		aux = list->NEXT;
+		free(list);
+		if(aux != NULL)
+			aux->PREV = NULL;
+		return aux;
+	}
+	for(aux = list; aux->PREV != NULL; aux = aux->PREV);
+	list->PREV->NEXT = list->NEXT;
+	if(list->NEXT != NULL)
+		list->NEXT->PREV = list->PREV;
+	free(list);
+	return aux;
 }
 
 #define QUEUE_INIT(T) TOKENPASTE(queue_init_, T)
