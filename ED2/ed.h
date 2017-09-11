@@ -23,8 +23,8 @@ typedef struct QUEUE (TYPE){
 
 #define SIZE(T) TOKENPASTE(size_, T)
 int SIZE (TYPE) (LIST (TYPE) * list){
-	int x = 0;
-	for( ; list != NULL; x++, list = list->NEXT);
+	int x;
+	for(x = 0; list != NULL; x++, list = list->NEXT);
 	return x;
 }
 

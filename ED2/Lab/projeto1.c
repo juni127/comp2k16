@@ -4,6 +4,17 @@
 #include<time.h>
 #include<conio.h>
 
+//Só funciona no windows ->
+#include <windows.h>
+void gotoxy(int x, int y)
+{
+  COORD coord;
+  coord.X = x;
+  coord.Y = y;
+  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+//<-
+
 //Constantes
 #define MAX_PROCESS_SIZE 128
 #define MAX_READY_SIZE 5
@@ -226,7 +237,8 @@ int main(int argc, char *args[]){
     list_mem *MMEM = iniciaMemoria();
 
     //Loop principal
-    for (;;) {
+    for (;;){
+        puts("------| INFO |--------------------------------------------------------");
         /*
             Flags
             0x01 -> Interrupção
@@ -257,9 +269,9 @@ int main(int argc, char *args[]){
             if(alocaProcesso(MMEM, novo)){
                 queue_add_proc(&ready, novo);
                 PCBT = add_end_pcb(PCBT, gerarPCB(queue_get_last_proc(ready)));
-                printf("Processo %i alocado na memoria com sucesso.\n", novo->id);
+                printf(" Processo %i alocado na memoria com sucesso.\n", novo->id);
             }else{
-                printf("Erro ao alocar o processo %i! Provavelmente nao ha espaco na memoria.\n", novo->id);
+                printf(" Erro ao alocar o processo %i! Provavelmente nao ha espaco na memoria.\n", novo->id);
                 returnId(novo->id);
                 free(novo);
             }
@@ -267,7 +279,7 @@ int main(int argc, char *args[]){
 
         if(queue_size_proc(device) > 0 && rand()%100 < PROBA_INTERRUPTION){
             queue_add_proc(&ready, queue_remove_proc(&device)->DATA);
-            printf("Processo %i movido da fila de Dispositivos para a fila Prontos.\n", queue_get_last_proc(ready)->id);
+            printf(" Processo %i movido da fila de Dispositivos para a fila Prontos.\n", queue_get_last_proc(ready)->id);
         }
 
         char quantum = 0;
@@ -296,7 +308,7 @@ int main(int argc, char *args[]){
                     f |= 0x01;
                     //Adicionar o processo atual a fila de dispositivos
                     queue_add_proc(&device, queue_remove_proc(&ready)->DATA);
-                    printf("Processo %i movido da fila de Prontos para a fila de Dispositivos.\n", queue_get_last_proc(device)->id);
+                    printf(" Processo %i movido da fila de Prontos para a fila de Dispositivos.\n", queue_get_last_proc(device)->id);
                     break;
                 }
             }
@@ -331,60 +343,217 @@ int main(int argc, char *args[]){
 
         }
 
-        int zyzz;
+        int zyzz = 0;
+
+        if(f & 0x01)
+            printf(" Processo %i interompido.\n", dados.id);
+        else if(f & 0x02)
+            printf(" Processo %i finalizado.\n", dados.id);
+        else
+            printf(" Processo %i movido para o final da fila.\n", dados.id);
 
 		do{
+	        int i, b;
 
-            if(f & 0x01)
-                printf("Processo %i interompido.\n", dados.id);
-            else if(f & 0x02)
-                printf("Processo %i finalizado.\n", dados.id);
-            else
-                printf("Processo %i movido para o final da fila.\n", dados.id);
-			puts("DADOS:");
-	        printf("READY = ");
-	        printarFilas(ready);
-	        printf("DEVICES = ");
-	        printarFilas(device);
+            //Limpar a tela
+            gotoxy(0, 5);
+            for(i = 0; i < 35; i++)
+                puts("                                                                                                                    ");
 
-	        //1 proc 2 jobs 3  backspace = 8 a = 97 enter = 13
-	        printf("Aperte:\n d para os dados do ultimo processo \nr para a fila de Prontos \ns para fila de dispositivos \nQualquer outra tecla para continuar\n");
-	        int i;
-	        switch(getch()){
+            gotoxy(0, 5);
+			puts("------| CONTROLES |---------------------------------------------------");
+	        puts("| d : para os dados do ultimo processo                               |");
+            puts("| r : para a fila de Prontos                                         |");
+            puts("| s : para fila de dispositivos                                      |");
+            puts("| m : para mostrar a memoria                                         |");
+            puts("|                                                                    |");
+            puts("| Qualquer outra tecla para continuar                                |");
+            puts("----------------------------------------------------------------------");
+
+            if(!zyzz || zyzz == 8)
+                zyzz = getch();
+
+            int vetIn = 0, dir = 0;
+
+	        switch(zyzz){
 	        	case 100:
-	        		printf("Dados do processo: \nId: %i\nStatus do processo: %i\nTempo total passado: %i\nTempo total: %i\nTempo restate: %i\nQuantum da ultima rodada: %i\n", dados.id,dados.PS,dados.T,dados.total,dados.total-dados.T,quantum);
-					printf("Aperte backspace par voltar ou qualquer tecla para continuar\n");
+                    //TODO show backspace control option
+                    puts("------| Ultimo processo |---------------------------------------------");
+                    printf("| ID:                                                          %5d |\n", dados.id);
+                    printf("| Status do processo:                                          %5d |\n", dados.PS);
+                    printf("| Tempo total passado:                                         %5d |\n", dados.T);
+                    printf("| Tempo total:                                                 %5d |\n", dados.total);
+                    printf("| Tempo restate:                                               %5d |\n", dados.total - dados.T);
+                    printf("| Quantum da ultima rodada:                                    %5d |\n", quantum);
+                    puts("----------------------------------------------------------------------");
+                    gotoxy(2, 10);
+                    printf("Backspace para voltar");
 					zyzz = getch();
 	        		break;
 	        	case 114:
-	        		printf("\nLista de processor na fila READY:\n");
-	        		puts("---------------------------------------------------------");
-	        		for(i = 0; i < queue_size_proc(ready);i++){
-	        			printf("Id do processo: %i\nTamanho do processo: %i\n", get_proc(ready.FIRST, i)->DATA->id, getSizeOfInstruction(get_proc(ready.FIRST, i)->DATA));
-	        			PCB = getPCB(PCBT, get_proc(ready.FIRST, i)->DATA->id);
-						printf("Estado do programa: %i \nQuantum utilizado: %i\n", PCB->DATA->PS, PCB->DATA->T);
-	        			printf("---------------------------------------------------------\n");
-					}
-					printf("Aperte backspace par voltar ou qualquer tecla para continuar\n");
-					zyzz = getch();
-	        		break;
+        			puts("------| READY |--------------------------------------------------------------------------------------------------\n\n\n\n\n\n\n\n");
+	        		puts("-----------------------------------------------------------------------------------------------------------------");
+                    printf("\n READY (Somente IDs): ");
+                    printarFilas(ready);
+	        		puts("\n-----------------------------------------------------------------------------------------------------------------");
+                    gotoxy(2, 10);
+                    printf("Setas para mover e backspace para voltar");
+
+                    do{
+                        gotoxy(0, 15);
+                        list_proc *aux;
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(ready.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" ------| INDEX: %3d |----------------------------------- ", i);
+                        }
+                        puts("");
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(ready.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" | Id:                                           %5d | ", aux->DATA->id);
+                        }
+                        puts("");
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(ready.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" | Tamanho:                                      %5d | ", getSizeOfInstruction(aux->DATA));
+                        }
+                        puts("");
+
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(ready.FIRST, i);
+                            if(aux == NULL)
+                                break;
+    	        			PCB = getPCB(PCBT, aux->DATA->id);
+                            printf(" | Estado do processo:                           %5d | ", PCB->DATA->PS);
+                        }
+                        puts("");
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(ready.FIRST, i);
+                            if(aux == NULL)
+                                break;
+    	        			PCB = getPCB(PCBT, aux->DATA->id);
+                            printf(" | Quantum utilizado:                            %5d | ", PCB->DATA->T);
+                        }
+                        puts("");
+
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(ready.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" ------------------------------------------------------- ", i);
+                        }
+
+                        zyzz = (char)getch();
+                        if(zyzz == -32)
+                            dir = getch();
+
+                        if(dir == 77 && vetIn < queue_size_proc(ready) - 2)
+                            vetIn++;
+
+                        if(dir == 75 && vetIn > 0)
+                            vetIn--;
+
+                    }while(zyzz == -32);
+                    break;
 	        	case 115:
-	        		printf("\nLista de processor na fila DEVICE:\n");
-	        		puts("---------------------------------------------------------");
-	        		for(i = 0; i < queue_size_proc(device);i++){
-	        			printf("Id do processo: %i\nTamanho do processo: %i\n", get_proc(device.FIRST, i)->DATA->id, getSizeOfInstruction(get_proc(device.FIRST, i)->DATA));
-	        			PCB = getPCB(PCBT, get_proc(device.FIRST, i)->DATA->id);
-						printf("Estado do programa: %i \nQuantum utilizado: %i\n", PCB->DATA->PS, PCB->DATA->T);
-	        			printf("---------------------------------------------------------\n");
-					}
-					printf("Aperte backspace par voltar ou qualquer tecla para continuar\n");
-					zyzz = getch();
-	        		break;
+        			puts("------| DEVICE |-------------------------------------------------------------------------------------------------\n\n\n\n\n\n\n\n");
+	        		puts("-----------------------------------------------------------------------------------------------------------------");
+                    printf("\n DEVICE (Somente IDs): ");
+                    printarFilas(device);
+	        		puts("\n-----------------------------------------------------------------------------------------------------------------");
+                    gotoxy(2, 10);
+                    printf("Setas para mover e backspace para voltar");
+
+                    do{
+                        gotoxy(0, 15);
+                        list_proc *aux;
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(device.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" ------| INDEX: %3d |----------------------------------- ", i);
+                        }
+                        puts("");
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(device.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" | Id:                                           %5d | ", aux->DATA->id);
+                        }
+                        puts("");
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(device.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" | Tamanho:                                      %5d | ", getSizeOfInstruction(aux->DATA));
+                        }
+                        puts("");
+
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(device.FIRST, i);
+                            if(aux == NULL)
+                                break;
+    	        			PCB = getPCB(PCBT, aux->DATA->id);
+                            printf(" | Estado do processo:                           %5d | ", PCB->DATA->PS);
+                        }
+                        puts("");
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(device.FIRST, i);
+                            if(aux == NULL)
+                                break;
+    	        			PCB = getPCB(PCBT, aux->DATA->id);
+                            printf(" | Quantum utilizado:                            %5d | ", PCB->DATA->T);
+                        }
+                        puts("");
+
+                        for(i = vetIn; i < vetIn + 2; i++){
+                            aux = get_proc(device.FIRST, i);
+                            if(aux == NULL)
+                                break;
+                            printf(" ------------------------------------------------------- ", i);
+                        }
+
+                        zyzz = (char)getch();
+                        if(zyzz == -32)
+                            dir = getch();
+
+                        if(dir == 77 && vetIn < queue_size_proc(device) - 2)
+                            vetIn++;
+
+                        if(dir == 75 && vetIn > 0)
+                            vetIn--;
+
+                    }while(zyzz == -32);
+                    break;
+                case 109:
+                    puts("------| MEMORIA |-------------------------------------------------------------------------------------------------");
+                    list_mem *auxMem = MMEM;
+                    for(i = 0; auxMem != NULL; auxMem = auxMem->NEXT){
+                        for(b = 0; b < auxMem->DATA->SIZE; b++, i++){
+                            if(!(i%28))
+                                printf("\n |");
+                            if(auxMem->DATA->DATA == NULL)
+                                printf("NDA|");
+                            else
+                                printf("%3d|", auxMem->DATA->DATA->id);
+                        }
+                    }
+                    puts("");
+	        		puts("------------------------------------------------------------------------------------------------------------------");
+                    gotoxy(2, 10);
+                    printf("Backspace para voltar");
+                    zyzz = getch();
+                    break;
         		default:
-        			zyzz = 0;
+                    zyzz = 0;
         			break;
 			}
-            system("cls");
-		}while(zyzz == 8);
+		}while(zyzz == 8 || zyzz == 100  ||  zyzz == 114 || zyzz == 115 || zyzz == 109);
+        system("cls");
     }
 }
