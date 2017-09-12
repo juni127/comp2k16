@@ -284,9 +284,6 @@ int main(int argc, char *args[]){
 
         char quantum = 0;
         if(queue_size_proc(ready) > 0){
-            //RODAR
-            queue_add_proc(&ready, queue_remove_proc(&ready)->DATA);
-
             //Pegar pcb do processo atual0
             PCB = getPCB(PCBT, queue_get_first_proc(ready)->id);
             //Executar as instru��es do processo a menos que, o seu quantum tenha se esgotado ou suas instru��es tenham acabado
@@ -322,23 +319,25 @@ int main(int argc, char *args[]){
             }
 
             //Verificar se o processo foi encerrado (Caso ele n�o tenha ido pra fila de dispositivos)
-            if(
-                !(f & 0x01) &&
-                (queue_get_first_proc(ready)->text[PCB->DATA->PC] == 0xFF ||
-                    queue_get_first_proc(ready)->text[PCB->DATA->PC + 1] == 0xFF)
-            ){
-                //Setar flag
-                f |= 0x02;
-                //Setar status de encerrado
-                dados.PS = 5;
-                //Purge pcb
-                purge_pcb(PCBT, getPCB(PCBT, queue_get_first_proc(ready)->id));
-                //Retornar o id
-                returnId(queue_get_first_proc(ready)->id);
-                //Liberar memoria
-                liberarMemoria(MMEM, queue_get_first_proc(ready));
-                //Eliminar processo
-                queue_purge_proc(&ready);
+            if(!(f & 0x01)){
+                if (queue_get_first_proc(ready)->text[PCB->DATA->PC] == 0xFF ||
+                    queue_get_first_proc(ready)->text[PCB->DATA->PC + 1] == 0xFF){
+                        //Setar flag
+                        f |= 0x02;
+                        //Setar status de encerrado
+                        dados.PS = 5;
+                        //Purge pcb
+                        purge_pcb(PCBT, getPCB(PCBT, queue_get_first_proc(ready)->id));
+                        //Retornar o id
+                        returnId(queue_get_first_proc(ready)->id);
+                        //Liberar memoria
+                        liberarMemoria(MMEM, queue_get_first_proc(ready));
+                        //Eliminar processo
+                        queue_purge_proc(&ready);
+                }else{
+                    //RODAR
+                    queue_add_proc(&ready, queue_remove_proc(&ready)->DATA);
+                }
             }
 
         }
@@ -383,7 +382,7 @@ int main(int argc, char *args[]){
                     printf("| Status do processo:                                          %5d |\n", dados.PS);
                     printf("| Tempo total passado:                                         %5d |\n", dados.T);
                     printf("| Tempo total:                                                 %5d |\n", dados.total);
-                    printf("| Tempo restate:                                               %5d |\n", dados.total - dados.T);
+                    printf("| Tempo restate:                                               %5d |\n", (dados.total - dados.T < 0)?dados.T - dados.total:dados.total - dados.T);
                     printf("| Quantum da ultima rodada:                                    %5d |\n", quantum);
                     puts("----------------------------------------------------------------------");
                     gotoxy(2, 10);
