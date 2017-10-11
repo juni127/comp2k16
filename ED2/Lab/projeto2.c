@@ -24,15 +24,20 @@ typedef struct HASHING{
 list_hashing * diretorio[16];
 int profundidade_global = 2, profundidade_local = 4;
 
+int dec_bin(int dec){
+    if(dec/2 == 0)return dec%2;
+    return dec%2 + 10 * dec_bin(dec/2);
+}
+
 //Inserir hashing
 void inserir_hash(int cpf, int linha){
-    int addr = cpf%profundidade_global;
+    int addr = cpf%(int)pow(2, profundidade_global);
     hashing * data = (hashing*)malloc(sizeof(hashing));
     data->cpf = cpf;
     data->linha = linha;
     if(size_hashing(diretorio[addr]) < profundidade_local)
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
-    else if(diretorio[addr] == diretorio[cpf%(profundidade_global-1)] && profundidade_global > 2)
+    else if(diretorio[addr] == diretorio[cpf%(int)pow(2, profundidade_global-1)] && profundidade_global > 2)
         diretorio[addr] = add_end_hashing(NULL, data);
     else{
         //Aumentar profundidade global
@@ -40,13 +45,13 @@ void inserir_hash(int cpf, int linha){
         int x, y;
         for(x = pow(2, profundidade_global-1), y = 0; x < pow(2, profundidade_global); x++, y++)
             diretorio[x] = diretorio[y];
-        addr = cpf%profundidade_global;
+        addr = cpf%(int)pow(2, profundidade_global);
         diretorio[addr] = add_end_hashing(NULL, data);
     }
 }
 
 void deletar_hash(int cpf){
-    int addr = cpf%profundidade_global;
+    int addr = cpf%(int)pow(2, profundidade_global);
     list_hashing * aux = diretorio[addr];
     for( ;aux != NULL && aux->DATA->cpf != cpf; aux = aux->NEXT);
     if(aux != NULL)
@@ -103,9 +108,9 @@ int main(){
 
     do{
         int x;
-        for(x = 0; x < profundidade_global; x++){
+        for(x = 0; x < pow(2, profundidade_global); x++){
             list_hashing * aux = diretorio[x];
-            printf("---| BALDE %i |----------------\n", x);
+            printf("---| BALDE %8i |----------------\n", dec_bin(x));
             for ( ;aux != NULL; aux = aux->NEXT) {
                 printf("CPF: %i LINHA: %i\n", aux->DATA->cpf, aux->DATA->linha);
             }
