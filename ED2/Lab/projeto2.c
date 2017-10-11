@@ -24,6 +24,7 @@ typedef struct HASHING{
 list_hashing * diretorio[16];
 int profundidade_global = 2, profundidade_local = 4;
 
+//Converte de decimal para binario
 int dec_bin(int dec){
     if(dec/2 == 0)return dec%2;
     return dec%2 + 10 * dec_bin(dec/2);
