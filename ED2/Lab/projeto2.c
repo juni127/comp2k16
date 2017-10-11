@@ -10,7 +10,7 @@ typedef struct CLIENTE{
 }cliente;
 
 typedef struct HASHING{
-    int cpf, linha;
+    int cpf, linha, profundidade_local;
 }hashing;
 
 #define TYPE hashing
@@ -22,7 +22,7 @@ typedef struct HASHING{
 #undef TYPE
 
 list_hashing * diretorio[16];
-int profundidade_global = 2, profundidade_local = 4;
+int profundidade_global = 2; //profundidade_local = 4;
 
 //Converte de decimal para binario
 int dec_bin(int dec){
@@ -32,33 +32,60 @@ int dec_bin(int dec){
 
 //Inserir hashing
 void inserir_hash(int cpf, int linha){
+    //Descobre o index utilizando os n bits menos significativos
     int addr = cpf%(int)pow(2, profundidade_global);
+    //Cria nova estrutura para armazenar os dados
     hashing * data = (hashing*)malloc(sizeof(hashing));
     data->cpf = cpf;
     data->linha = linha;
-    if(size_hashing(diretorio[addr]) < profundidade_local)
+    //Se o balde não está cheio
+    if(size_hashing(diretorio[addr]) < 4){
+        //Adicionamos os dados a ele
+        data->profundidade_local = (diretorio[addr] != NULL)?diretorio[addr]->DATA->profundidade_local:profundidade_global;
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
-    else if(diretorio[addr] == diretorio[cpf%(int)pow(2, profundidade_global-1)] && profundidade_global > 2)
-        diretorio[addr] = add_end_hashing(NULL, data);
-    else{
+    }
+    //Se o balde estiver cheio e a profundidade global já suportar outro
+    else if(diretorio[addr]->DATA->profundidade_local < profundidade_global){
+        int x, y;
+        list_hashing * aux;
+        //Pega os elementos do baldo com overflow para serem realocados
+        aux = diretorio[addr];
+
+        //"Esvasia os baldes"
+        for(x = addr&0x3; x < 16; x+=4){
+            if(aux == diretorio[x])
+                diretorio[x] = NULL;
+        }
+
+        //"Re-enche os baldes vasios"
+        do{
+            aux->DATA->profundidade_local++;
+            int new_addr = aux->DATA->cpf%(int)pow(2, aux->DATA->profundidade_local);
+            diretorio[new_addr] = add_end_hashing(diretorio[new_addr], aux->DATA);
+            aux = purge_node_hashing(aux);
+        }while(aux != NULL);
+
+        for(x = pow(2, diretorio[addr]->DATA->profundidade_local), y = 0; profundidade_global > diretorio[addr]->DATA->profundidade_local && x < pow(2, diretorio[addr]->DATA->profundidade_local+1); x++, y++)
+            diretorio[x] = diretorio[y];
+
+        //Iserir novo elemento
+        diretorio[addr] = add_end_hashing(diretorio[addr], data);
+    }else{
         //Aumentar profundidade global
         profundidade_global++;
-        list_hashing * diretorio_old[16], * aux;
+        list_hashing * aux;
         int x, y;
-
-        for(x = 0; x < pow(2, profundidade_global); x++){
-            diretorio_old[x] = diretorio[x];
-            diretorio[x] = NULL;
-        }
-        for(x = 0; x < pow(2, profundidade_global - 1); x++){
-            aux = diretorio_old[x];
-            for( ;aux != NULL; aux = aux->NEXT)
-                inserir_hash(aux->DATA->cpf, aux->DATA->linha);
-        }
-
+        //Pega os elementos do baldo com overflow para serem inseridos de novo
+        aux = diretorio[addr];
+        //"Esvasia o balde"
+        diretorio[addr] = NULL;
+        //Apontamos os ponteiros para os baldes como se a profundidade global ainda fosse a mesma
         for(x = pow(2, profundidade_global-1), y = 0; x < pow(2, profundidade_global); x++, y++)
-            if(diretorio[x] == NULL)
-                diretorio[x] = diretorio[y];
+            diretorio[x] = diretorio[y];
+
+        //Re-inserir dados do balde com overflow
+        for(;aux != NULL; aux = purge_node_hashing(aux))
+            inserir_hash(aux->DATA->cpf, aux->DATA->linha);
 
         addr = cpf%(int)pow(2, profundidade_global);
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
@@ -116,7 +143,6 @@ list_cliente * abrir(char * nome_arquivo){
 }
 
 int main(){
-
     list_cliente * clientes = abrir("entrada.txt");
 
     char e;
@@ -126,8 +152,7 @@ int main(){
         system("cls");
         for(x = 0; x < pow(2, profundidade_global); x++){
             list_hashing * aux = diretorio[x];
-            printf("\n\n%p\n\n", diretorio[x]);
-            printf("---| BALDE %8i |----------------\n", dec_bin(x));
+            printf("\n---| BALDE %8i |---| DIR ADDRESS 0x%p |---| PROFUNDIDADE %i |----------\n", dec_bin(x), diretorio[x], (diretorio[x] != NULL)?diretorio[x]->DATA->profundidade_local:0);
             for ( ;aux != NULL; aux = aux->NEXT) {
                 printf("CPF: %i LINHA: %i\n", aux->DATA->cpf, aux->DATA->linha);
             }
