@@ -43,11 +43,25 @@ void inserir_hash(int cpf, int linha){
     else{
         //Aumentar profundidade global
         profundidade_global++;
+        list_hashing * diretorio_old[16], * aux;
         int x, y;
+
+        for(x = 0; x < pow(2, profundidade_global); x++){
+            diretorio_old[x] = diretorio[x];
+            diretorio[x] = NULL;
+        }
+        for(x = 0; x < pow(2, profundidade_global - 1); x++){
+            aux = diretorio_old[x];
+            for( ;aux != NULL; aux = aux->NEXT)
+                inserir_hash(aux->DATA->cpf, aux->DATA->linha);
+        }
+
         for(x = pow(2, profundidade_global-1), y = 0; x < pow(2, profundidade_global); x++, y++)
-            diretorio[x] = diretorio[y];
+            if(diretorio[x] == NULL)
+                diretorio[x] = diretorio[y];
+
         addr = cpf%(int)pow(2, profundidade_global);
-        diretorio[addr] = add_end_hashing(NULL, data);
+        diretorio[addr] = add_end_hashing(diretorio[addr], data);
     }
 }
 
@@ -109,8 +123,10 @@ int main(){
 
     do{
         int x;
+        system("cls");
         for(x = 0; x < pow(2, profundidade_global); x++){
             list_hashing * aux = diretorio[x];
+            printf("\n\n%p\n\n", diretorio[x]);
             printf("---| BALDE %8i |----------------\n", dec_bin(x));
             for ( ;aux != NULL; aux = aux->NEXT) {
                 printf("CPF: %i LINHA: %i\n", aux->DATA->cpf, aux->DATA->linha);
