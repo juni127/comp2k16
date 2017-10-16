@@ -107,7 +107,7 @@ void salvar(char * nome_arquivo, list_cliente * clientes){
         if(clientes->DATA != NULL)
             fprintf(alvo, "%i %s# %i %f %f\n", clientes->DATA->conta, clientes->DATA->nome, clientes->DATA->cpf, clientes->DATA->limite, clientes->DATA->saldo);
         else
-            fprintf(alvo, "%i\n", line);
+            fprintf(alvo, "%i\n", -1);
     }
     fclose(alvo);
 }
@@ -120,23 +120,26 @@ list_cliente * abrir(char * nome_arquivo){
     list_cliente * retorno = NULL;
     cliente entrada;
     while(!feof(alvo)){
-        for( ; fscanf(alvo, "%i %[^#]# %i %f %f\n", &entrada.conta, entrada.nome, &entrada.cpf, &entrada.limite, &entrada.saldo) > 1; linha++){
-            //Popular hashing
-            inserir_hash(entrada.cpf, linha);
-            //Criar novo cliente
-            cliente * aux = (cliente*)malloc(sizeof(cliente));
-            //Popular cliente
-            aux->conta = entrada.conta;
-            strcpy(aux->nome, entrada.nome);
-            aux->cpf = entrada.cpf;
-            aux->limite = entrada.limite;
-            aux->saldo = entrada.saldo;
-            //Adicionar cliente na lista
-            retorno = add_end_cliente(retorno, aux);
-        }
-        if(!feof(alvo)){
-            fscanf(alvo, "%i\n");
-            linha++;
+        for( ; fscanf(alvo, "%d ", &entrada.conta) > 0; linha++){
+            if(entrada.conta < 0){
+                retorno = add_end_cliente(retorno, NULL);
+                fscanf(alvo, "\n");
+            }else{
+                //Ler resto
+                fscanf(alvo, "%[^#]# %i %f %f\n", entrada.nome, &entrada.cpf, &entrada.limite, &entrada.saldo);
+                //Popular hashing
+                inserir_hash(entrada.cpf, linha);
+                //Criar novo cliente
+                cliente * aux = (cliente*)malloc(sizeof(cliente));
+                //Popular cliente
+                aux->conta = entrada.conta;
+                strcpy(aux->nome, entrada.nome);
+                aux->cpf = entrada.cpf;
+                aux->limite = entrada.limite;
+                aux->saldo = entrada.saldo;
+                //Adicionar cliente na lista
+                retorno = add_end_cliente(retorno, aux);
+            }
         }
     }
     return retorno;
@@ -186,7 +189,7 @@ int main(){
                 list_cliente * aux = clientes;
                 for( ; aux != NULL && aux->DATA->cpf != cpf; aux = aux->NEXT);
                 if(aux != NULL)
-                    clientes = purge_node_cliente(aux);
+                    aux->DATA = NULL;
                 break;
         }
     }while(e != 's');
