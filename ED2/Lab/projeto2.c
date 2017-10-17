@@ -33,15 +33,16 @@ int dec_bin(int dec){
 //Inserir hashing
 void inserir_hash(int cpf, int linha){
     //Descobre o index utilizando os n bits menos significativos
-    int addr = cpf%(int)pow(2, profundidade_global);
+    int addr = (diretorio[cpf%4] != NULL)?cpf%(int)pow(2, diretorio[cpf%4]->DATA->profundidade_local):cpf%4, i;
     //Cria nova estrutura para armazenar os dados
     hashing * data = (hashing*)malloc(sizeof(hashing));
     data->cpf = cpf;
     data->linha = linha;
+
     //Se o balde não está cheio
     if(size_hashing(diretorio[addr]) < 4){
         //Adicionamos os dados a ele
-        data->profundidade_local = (diretorio[addr] != NULL)?diretorio[addr]->DATA->profundidade_local:profundidade_global;
+        data->profundidade_local = (diretorio[addr] != NULL)?diretorio[addr]->DATA->profundidade_local:2;
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
     }
     //Se o balde estiver cheio e a profundidade global já suportar outro
@@ -84,20 +85,55 @@ void inserir_hash(int cpf, int linha){
             diretorio[x] = diretorio[y];
 
         //Re-inserir dados do balde com overflow
-        for(;aux != NULL; aux = purge_node_hashing(aux))
-            inserir_hash(aux->DATA->cpf, aux->DATA->linha);
+        for(;aux != NULL; aux = purge_node_hashing(aux)){
+            aux->DATA->profundidade_local = profundidade_global;
+            int new_addr = aux->DATA->cpf%(int)pow(2, profundidade_global);
+            diretorio[new_addr] = add_end_hashing(diretorio[new_addr], aux->DATA);
+        }
 
         addr = cpf%(int)pow(2, profundidade_global);
-        diretorio[addr] = add_end_hashing(diretorio[addr], data);
+        //diretorio[addr] = add_end_hashing(diretorio[addr], data);
+        inserir_hash(data->cpf, data->linha);
     }
 }
 
 void deletar_hash(int cpf){
-    int addr = cpf%(int)pow(2, profundidade_global);
-    list_hashing * aux = diretorio[addr];
+    int addr = cpf%(int)pow(2, profundidade_global), x, y, i, t;
+    list_hashing * aux = diretorio[addr], * aux2, * old[16];
     for( ;aux != NULL && aux->DATA->cpf != cpf; aux = aux->NEXT);
-    if(aux != NULL)
-        diretorio[addr] = purge_node_hashing(aux);
+    if(aux == NULL)
+        return;
+    aux2 = aux->NEXT;
+    diretorio[addr] = purge_node_hashing(aux);
+
+    for(x = 0; x < pow(2, profundidade_global - 2); x++){
+        y = (x << 2) + (addr&0x3);
+        if(diretorio[y] == aux)diretorio[y] = NULL;
+    }
+
+    for(i = profundidade_global; i > 2; i--){
+        for(x = 1<<(i-1), y = 0; x < 1<<i; x++, y++){
+            if(diretorio[y] == diretorio[x])diretorio[x] = NULL;
+        }
+    }
+
+    for(i = 0, t = 0; i < 1<<profundidade_global; i++){
+        if(diretorio[i] != NULL){
+            old[t] = diretorio[i];
+            diretorio[i] = NULL;
+            t++;
+        }
+    }
+
+    profundidade_global = 2;
+
+    for(i = 0; i < t; i++){
+        aux = old[i];
+        for( ;aux != NULL; aux = purge_node_hashing(aux)){
+            inserir_hash(aux->DATA->cpf, aux->DATA->linha);
+            free(aux->DATA);
+        }
+    }
 }
 
 void salvar(char * nome_arquivo, list_cliente * clientes){
@@ -187,7 +223,7 @@ int main(){
                 scanf("%i", &cpf);
                 deletar_hash(cpf);
                 list_cliente * aux = clientes;
-                for( ; aux != NULL && aux->DATA->cpf != cpf; aux = aux->NEXT);
+                for( ; aux != NULL && (aux->DATA == NULL || aux->DATA->cpf != cpf); aux = aux->NEXT);
                 if(aux != NULL)
                     aux->DATA = NULL;
                 break;
