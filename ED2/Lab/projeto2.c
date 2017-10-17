@@ -31,7 +31,7 @@ int dec_bin(int dec){
 }
 
 //Inserir hashing
-void inserir_hash(int cpf, int linha){
+int inserir_hash(int cpf, int linha){
     //Descobre o index utilizando os n bits menos significativos
     int addr = (diretorio[cpf%4] != NULL)?cpf%(int)pow(2, diretorio[cpf%4]->DATA->profundidade_local):cpf%4, i;
     //Cria nova estrutura para armazenar os dados
@@ -72,6 +72,9 @@ void inserir_hash(int cpf, int linha){
         //Iserir novo elemento
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
     }else{
+        //Não é possivel colocar esse elemento
+        if(profundidade_global > 3)
+            return 0;
         //Aumentar profundidade global
         profundidade_global++;
         list_hashing * aux;
@@ -95,6 +98,7 @@ void inserir_hash(int cpf, int linha){
         //diretorio[addr] = add_end_hashing(diretorio[addr], data);
         inserir_hash(data->cpf, data->linha);
     }
+    return 1;
 }
 
 void deletar_hash(int cpf){
@@ -214,8 +218,12 @@ int main(){
                 scanf("%f", &entrada->limite);
                 printf("Saldo:");
                 scanf("%f", &entrada->saldo);
-                clientes = add_end_cliente(clientes, entrada);
-                inserir_hash(entrada->cpf, size_hashing(clientes));
+                if(inserir_hash(entrada->cpf, size_hashing(clientes)))
+                    clientes = add_end_cliente(clientes, entrada);
+                else{
+                    puts("Não foi possivel adicionar esse elemento.");
+                    system("pause");
+                }
                 break;
             case 'd':
                 printf("CPF:");
