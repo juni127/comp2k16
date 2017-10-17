@@ -1,7 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<conio.h>
 #include<string.h>
+
+#define NOME_ARQUIVO "entrada.txt"
 
 typedef struct CLIENTE{
     int conta, cpf;
@@ -39,13 +42,13 @@ int inserir_hash(int cpf, int linha){
     data->cpf = cpf;
     data->linha = linha;
 
-    //Se o balde n√£o est√° cheio
+    //Se o balde n„o est· cheio
     if(size_hashing(diretorio[addr]) < 4){
         //Adicionamos os dados a ele
         data->profundidade_local = (diretorio[addr] != NULL)?diretorio[addr]->DATA->profundidade_local:2;
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
     }
-    //Se o balde estiver cheio e a profundidade global j√° suportar outro
+    //Se o balde estiver cheio e a profundidade global j· suportar outro
     else if(diretorio[addr]->DATA->profundidade_local < profundidade_global){
         int x, y;
         list_hashing * aux;
@@ -72,7 +75,7 @@ int inserir_hash(int cpf, int linha){
         //Iserir novo elemento
         diretorio[addr] = add_end_hashing(diretorio[addr], data);
     }else{
-        //N√£o √© possivel colocar esse elemento
+        //N„o È possivel colocar esse elemento
         if(profundidade_global > 3)
             return 0;
         //Aumentar profundidade global
@@ -99,6 +102,16 @@ int inserir_hash(int cpf, int linha){
         inserir_hash(data->cpf, data->linha);
     }
     return 1;
+}
+
+int busca_hash(int cpf){
+	int addr = cpf%(int)pow(2, profundidade_global);
+	list_hashing * aux = diretorio[addr];
+	for( ;aux != NULL && aux->DATA->cpf != cpf; aux = aux->NEXT);
+	if(aux == NULL)
+		return -1;
+	else 
+		return aux->DATA->linha;
 }
 
 void deletar_hash(int cpf){
@@ -186,26 +199,28 @@ list_cliente * abrir(char * nome_arquivo){
 }
 
 int main(){
-    list_cliente * clientes = abrir("entrada.txt");
+    list_cliente * clientes = abrir(NOME_ARQUIVO);
 
     char e;
 
     do{
         int x;
         system("cls");
-        for(x = 0; x < pow(2, profundidade_global); x++){
-            list_hashing * aux = diretorio[x];
-            printf("\n---| BALDE %8i |---| DIR ADDRESS 0x%p |---| PROFUNDIDADE %i |----------\n", dec_bin(x), diretorio[x], (diretorio[x] != NULL)?diretorio[x]->DATA->profundidade_local:0);
-            for ( ;aux != NULL; aux = aux->NEXT) {
-                printf("CPF: %i LINHA: %i\n", aux->DATA->cpf, aux->DATA->linha);
-            }
-        }
         fflush(stdin);
-        printf("Entre: ");
-        scanf("%c", &e);
+        printf("----------------------------------------------\n");
+        printf("| Comando  |  Acao                           |\n");
+        printf("|--------------------------------------------|\n");
+        printf("|    i     |  Inserir cliente                |\n");
+        printf("|    d     |  Apagar cliente                 |\n");
+        printf("|    b     |  Buscar cliente                 |\n");
+        printf("|    m     |  Mostrar estado da hash table   |\n");
+        printf("|    s     |  Salvar dados                   |\n");
+        printf("----------------------------------------------\n");
+        e = getch();
         fflush(stdin);
         switch (e) {
             case 'i':
+            	puts("Insira os dados:");
                 printf("Nome:");
                 cliente * entrada = (cliente*)malloc(sizeof(cliente));
                 fflush(stdin);
@@ -221,11 +236,12 @@ int main(){
                 if(inserir_hash(entrada->cpf, size_hashing(clientes)))
                     clientes = add_end_cliente(clientes, entrada);
                 else{
-                    puts("N√£o foi possivel adicionar esse elemento.");
+                    puts("N„o foi possivel adicionar esse elemento.");
                     system("pause");
                 }
                 break;
             case 'd':
+            	puts("Insira os dados:");
                 printf("CPF:");
                 int cpf;
                 scanf("%i", &cpf);
@@ -235,10 +251,38 @@ int main(){
                 if(aux != NULL)
                     aux->DATA = NULL;
                 break;
+            case 'b':
+            	puts("Insira os dados:");
+            	printf("CPF:");
+            	int cpf2, linha;
+            	scanf("%i", &cpf2);
+            	linha = busca_hash(cpf2);
+            	if(linha < 0)
+            		puts("Cpf n„o encontrado!");
+            	else{
+                	list_cliente * clnt = get_cliente(clientes, linha);
+                	printf("Nome: %s \nConta: %i \nCPF: %i \nLimite: %.2f \nSaldo: %.2f\n", clnt->DATA->nome, clnt->DATA->conta, clnt->DATA->cpf, clnt->DATA->limite, clnt->DATA->saldo);
+				}
+            	break;
+            case 'm':
+        		for(x = 0; x < pow(2, profundidade_global); x++){
+            		list_hashing * aux = diretorio[x];
+        		    printf("\n---| BALDE %8i |---| DIR ADDRESS 0x%p |---| PROFUNDIDADE %i |----------\n", dec_bin(x), diretorio[x], (diretorio[x] != NULL)?diretorio[x]->DATA->profundidade_local:0);
+		            for ( ;aux != NULL; aux = aux->NEXT) {
+                		printf("CPF: %i LINHA: %i\n", aux->DATA->cpf, aux->DATA->linha);
+            		}
+        		}
+        		break;
+            case 's':
+            	salvar(NOME_ARQUIVO, clientes);
+            	break;
         }
+        puts("\n\nQualquer tecla para continuar\n");
+        getch();
+        fflush(stdin);
     }while(e != 's');
 
-    salvar("entrada.txt", clientes);
+    salvar(NOME_ARQUIVO, clientes);
 
     return 0;
 }
