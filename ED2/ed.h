@@ -148,6 +148,7 @@ LIST (TYPE) *PURGE_NODE (TYPE) (LIST (TYPE) * list){
 	LIST (TYPE) * aux;
 	if(list->PREV == NULL){
 		aux = list->NEXT;
+		free(list->DATA);
 		free(list);
 		if(aux != NULL)
 			aux->PREV = NULL;
@@ -157,6 +158,7 @@ LIST (TYPE) *PURGE_NODE (TYPE) (LIST (TYPE) * list){
 	list->PREV->NEXT = list->NEXT;
 	if(list->NEXT != NULL)
 		list->NEXT->PREV = list->PREV;
+	free(list->DATA);
 	free(list);
 	return aux;
 }
