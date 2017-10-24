@@ -161,6 +161,13 @@ LIST (TYPE) *PURGE_NODE (TYPE) (LIST (TYPE) * list){
 	return aux;
 }
 
+#define PURGE_ALL(T) TOKENPASTE(purge_all_, T)
+void PURGE_ALL (TYPE) (LIST (TYPE) * list){
+	if(list == NULL)return;
+	PURGE_ALL(TYPE)(list->NEXT);
+	free(list);
+}
+
 #define QUEUE_INIT(T) TOKENPASTE(queue_init_, T)
 QUEUE (TYPE) QUEUE_INIT (TYPE) (){
 	QUEUE(TYPE) result;
