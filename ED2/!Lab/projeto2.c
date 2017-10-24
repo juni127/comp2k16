@@ -102,6 +102,7 @@ void adicionarAluno(aluno alvo){
     buffer[0]->alunos[alunoc].idade = alvo.idade;
     buffer[0]->alunos[alunoc].matricula = alvo.matricula;
     alunoc++;
+    buffer[0]->alunos_count = alunoc;
     reg * registro = (reg*)malloc(sizeof(reg));
     registro->pos = alunoc-1;
     registro->matricula = alvo.matricula;
@@ -145,8 +146,11 @@ void editarAluno(int matricula, aluno alvo){
     if(lista_reg == NULL)
         return;
     carregarBuffer(lista_reg->DATA->page_id);
-    if(!strcmp("", aluno.nome))
-        strcpy(buffer[0]->alunos[lista_reg->DATA->pos].nome, aluno.nome);
+    strcpy(buffer[0]->alunos[lista_reg->DATA->pos].nome, alvo.nome);
+    if(alvo.idade > -1)
+        buffer[0]->alunos[lista_reg->DATA->pos].idade = alvo.idade;
+    if(alvo.sexo == 'm' || alvo.sexo == 'f')
+        buffer[0]->alunos[lista_reg->DATA->pos].sexo = alvo.sexo;
 }
 
 int main(){
@@ -155,7 +159,7 @@ int main(){
 
     hashing = (list_reg**)malloc(sizeof(list_reg*)*HASH_SIZE);
     paginas_incompletas = (pagina**)malloc(sizeof(pagina*)*HASH_SIZE);
-    int x;
+    int x, y;
     for(x = 0; x < 4; x++)buffer[x] = NULL;
     for(x = 0; x < HASH_SIZE; x++){
         paginas_incompletas[x] = (pagina*)malloc(sizeof(pagina));
@@ -170,7 +174,13 @@ int main(){
 
     do{
         system("cls");
-        printf("Menuzera\nn para adicionar\nb para buscar\nd para deletar\n\n\n\n");
+        puts("--------| Menu |------------------------");
+        puts("|        n         |    Novo aluno     |");
+        puts("|        b         |   Buscar aluno    |");
+        puts("|        d         |   Deletar aluno   |");
+        puts("|        e         |   Editar aluno    |");
+        puts("|        m         | Mostrar estrutura |");
+        puts("----------------------------------------");
         fflush(stdin);
         e = getch();
         switch (e) {
@@ -217,6 +227,56 @@ int main(){
                 printf("Digite a nova idade do aluno:");
                 scanf("%i", &novo1.idade);
                 editarAluno(x, novo1);
+                break;
+            case 'm':
+                puts("\n\n");
+                puts("----| Info |---------------------------------------");
+                puts("\n ----| Buffer info |--------------------------------");
+                for(x = 0; x < 4; x++){
+                    printf("\n  -----| quadro %i |---------------------------", x);
+                    printf("  -> ADDR da Pagina: 0x%p\n", buffer[x]);
+                    if(buffer[x] != NULL){
+                        printf("  |_> Id da pagina: %i\n", buffer[x]->id);
+                        printf("  |_> Numero de registros na pagina: %i\n", buffer[x]->alunos_count);
+                        for(y = 0; y < buffer[x]->alunos_count; y++){
+                            printf("   |_> Numero da matricula %i: %i\n", y+1, buffer[x]->alunos[y].matricula);
+                        }
+                    }else{
+                        puts("  -> Quadro vazio!");
+                    }
+                    puts("  --------------------------------------------");
+                }
+                puts(" ---------------------------------------------------");
+                puts("\n -----| Pages info |--------------------------------");
+                puts("\n\n  -> Paginas incompletas");
+                for(x = 0; x < HASH_SIZE; x++){
+                    printf("  |_> Id: %i\n", paginas_incompletas[x]->id);
+                    printf("    |_> Registros: %i\n", paginas_incompletas[x]->alunos_count);
+                    printf("    |_> Dados dos registros:\n");
+                    for(y = 0; y < paginas_incompletas[x]->alunos_count; y++){
+                        printf("      |_> Matricula %i: %i\n", y+1, paginas_incompletas[x]->alunos[y].matricula);
+                    }
+                }
+                puts("\n\n  -> Paginas Completas");
+                for(x = 0; x < topo_pagina; x++){
+                    printf("  |_> Id: %i\n", paginas_completas[x]->id);
+                    printf("    |_> Dados dos registros:\n");
+                    for(y = 0; y < 3; y++){
+                        printf("      |_> Matricula %i: %i\n", y+1, paginas_completas[x]->alunos[y].matricula);
+                    }
+                }
+                puts("\n\n ---------------------------------------------------");
+                puts("\n -----| Hash info (matricula, id da pagina) |-------");
+                for(x = 0; x < HASH_SIZE; x++){
+                    list_reg * aux;
+                    printf(" |_> hash[%i] = {", x);
+                    for(aux = hashing[x]; aux->NEXT != NULL; aux = aux->NEXT){
+                        printf("(%i, %i), ", aux->DATA->matricula, aux->DATA->page_id);
+                    }
+                    printf("(%i, %i)}\n", aux->DATA->matricula, aux->DATA->page_id);
+                }
+                puts("\n\n ---------------------------------------------------");
+                puts("\n\n----------------------------------------------------");
                 break;
         }
         puts("\n\n\n\nQualquer tecla para continuar.");
