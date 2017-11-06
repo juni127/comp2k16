@@ -16,7 +16,7 @@ int main(){
     char e;
     int addr, x, y;
 
-    start:
+    do{
         system("cls");
         puts("------| MeNu |-------------------------------------------");
         puts("| Comando | Acao                                        |");
@@ -27,7 +27,7 @@ int main(){
         puts("---------------------------------------------------------");
         fflush(stdin);
         e = getch();
-        if(e == 's')goto saida;
+        if(e == 's')break;
         puts("| Digite o endereco em hexadecimal                      |");
         puts("---------------------------------------------------------");
         scanf("%p", &addr);
@@ -72,8 +72,7 @@ int main(){
         }
         puts("\n\n               | Qualquer tecla para continutar |");
         getch();
-    goto start;
-    saida:
+    while(1);
     system("cls");
     puts("Obrigado por usar o programa. Volte sempre. (Qualquer tecla para continuar)");
     getch();
