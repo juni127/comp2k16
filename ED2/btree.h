@@ -1099,7 +1099,7 @@ node * insertFile( node * root, int key, int value) {
 
 
  	/* Case:  leaf must be split.
-		Vou precisar de uma função nova
+		Vou precisar de uma fun��o nova
  	 */
 
  	return insert_into_leaf_after_splitting_file(root, leaf, key, pointer);
@@ -1361,6 +1361,7 @@ node * coalesce_nodes_file(node * root, node * n, node * neighbor, int neighbor_
 		buffer[btop] = c;
 		btop++;
 	}
+	fclose(f);
 	char del[26], x;
 	del[0] = 'd';
 	del[1] = 'e';
@@ -1452,10 +1453,10 @@ node * coalesce_nodes_file(node * root, node * n, node * neighbor, int neighbor_
 	free(n);
 
 	char y;
-	f = fopen(genFileName(((record *)root->pointers[0])->value), "w");
-	for(y = 0; y < root->num_keys; y++){
+	f = fopen(genFileName(((record *)neighbor->pointers[0])->value), "w");
+	for(y = 0; y < neighbor->num_keys; y++){
 		for(x = 0; x < btop; x++)
-			if(buffer[x].codigo == ((record *)root->pointers[y])->value)
+			if(buffer[x].codigo == ((record *)neighbor->pointers[y])->value)
 				fprintf(f, "%i %i %s# %s# %s\n", buffer[x].codigo, buffer[x].idade, buffer[x].nome, buffer[x].telefone, buffer[x].endereco);
 	}
 	fclose(f);
@@ -1558,6 +1559,7 @@ node * redistribute_nodes_file(node * root, node * n, node * neighbor, int neigh
 		 buffer[btop] = c;
 		 btop++;
 	 }
+	 fclose(f);
 	 char del[26], x;
 	 del[0] = 'd';
 	 del[1] = 'e';
@@ -1630,7 +1632,7 @@ node * redistribute_nodes_file(node * root, node * n, node * neighbor, int neigh
 	neighbor->num_keys--;
 
 	char y;
-		f = fopen(genFileName(((record *)n->pointers[0])->value), "w");
+	f = fopen(genFileName(((record *)n->pointers[0])->value), "w");
 	for(y = 0; y < n->num_keys; y++){
 		for(x = 0; x < btop; x++)
 			if(buffer[x].codigo == ((record *)n->pointers[y])->value)
@@ -1822,7 +1824,7 @@ node * deleteFile(node * root, int key) {
  	if (key_record != NULL && key_leaf != NULL) {
 		btop = 0;
 		char oldFile[20];
-		strcpy(oldFile, genFileName(((record *)root->pointers[0])->value));
+		strcpy(oldFile, genFileName(((record *)key_leaf->pointers[0])->value));
 		FILE * f = fopen(oldFile, "r");
 		cliente c;
 		while(fscanf(f, "%i %i %[^#]# %[^#]# %[^\n]\n", &c.codigo, &c.idade, c.nome, c.telefone, c.endereco) == 5){

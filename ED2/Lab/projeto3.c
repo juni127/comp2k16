@@ -36,7 +36,7 @@ char * genFileName(int x){
     return file_name;
 }
 
-#include"../btree.h"
+#include"btree.h"
 
 int main(){
 
