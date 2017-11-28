@@ -2,16 +2,6 @@
 #include<stdlib.h>
 #include<conio.h>
 
-//Printar os numeros em binario
-void printBin(int x){
-        if(x == 0){
-            printf("0");
-            return;
-        }
-        printBin(x/2);
-        printf("%i", x%2);
-}
-
 int main(){
     char e;
     int addr, x, y;
@@ -43,36 +33,38 @@ int main(){
                 printf("WORD: 0x%p\nLINHA: 0x%p\nTAG: 0x%p\n", word, linha, tag);
                 puts("\n\nEm binario:");
                 printf("\nWORD: ");
-                printBin(word);
+                for(x = 1; x >= 0; x--)printf("%i", (word>>x)&0x1);
                 printf("\nLINHA: ");
-                printBin(linha);
+                for(x = 10; x >= 0; x--)printf("%i", (linha>>x)&0x1);
                 printf("\nTAG: ");
-                printBin(tag);
+                for(x = 16; x >= 0; x--)printf("%i", (tag>>x)&0x1);
                 printf("\n\nEndereco completo: \n");
                 for(x = 31; x >= 0; x--)printf("%i", (addr>>x)&0x1);
                 break;
             case 'a':
                 //Associativo
                 printf(" Digite o numero de conjuntos (potencia de dois):");
-                scanf("%i", &x);
-                int set = (addr>>2)&(x-1);
-                tag = (addr>>11);
+                int y, k;
+                scanf("%i", &y);
+                for(k = 0; (1<<k) < y; k++);
+                int set = (addr>>2)&(y-1);
+                tag = (addr>>2+k);
                 puts("\n\nEm hexa:");
                 printf("WORD: 0x%p\nCONJUNTO: 0x%p\nTAG: 0x%p\n", word, set, tag);
                 puts("\n\nEm binario:");
                 printf("\nWORD: ");
-                printBin(word);
+                for(x = 1; x >= 0; x--)printf("%i", (word>>x)&0x1);
                 printf("\nCONJUNTO: ");
-                printBin(set);
+                for(x = k-1; x >= 0; x--)printf("%i", (set>>x)&0x1);
                 printf("\nTAG: ");
-                printBin(tag);
+                for(x = 29-k; x >= 0; x--)printf("%i", (tag>>x)&0x1);
                 printf("\n\nEndereco completo: \n");
-                for(x = 31; x >= 0; x--)printf("%i", (addr>>x)&0x1);
+                for(x = 31; x >= 0; x--)printf("%i", ((addr>>x)&0x1));
                 break;
         }
         puts("\n\n               | Qualquer tecla para continutar |");
         getch();
-    while(1);
+    }while(1);
     system("cls");
     puts("Obrigado por usar o programa. Volte sempre. (Qualquer tecla para continuar)");
     getch();

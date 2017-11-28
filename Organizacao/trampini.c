@@ -3,7 +3,7 @@
 #include<conio.h>
 #include<string.h>
 
-#define MEM_SIZE 1000
+#define MEM_SIZE 128
 
 struct PROCESSADOR{
     unsigned short MAR, MBR, PC, IR;
@@ -15,7 +15,7 @@ int mem_top = -1;
 int correrPrograma(){
     do{
         PROC.IR = mem[PROC.PC];
-        switch ((PROC.IR >> 7) & 0x07) {
+        switch ((PROC.IR >> 7)&0x07) {
             case 0x00:
                 //NOOP Provavelmente é um valor de memoria
                 PROC.PC++;
@@ -23,25 +23,25 @@ int correrPrograma(){
             case 0x01:
                 //Lê o valor contido no endereço x e o salva no MBR
                 PROC.MAR = PROC.IR&0x7F;
-                PROC.MBR = mem[PROC.MAR];
+                PROC.MBR = mem[PROC.MAR+mem_top];
                 PROC.PC++;
                 break;
             case 0x02:
                 //Salva o valor contido no MBR no endereço x
                 PROC.MAR = PROC.IR&0x7F;
-                mem[PROC.MAR] = PROC.MBR&0x7F;
+                mem[PROC.MAR+mem_top] = PROC.MBR&0x7F;
                 PROC.PC++;
                 break;
             case 0x03:
                 //Lê o valor contido no endereço x e soma ao valor contido no MBR. O valor da soma é armazenado no MBR
                 PROC.MAR = PROC.IR&0x7F;
-                PROC.MBR += mem[PROC.MAR];
+                PROC.MBR += mem[PROC.MAR+mem_top];
                 PROC.PC++;
                 break;
             case 0x04:
                 //Lê o valor contido no endereço x e subtrai do valor contido no MBR (MBR - ‘x’) . O valor da subtração é armazenado no MBR
                 PROC.MAR = PROC.IR&0x7F;
-                PROC.MBR -= mem[PROC.MAR];
+                PROC.MBR -= mem[PROC.MAR+mem_top];
                 PROC.PC++;
                 break;
             case 0x05:
@@ -66,10 +66,20 @@ int correrPrograma(){
     return 1;
 }
 
-void compilar(char str1[100], char str2[100]){
-    FILE * f = fopen(str1, "r"), * o = fopen(str2, "w");
+int compilar(char str1[100], char str2[100]){
+    FILE * f = fopen(str1, "r"), * o;
+    if(f == NULL)
+        return -2;
+    int s, y;
     char in[7];
+    for(s = 0; !feof(f); s++)
+        fscanf(f, "%s %p", in, &y);
+    y = 0;
+    if(s >= MEM_SIZE)
+        return -1;
+    rewind(f);
     unsigned short x, codigo[1];
+    o = fopen(str2, "w");
     do{
         fscanf(f, "%s", in);
         if(in[0] == 'R' || in[0] == 'r')
@@ -80,22 +90,33 @@ void compilar(char str1[100], char str2[100]){
             codigo[0] = 0x180;
         else if(in[2] == 'B' || in[2] == 'b')
             codigo[0] = 0x200;
-        else if(in[0] == 'J' || in[0] == 'j')
+        else if(in[1] == 'M' || in[1] == 'm')
             codigo[0] = 0x280;
         else if(in[0] == 'S' || in[0] == 's')
             codigo[0] = 0x300;
         else
             codigo[0] = 0x380;
-        fscanf(f, " %p", &x);
-        codigo[0] |= x;
+        fscanf(f, "%c", &in[0]);
+        if(in[0] == '\n' && codigo[0] != 0x380)
+            return 0x100 | y;
+        if(fscanf(f, "%p", &x) < 1 && codigo[0] != 0x380)
+            return 0x100 | y;
+        if(x+s >= MEM_SIZE && !(codigo[0] == 0x380 || codigo[0] == 0x300))
+            return 0x80 | y;
+        codigo[0] |= x&0x7F;
         fwrite(codigo, sizeof(unsigned short), 1, o);
+        fscanf(f, "%c", &in[0]);
+        if(in[0] == '\n')y++;
     }while(!feof(f));
     fclose(f);
     fclose(o);
+    return 0;
 }
 
-void carregar(char str1[100]){
+int carregar(char str1[100]){
     FILE * f = fopen(str1, "r");
+    if(f == NULL)
+        return 0;
     unsigned short codigo[1];
     PROC.PC = 0;
     mem_top = 0;
@@ -104,6 +125,44 @@ void carregar(char str1[100]){
         mem_top++;
     }
     fclose(f);
+    return 1;
+}
+
+void descompilar(){
+    int x;
+    puts("INICIO:");
+    for(x = 0; x < mem_top; x++){
+        switch ((mem[x]>>7)&0xF) {
+            case 0x0:
+                printf(" 0x%p: MEM ", x);
+                break;
+            case 0x1:
+                printf(" 0x%p: READ ", x);
+                break;
+            case 0x2:
+                printf(" 0x%p: WRITE ", x);
+                break;
+            case 0x3:
+                printf(" 0x%p: ADD ", x);
+                break;
+            case 0x4:
+                printf(" 0x%p: SUB ", x);
+                break;
+            case 0x5:
+                printf(" 0x%p: JMP ", x);
+                break;
+            case 0x6:
+                printf(" 0x%p: SET ", x);
+                break;
+        }
+        if(((mem[x]>>7)&0xF) != 0x7){
+            if(mem[x]&0x8000)
+                printf("%p <-| breakpoint |\n", mem[x]&0x7F);
+            else
+                printf("%p\n", mem[x]&0x7F);
+        }
+    }
+    printf(" 0x%p: END\n", x);
 }
 
 void guia(){
@@ -188,7 +247,7 @@ void ajuda(char e){
 }
 
 int main(){
-    char e, str1[100], str2[100], a;
+    char e, str1[100], str2[100], a, b, x;
     guia();
     do{
         fflush(stdin);
@@ -198,13 +257,24 @@ int main(){
                 break;
             case 'c':
                 scanf(" %s %s", str1, str2);
-                compilar(str1, str2);
-                puts(" Compilado com sucesso.");
+                int r = compilar(str1, str2);
+                if(!r)
+                    puts(" Convertido com sucesso.");
+                else if(r == -1)
+                    puts(" ERRO NA LINHA 128: Programa maior que a memoria.");
+                else if(r == -2)
+                    puts(" ERRO: Arquivo de entrada nao encontrado.");
+                else if(r&0x80)
+                    printf(" ERRO NA LINHA %i: Endereco digitado corresponde a espaco inexistente.\n", (r&0x7F) + 1);
+                else if(r&0x100)
+                    printf(" ERRO NA LINHA %i: Erro de sintaxe.\n", (r&0x7F) + 1);
                 break;
             case 'l':
                 scanf("  %s", str1);
-                carregar(str1);
-                puts(" Carregado com sucesso.");
+                if(carregar(str1))
+                    puts(" Carregado com sucesso.");
+                else
+                    puts(" Arquivo nao encontrado.");
                 break;
             case 'r':
                 if(correrPrograma())
@@ -216,11 +286,77 @@ int main(){
                 puts(" Breakpoint adicionado.");
                 break;
             case 'm':
-                printf("\nMBR: %p\nMAR: %p\nPC: %p\nIR: %p\n\n", PROC.MBR, PROC.MAR, PROC.PC, PROC.IR);
+                printf("\n MBR: %p\n MAR: %p\n PC: %p\n IR: %p\n\n", PROC.MBR, PROC.MAR, PROC.PC, PROC.IR);
+                break;
+            case 's':
+                scanf("%p", &a);
+                x = a;
+                char spc;
+                scanf("%c", &spc);
+                if(spc != '\n')
+                    scanf("%p", &b);
+                else
+                    b = x;
+                for(; x <= b; x++)
+                    if(x < mem_top)
+                        printf(" PRG 0x%p: %p\n", x, mem[x]);
+                    else
+                        printf(" MEM 0x%p: %p\n", x, mem[x]);
+                break;
+            case 'd':
+                descompilar();
                 break;
             case 'h':
                 scanf(" %c", &a);
                 ajuda(a);
+                break;
+            case 'n':
+                a = 0;
+                FILE * f = fopen(".tmp", "w");
+                do{
+                    fflush(stdin);
+                    printf(" 0x%p: ", a);
+                    scanf("%[^\n]", str1);
+                    fprintf(f, "%s\n", str1);
+                    a++;
+                }while(str1[0] != 'E' && str1[0] != 'e');
+                fclose(f);
+                a = compilar(".tmp", ".tmp_out");
+                system("del .tmp");
+                if(!a){
+                    puts(" Convertido com sucesso.");
+                    carregar(".tmp_out");
+                    system("del .tmp_out");
+                    puts(" Programa inserido na memoria com sucesso.");
+                }else if(a == -1)
+                    puts(" ERRO NA LINHA 128: Programa maior que a memoria.");
+                else if(a == -2)
+                    puts(" ERRO: Arquivo de entrada nao encontrado.");
+                else if(r&0x80)
+                    printf(" ERRO NA LINHA %i: Endereco digitado corresponde a espaco inexistente.\n", (r&0x7F) + 1);
+                else if(r&0x100)
+                    printf(" ERRO NA LINHA %i: Erro de sintaxe.\n", (r&0x7F) + 1);
+                break;
+            case 'e':
+                printf(" EXEC: ");
+                scanf("%s %p", str1, &a);
+                if(str1[0] == 'R' || str1[0] == 'r'){
+                    PROC.MAR = a&0x7F;
+                    PROC.MBR = mem[PROC.MAR];
+                }else if(str1[0] == 'W' || str1[0] == 'w'){
+                    PROC.MAR = a&0x7F;
+                    mem[PROC.MAR] &= 0x7<<0x7;
+                    mem[PROC.MAR] |= PROC.MBR;
+                }else if(str1[0] == 'A' || str1[0] == 'a'){
+                    PROC.MAR = a&0x7F;
+                    PROC.MBR += mem[PROC.MAR]&0x7F;
+                }else if(str1[2] == 'B' || str1[2] == 'b'){
+                    PROC.MAR = a&0x7F;
+                    PROC.MBR -= mem[PROC.MAR]&0x7F;
+                }else if(str1[1] == 'M' || str1[1] == 'm')
+                    PROC.PC = a&0x7F;
+                else if(str1[0] == 'S' || str1[0] == 's')
+                    PROC.MBR = a;
                 break;
             default:
                 puts(" Utilize \"h a\" para listar todos os comandos.");
