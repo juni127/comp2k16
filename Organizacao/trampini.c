@@ -97,12 +97,21 @@ int compilar(char str1[100], char str2[100]){
         else
             codigo[0] = 0x380;
         fscanf(f, "%c", &in[0]);
-        if(in[0] == '\n' && codigo[0] != 0x380)
+    if(in[0] == '\n' && codigo[0] != 0x380){
+            fclose(f);
+            fclose(o);
             return 0x100 | y;
-        if(fscanf(f, "%p", &x) < 1 && codigo[0] != 0x380)
+        }
+        if(fscanf(f, "%p", &x) < 1 && codigo[0] != 0x380){
+            fclose(f);
+            fclose(o);
             return 0x100 | y;
-        if(x+s >= MEM_SIZE && !(codigo[0] == 0x380 || codigo[0] == 0x300))
+        }
+        if(x+s >= MEM_SIZE && !(codigo[0] == 0x380 || codigo[0] == 0x300)){
+            fclose(f);
+            fclose(o);
             return 0x80 | y;
+        }
         codigo[0] |= x&0x7F;
         fwrite(codigo, sizeof(unsigned short), 1, o);
         fscanf(f, "%c", &in[0]);
@@ -247,7 +256,7 @@ void ajuda(char e){
 }
 
 int main(){
-    char e, str1[100], str2[100], a, b, x;
+    char e, str1[100], str2[100], a, b, x, y;
     guia();
     do{
         fflush(stdin);
@@ -297,11 +306,15 @@ int main(){
                     scanf("%p", &b);
                 else
                     b = x;
-                for(; x <= b; x++)
+                for(; x <= b; x++){
                     if(x < mem_top)
-                        printf(" PRG 0x%p: %p\n", x, mem[x]);
+                        printf(" PRG 0x%p: HEX: %p BIN: (", x, mem[x]);
                     else
-                        printf(" MEM 0x%p: %p\n", x, mem[x]);
+                        printf(" MEM 0x%p: HEX: %p BIN: (", x, mem[x]);
+                    for(y = 9; y > 0; y--)
+                        printf("%i", (mem[x]>>y)&1);
+                    puts(")");
+                }
                 break;
             case 'd':
                 descompilar();
