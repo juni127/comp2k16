@@ -39,6 +39,12 @@ void printa_lista(no * lista){
         puts("]");
 }
 
+void imprime_lista(FILE * arq, no * lista){
+    for( ;lista != NULL; lista = lista->prox){
+        fprintf(arq, "%i ", lista->valor);
+    }
+}
+
 void swap(int *xp, int *yp)
 {
     int temp = *xp;
@@ -71,8 +77,8 @@ void bubbleSort(int arr[], int n)
 
 int main(){
 
-    int x, y, z, mem[3], cs, carregou = 0, acabou = 0;
-    FILE * in;
+    int x, y, z, mem[3], cs, carregou = 0;
+    FILE * in, * out;
     no * fitas[6];
     for(x = 0; x < 6; x++)
         fitas[x] = NULL;
@@ -98,7 +104,6 @@ int main(){
                     y = (y == 2)?0:y+1;
                 }
                 carregou = 1;
-                acabou = 0;
                 fclose(in);
                 break;
             case 'p':
@@ -106,7 +111,7 @@ int main(){
                     puts(" Numeros nao carregados.");
                     break;
                 }
-                if(acabou){
+                if(fitas[1] == NULL && fitas[2] == NULL){
                     puts(" Numeros já ordenados.");
                     break;
                 }
@@ -178,8 +183,6 @@ int main(){
                     }
 
                 }while(fitas[0] != NULL || fitas[1] != NULL || fitas[2] != NULL);
-                if(z < 1)
-                    acabou = 1;
                 cs *= 3;
                 fitas[0] = fitas[3];
                 fitas[3] = NULL;
@@ -187,6 +190,11 @@ int main(){
                 fitas[4] = NULL;
                 fitas[2] = fitas[5];
                 fitas[5] = NULL;
+                if(fitas[1] == NULL && fitas[2] == NULL){
+                    out = fopen("saida", "w");
+                    imprime_lista(out, fitas[0]);
+                    fclose(out);
+                }
                 break;
             case 'm':
                 if(!carregou){
