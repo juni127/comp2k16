@@ -97,12 +97,12 @@ int compilar(char str1[100], char str2[100]){
         else
             codigo[0] = 0x380;
         fscanf(f, "%c", &in[0]);
-    if(in[0] == '\n' && codigo[0] != 0x380){
+        if(in[0] == '\n' && codigo[0] != 0x380){
             fclose(f);
             fclose(o);
             return 0x100 | y;
         }
-        if(fscanf(f, "%p", &x) < 1 && codigo[0] != 0x380){
+        if(codigo[0] != 0x380 && fscanf(f, "%p", &x) < 1){
             fclose(f);
             fclose(o);
             return 0x100 | y;
@@ -112,10 +112,14 @@ int compilar(char str1[100], char str2[100]){
             fclose(o);
             return 0x80 | y;
         }
-        codigo[0] |= x&0x7F;
+        if(codigo[0] != 0x380)
+            codigo[0] |= x&0x7F;
         fwrite(codigo, sizeof(unsigned short), 1, o);
-        fscanf(f, "%c", &in[0]);
-        if(in[0] == '\n')y++;
+        if(codigo[0] != 0x380){
+            fscanf(f, "%c", &in[0]);
+            if(in[0] == '\n')y++;
+        }else
+            y++;
     }while(!feof(f));
     fclose(f);
     fclose(o);
@@ -163,6 +167,8 @@ void descompilar(){
             case 0x6:
                 printf(" 0x%p: SET ", x);
                 break;
+            case 0x7:
+                printf(" 0x%p: END \n", x);
         }
         if(((mem[x]>>7)&0xF) != 0x7){
             if(mem[x]&0x8000)
@@ -171,7 +177,6 @@ void descompilar(){
                 printf("%p\n", mem[x]&0x7F);
         }
     }
-    printf(" 0x%p: END\n", x);
 }
 
 void guia(){
