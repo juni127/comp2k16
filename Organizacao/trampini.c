@@ -206,9 +206,25 @@ void ajuda(char e){
             puts("\nUtilizacao:");
             puts("    l <diretorio do arquivo>");
             puts("Exemplo:");
-            puts("    c binario");
+            puts("    l binario");
             puts("Funcionamento:");
             puts("    Carrega o codigo de maquina no arquivo para a memoria para execucao.");
+            break;
+        case 'n':
+            puts("\nUtilizacao:");
+            puts("    n");
+            puts("Exemplo:");
+            puts("    n");
+            puts("Funcionamento:");
+            puts("    Converte os comandos digitados para codigo de maquina ate \"!q\" ser atingido e em seguida carrega os codigos para a memoria.");
+            break;
+        case 'd':
+            puts("\nUtilizacao:");
+            puts("    d");
+            puts("Exemplo:");
+            puts("    d");
+            puts("Funcionamento:");
+            puts("    Mostra o equivalente mnemonico ao programa que esta na memoria.");
             break;
         case 'b':
             puts("\nUtilizacao:");
@@ -242,6 +258,22 @@ void ajuda(char e){
             puts("Funcionamento:");
             puts("    Sai do programa.");
             break;
+        case 's':
+            puts("\nUtilizacao:");
+            puts("    s <inicio> [fim]");
+            puts("Exemplo:");
+            puts("    s 10");
+            puts("Funcionamento:");
+            puts("    Mostra os valores de memoria dentro do alcance dos enderecos.");
+            break;
+        case 'e':
+            puts("\nUtilizacao:");
+            puts("    e <comando>");
+            puts("Exemplo:");
+            puts("    e set 10");
+            puts("Funcionamento:");
+            puts("    Executa o comando diretamente.");
+            break;
         case 'a':
             puts("\nComando            Acao");
             puts("  c             Converte o codigo do arquivo de entrada em codigo de maquina e grava no arquivo de saida.");
@@ -249,6 +281,8 @@ void ajuda(char e){
             puts("  b             Cria ponto de quebra no endereco de memoria especificado.");
             puts("  r             Roda o programa que esta carregado atualmente na memmoria.");
             puts("  m             Mostra o estado atual do processador.");
+            puts("  n             Converte os comandos digitados para codigo de maquina ate \"!q\" ser atingido e em seguida carrega os codigos para a memoria.");
+            puts("  s             Mostra os valores de memoria dentro do alcance dos enderecos.");
             puts("  q             Finaliza o programa.");
             break;
         default:
