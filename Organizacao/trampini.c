@@ -94,8 +94,10 @@ int compilar(char str1[100], char str2[100]){
             codigo[0] = 0x280;
         else if(in[0] == 'S' || in[0] == 's')
             codigo[0] = 0x300;
-        else
+        else if(in[0] == 'E' || in[0] == 'e')
             codigo[0] = 0x380;
+        else 
+            return 0x100 | y;
         fscanf(f, "%c", &in[0]);
         if(in[0] == '\n' && codigo[0] != 0x380){
             fclose(f);
@@ -337,7 +339,7 @@ int main(){
                     scanf("%[^\n]", str1);
                     fprintf(f, "%s\n", str1);
                     a++;
-                }while(str1[0] != 'E' && str1[0] != 'e');
+                }while(str1[0] != '!' && str1[1] != 'q');
                 fclose(f);
                 a = compilar(".tmp", ".tmp_out");
                 system("del .tmp");
