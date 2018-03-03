@@ -1,4 +1,4 @@
-#include < system.h >
+#include "system.h"
 
 /* You will need to code these up yourself!  */
 unsigned char *mem_cpy(unsigned char *dest, const unsigned char *src, int count){
@@ -56,6 +56,11 @@ void outportb (unsigned short _port, unsigned char _data)
 void main()
 {
     /* You would add commands after here */
+
+	//Inicia o video 
+	//init_video();
+
+	//puts("Hello World!"); 
 
     /* ...and leave this loop in. There is an endless loop in
     *  'start.asm' also, if you accidentally delete this next line */

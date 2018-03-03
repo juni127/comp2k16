@@ -1,7 +1,5 @@
-; This is the kernel's entry point. We could either call main here,
-; or we can use this to setup the stack or other nice stuff, like
-; perhaps setting up the GDT and segments. Please note that interrupts
-; are disabled at this point: More on interrupts later!
+; This is the kernel's entry point.
+
 [BITS 32]
 global start
 start:
@@ -9,6 +7,7 @@ start:
     jmp stublet
 
 ; This part MUST be 4byte aligned, so we solve that issue using 'ALIGN 4'
+
 ALIGN 4
 mboot:
     ; Multiboot macros to make a few lines later more readable
@@ -35,8 +34,8 @@ mboot:
 
 ; Call to main code
 stublet:
-    extern _main ; Lets assembler knows that main is in an external file
-    call _main   ; Call to main
+    extern main ; Lets assembler knows that main is in an external file
+    call main   ; Call to main
     jmp $
 
 
