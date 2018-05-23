@@ -11,17 +11,17 @@ Cada uma das zyzz bibliotecas contém funções que implementam as tecnicas e al
 ### 2.1. Tópicos do trabalho por arquivo
 Divisão dos tópicos do trabalho pelos arquivos que o compõe. A medida que os grupos terminem suas implementações os tópicos devem ser marcados como concluidos. 
 
-1. -[ ] proc.h
- 1. -[ ] Gerenciamento de processos: semáforos
- 2. -[ ] Gerenciamento de processos: monitores e barreiras
- 3. -[ ] Escalonamento de processos
-2. -[ ] mem.h
- 1. -[ ] Memória virtual: mecanismo de paginação
- 2. -[ ] Algoritmos de substituição: FIFO, MRU, LRU e MFU
-3. -[ ] files.h
- 1. -[ ] Sistemas de arquivos: estrutura de dados para suporte aos arquivos
- 2. -[ ] Sistemas de arquivos: indicar o compartilhamento de arquivos
-4. -[ ] io.h
- 1. -[x] Entrada e saída programada
- 2. -[ ] Entrada e saída por interrupção
- 3. -[ ] Entrada e saída por DMA
+1. [ ] proc.h
+ 1. [ ] Gerenciamento de processos: semáforos
+ 2. [ ] Gerenciamento de processos: monitores e barreiras
+ 3. [ ] Escalonamento de processos
+2. [ ] mem.h
+ 1. [ ] Memória virtual: mecanismo de paginação
+ 2. [ ] Algoritmos de substituição: FIFO, MRU, LRU e MFU
+3. [ ] files.h
+ 1. [ ] Sistemas de arquivos: estrutura de dados para suporte aos arquivos
+ 2. [ ] Sistemas de arquivos: indicar o compartilhamento de arquivos
+4. [ ] io.h
+ 1. [x] Entrada e saída programada
+ 2. [ ] Entrada e saída por interrupção
+ 3. [ ] Entrada e saída por DMA
