@@ -1,6 +1,5 @@
 /*
 	Inclua essa biblioteca assim:
-
 	#define TYPE tipo_necessario
 	#include "ed.h"
 	#undef TYPE
@@ -12,6 +11,7 @@
 typedef struct LIST (TYPE){
 	TYPE* DATA;
 	struct LIST (TYPE)* NEXT;
+	struct LIST (TYPE)* PREV;
 }LIST (TYPE);
 
 #define QUEUE(T) TOKENPASTE(queue_, T)
@@ -22,8 +22,8 @@ typedef struct QUEUE (TYPE){
 
 #define SIZE(T) TOKENPASTE(size_, T)
 int SIZE (TYPE) (LIST (TYPE) * list){
-	int x = 0;
-	for( ; list != NULL; x++, list = list->NEXT);
+	int x;
+	for(x = 0; list != NULL; x++, list = list->NEXT);
 	return x;
 }
 
@@ -48,6 +48,13 @@ TYPE * GET_DATA (TYPE) (LIST (TYPE) * list, int index){
 	return list->DATA;
 }
 
+#define GET_FIRST_DATA(T) TOKENPASTE(get_first_data_, T)
+TYPE * GET_FIRST_DATA (TYPE) (LIST (TYPE) * list){
+	if(list == NULL)
+		return NULL;
+	return list->DATA;
+}
+
 #define GET_LAST_DATA(T) TOKENPASTE(get_last_data_, T)
 TYPE * GET_LAST_DATA (TYPE) (LIST (TYPE) * list){
 	return GET (TYPE) (list, SIZE(TYPE) (list) - 1);
@@ -58,12 +65,14 @@ LIST (TYPE) *ADD_AT_END (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	LIST (TYPE) *novo = (LIST (TYPE)*) malloc(sizeof(LIST (TYPE)));
 	novo->DATA = DATA;
 	novo->NEXT = NULL;
+	novo->PREV = NULL;
 	if(list == NULL)
 		return novo;
 	LIST (TYPE) *aux = list;
 	while(aux->NEXT != NULL)
 		aux = aux->NEXT;
 	aux->NEXT = novo;
+	novo->PREV = aux;
 	return list;
 }
 
@@ -72,6 +81,9 @@ LIST (TYPE) *ADD_AT_BEGIN (TYPE) (LIST (TYPE) * list, TYPE* DATA){
 	LIST (TYPE) *novo = (LIST (TYPE) *) malloc(sizeof(LIST (TYPE)));
 	novo->DATA = DATA;
 	novo->NEXT = list;
+	novo->PREV = NULL;
+	if(list != NULL)
+		list->PREV = novo;
 	return novo;
 }
 
@@ -85,6 +97,7 @@ LIST (TYPE) *REMOVE (TYPE) (LIST (TYPE) * list, int index){
 	if(aux->NEXT == NULL)
 		return list;
 	aux->NEXT = aux->NEXT->NEXT;
+	aux->NEXT->PREV = aux;
 	return list;
 }
 
@@ -99,6 +112,7 @@ void PURGE (TYPE) (LIST (TYPE) * list, int index){
 		return;
 	list = aux->NEXT;
 	aux->NEXT = aux->NEXT->NEXT;
+	aux->NEXT->PREV = aux;
 	free(list);
 }
 
@@ -106,9 +120,11 @@ void PURGE (TYPE) (LIST (TYPE) * list, int index){
 LIST (TYPE) *REMOVE_FIRST (TYPE) (LIST (TYPE) * list){
 	if(list == NULL)
 		return NULL;
-	LIST (TYPE) * aux = list;
 	list = list->NEXT;
-	aux->NEXT = NULL;
+	if(list != NULL){
+		list->PREV->NEXT = NULL;
+		list->PREV = NULL;
+	}
 	return list;
 }
 
@@ -118,8 +134,30 @@ LIST (TYPE) *PURGE_FIRST (TYPE) (LIST (TYPE) * list){
 		return NULL;
 	LIST (TYPE) * aux = list;
 	list = list->NEXT;
+	if(list != NULL)
+		list->PREV = NULL;
 	free(aux);
 	return list;
+}
+
+#define PURGE_NODE(T) TOKENPASTE(purge_node_, T)
+LIST (TYPE) *PURGE_NODE (TYPE) (LIST (TYPE) * list){
+	if(list == NULL)
+		return NULL;
+	LIST (TYPE) * aux;
+	if(list->PREV == NULL){
+		aux = list->NEXT;
+		free(list);
+		if(aux != NULL)
+			aux->PREV = NULL;
+		return aux;
+	}
+	for(aux = list; aux->PREV != NULL; aux = aux->PREV);
+	list->PREV->NEXT = list->NEXT;
+	if(list->NEXT != NULL)
+		list->NEXT->PREV = list->PREV;
+	free(list);
+	return aux;
 }
 
 #define QUEUE_INIT(T) TOKENPASTE(queue_init_, T)
