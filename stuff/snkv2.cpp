@@ -40,7 +40,7 @@ vector dir;
 char block = 0;
 
 clock_t start = 0, end = 0;
-double cpu_time_used, time_past = 0, speed = 100;
+double cpu_time_used, time_past = 0, speed = 500;
 #define SPEED_FACTOR 1.0
 
 sqr * novoBloco(int x, int y, int r, int g, int b){
@@ -71,6 +71,16 @@ void gameLogic(){
 			aux->DATA->pos.y += dir.y;
 			block = 0;
 		}
+
+		//Atravessar paredes
+		if(aux->DATA->pos.x > 39)
+			aux->DATA->pos.x = -40;
+		if(aux->DATA->pos.x < -40)
+			aux->DATA->pos.x = 39;
+		if(aux->DATA->pos.y > 40)
+			aux->DATA->pos.y = -39;
+		if(aux->DATA->pos.y < -39)
+			aux->DATA->pos.y = 40;
 
 		//Checar se a cobra comeu
 		if(aux->DATA->pos.x == food.pos.x && aux->DATA->pos.y == food.pos.y){
