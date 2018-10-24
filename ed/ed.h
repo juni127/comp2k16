@@ -37,7 +37,7 @@ LIST (TYPE) * GET (TYPE) (LIST (TYPE) * list, int index){
 
 #define GET_LAST(T) TOKENPASTE(get_last_, T)
 LIST (TYPE) * GET_LAST (TYPE) (LIST (TYPE) * list){
-	return GET (TYPE) (list, SIZE (TYPE) (list) - 1);
+	return GET (TYPE) (list, (SIZE (TYPE) (list)) - 1);
 }
 
 #define GET_DATA(T) TOKENPASTE(get_data_, T)
@@ -45,7 +45,7 @@ TYPE * GET_DATA (TYPE) (LIST (TYPE) * list, int index){
 	int x;
 	for(x = 0; list != NULL && x < index; x++, list = list->NEXT);
 	if(list == NULL)
-		return list;
+		return NULL;
 	return list->DATA;
 }
 
@@ -58,7 +58,7 @@ TYPE * GET_FIRST_DATA (TYPE) (LIST (TYPE) * list){
 
 #define GET_LAST_DATA(T) TOKENPASTE(get_last_data_, T)
 TYPE * GET_LAST_DATA (TYPE) (LIST (TYPE) * list){
-	return GET (TYPE) (list, SIZE(TYPE) (list) - 1);
+	return GET (TYPE) (list, SIZE(TYPE) (list) - 1)->DATA;
 }
 
 #define ADD_AT_END(T) TOKENPASTE(add_end_, T)
