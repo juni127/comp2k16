@@ -21,21 +21,21 @@ void TeclasEspeciais (int key, int x, int y);
 
 void Display()
 {
-   
+
    glEnable(GL_DEPTH_TEST);
-   
+
    glEnable(GL_LINE_SMOOTH);
-   glEnable(GL_POLYGON_SMOOTH); 
+   glEnable(GL_POLYGON_SMOOTH);
 
 
    glEnable(GL_SMOOTH);
    glEnable(GL_BLEND);
-   
+
    // Inicializa parâmetros de rendering
     // Define a cor de fundo da janela de visualização como preta
-   glClearColor(1.0, 0.0, 0.0, 0.0); 
-   
-   
+   glClearColor(1.0, 0.0, 0.0, 0.0);
+
+
    glMatrixMode(GL_PROJECTION);/*glMatrixMode()- define qual matriz será alterada. SEMPRE defina o tipo de apresentação 
                               (Ortogonal ou Perspectiva) na matriz PROJECTION.*/
    glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo possíveis erros.
@@ -44,8 +44,8 @@ void Display()
       glOrtho(-150, 150, -150, 150, -150, 150); //Define a projeção como ortogonal
    else
       gluPerspective(45,1,1,150); //Define a projeção como perspectiva
-   
-   glMatrixMode(GL_MODELVIEW);/*glMatrixMode()- define qual matriz será alterada. SEMPRE defina a câmera 
+
+   glMatrixMode(GL_MODELVIEW);/*glMatrixMode()- define qual matriz será alterada. SEMPRE defina a câmera
                               (Ortogonal ou Perspectiva) na matriz MODELVIEW (onde o desenho ocorrerá).*/
    glLoadIdentity(); ////"Limpa" ou "transforma" a matriz em identidade, reduzindo possíveis erros.
 
@@ -57,7 +57,7 @@ void Display()
    //----------------------------------------------------------------
    //glPushMatrix(); //Salva o estado atual da cena. O que for desenhado após o Push não influenciará o já representado
       glColor3ub(100, 255, 40); //DEFINE cor (R, G, B e percentual de transparência para o objeto)
-      glutWireTeapot(5.0);
+      glutSolidTeapot(5.0);
   // glPopMatrix();  //Retorna ao estado anterior da cena. O que for desenhado após o Push não influenciou o já representado
    //----------------------------------------------------------------   
    

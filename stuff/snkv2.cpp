@@ -2,10 +2,10 @@
 	JOGO DA COBRINHA v2
 
 	TODO
-	-[ ] A atualização tá toda zoada :(
+	-[x] A atualização tá toda zoada (Funciona no lab) :V
 	-[ ] Implementar logica para repor a comida
 	-[ ] Implementar logica para a cobra colidir
-	-[ ] Implementar logica para a cobra atravessar a parede
+	-[x] Implementar logica para a cobra atravessar a parede
 */
 
 
@@ -37,7 +37,7 @@ typedef struct SQUARE{
 list_sqr * snk;
 sqr food;
 vector dir;
-char block = 0;
+char block = 0, gameover = 0;
 
 clock_t start = 0, end = 0;
 double cpu_time_used, time_past = 0, speed = 500;
@@ -82,6 +82,11 @@ void gameLogic(){
 		if(aux->DATA->pos.y < -39)
 			aux->DATA->pos.y = 40;
 
+		//Checar se a cobra colidiu com ela mesma
+		for(prox = snk; prox->NEXT != NULL; prox = prox->NEXT)
+			if(prox->DATA->pos.x == aux->DATA->pos.x && prox->DATA->pos.y == aux->DATA->pos.y)
+				gameover = 1;
+
 		//Checar se a cobra comeu
 		if(aux->DATA->pos.x == food.pos.x && aux->DATA->pos.y == food.pos.y){
 			//Logica de fazer a cobra crescer
@@ -104,7 +109,7 @@ void dsply(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	end = clock();
-	gameLogic();
+	if(!gameover)gameLogic();
 	start = clock();
 
 	//Imprime a comida
@@ -166,6 +171,16 @@ void getKey(unsigned char key, int x, int y){
 				dir.x = 1;
 				block = 1;
 			}
+			break;
+		case 'r':
+			gameover = 0;
+			snk = purge_all_sqr(snk);
+			sqr * novo = novoBloco(0, 0, 0, 0, 255);
+			snk = add_begin_sqr(snk, novo);
+			food.pos.x = 3;
+			food.pos.y = 0;
+			dir.x = 0;
+			dir.y = 0;
 			break;
 	}
 	//glutPostRedisplay(); já to rechamando ela na display
