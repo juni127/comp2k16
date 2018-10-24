@@ -40,8 +40,8 @@ vector dir;
 char block = 0;
 
 clock_t start = 0, end = 0;
-double cpu_time_used, time_past = 0, speed = 100;
-#define SPEED_FACTOR 1.0
+double cpu_time_used, time_past = 0, speed = 10;
+#define SPEED_FACTOR 10000
 
 sqr * novoBloco(int x, int y, int r, int g, int b){
 	sqr * novo = (sqr*)malloc(sizeof(sqr));
@@ -54,8 +54,9 @@ sqr * novoBloco(int x, int y, int r, int g, int b){
 }
 
 void gameLogic(){
-	cpu_time_used = ((double) end - start)/CLOCKS_PER_SEC;
+	cpu_time_used = ((double) end - start);
 	time_past += cpu_time_used;
+	printf("%lf\n", time_past);
 	if(time_past > SPEED_FACTOR/speed){
 		time_past = 0;
 
