@@ -103,18 +103,24 @@ LIST (TYPE) *REMOVE (TYPE) (LIST (TYPE) * list, int index){
 }
 
 #define PURGE(T) TOKENPASTE(purge_, T)
-void PURGE (TYPE) (LIST (TYPE) * list, int index){
+LIST (TYPE) *PURGE (TYPE) (LIST (TYPE) * list, int index){
 	int x;
-	LIST (TYPE) *aux = list;
+	LIST (TYPE) *aux = list, *aux2;
 	for(x = 0; x < index-1 && aux != NULL; x++, aux = aux->NEXT);
 	if(aux == NULL)
-		return;
+		return list;
 	if(aux->NEXT == NULL)
-		return;
-	list = aux->NEXT;
-	aux->NEXT = aux->NEXT->NEXT;
-	aux->NEXT->PREV = aux;
-	free(list);
+		return list;
+	if(aux->PREV == NULL){
+		aux->NEXT->PREV = NULL;
+		aux2 = aux->NEXT;
+		free(aux);
+		return aux2;
+	}
+	aux->PREV->NEXT = aux->NEXT;
+	aux->NEXT->PREV = aux->PREV;
+	free(aux);
+	return list;
 }
 
 #define REMOVE_FIRST(T) TOKENPASTE(remove_first_, T)

@@ -3,9 +3,11 @@
 
 	TODO
 	-[x] A atualização tá toda zoada (Funciona no lab) :V
-	-[ ] Implementar logica para repor a comida
-	-[ ] Implementar logica para a cobra colidir
+	-[x] Implementar logica para repor a comida
+	-[x] Implementar logica para a cobra colidir
 	-[x] Implementar logica para a cobra atravessar a parede
+	-[x] Aparentemente o reset não funciona :(
+	-[ ] Implementar acressimo de velocidade quando a cobra comer
 */
 
 
@@ -34,14 +36,21 @@ typedef struct SQUARE{
 #include"../ed/ed.h"
 #undef TYPE
 
+#define TYPE vector
+#include"../ed/ed.h"
+#undef TYPE
+
+#define TAMANHO 80
+
 list_sqr * snk;
 sqr food;
 vector dir;
 char block = 0, gameover = 0;
+list_vector * posl;
 
 clock_t start = 0, end = 0;
 
-double cpu_time_used, time_past = 0, speed = 500;
+double cpu_time_used, time_past = 0, speed = 1000;
 #define SPEED_FACTOR 1.0
 
 sqr * novoBloco(int x, int y, int r, int g, int b){
@@ -55,9 +64,8 @@ sqr * novoBloco(int x, int y, int r, int g, int b){
 }
 
 void gameLogic(){
-	cpu_time_used = ((double) end - start);
+	cpu_time_used = ((double) end - start)/CLOCKS_PER_SEC;
 	time_past += cpu_time_used;
-	printf("%lf\n", time_past);
 	if(time_past > SPEED_FACTOR/speed){
 		time_past = 0;
 
@@ -96,6 +104,19 @@ void gameLogic(){
 			snk = add_begin_sqr(snk, novo);
 
 			//Logica de recolocar a comida
+			posl = purge_all_vector(posl);
+			int x;
+			for(x = 0; x < TAMANHO*TAMANHO; x++){
+				vector * n = (vector*)malloc(sizeof(vector));
+				n->x = x%TAMANHO - 40;
+				n->y = (x - n->x)/TAMANHO - 40;
+				posl = add_end_vector(posl, n);
+			}
+			for(aux = snk; aux != NULL; aux = aux->NEXT)
+				posl = purge_vector(posl, (aux->DATA->pos.y+40)*TAMANHO + (aux->DATA->pos.x+40));
+			x = rand()%size_vector(posl);
+			food.pos = *get_data_vector(posl, x);
+			printf("%i -> %i %i\n", x, food.pos.x, food.pos.y);
 		}
 	}
 }
@@ -191,6 +212,7 @@ void getKey(unsigned char key, int x, int y){
 int main(int argc, char **argv){
 
 	//Variaveis iniciais do jogo
+	srand(time(NULL));
 	//Inicia a comida
 	food.pos.x = 3;
 	food.pos.y = 0;
