@@ -21,6 +21,11 @@ typedef struct QUEUE (TYPE){
 	LIST (TYPE) * LAST;
 }QUEUE (TYPE);
 
+#define STACK(T) TOKENPASTE(stack_, T)
+typedef struct STACK (TYPE){
+	LIST (TYPE) * LAST;
+}STACK (TYPE);
+
 #define SIZE(T) TOKENPASTE(size_, T)
 int SIZE (TYPE) (LIST (TYPE) * list){
 	int x;
