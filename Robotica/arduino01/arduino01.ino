@@ -38,28 +38,53 @@ void setup(){
   
   o1 = MAXVEL;
   o2 = MAXVEL;
-  threshold = 450;
-  del = 40;
+  threshold = 400;
+  del = 35;
   
   Serial.begin(9600);
 }
 
-
+int count=0;
 void loop(){
   s1 = analogRead(0);
   s2 = analogRead(1);
   
   if(s2 >threshold){
-   digitalWrite(DIRA, HIGH);
-   digitalWrite(DIRB, LOW);
-   delay(del);
+   if (count >= 100){
+     digitalWrite(DIRA, LOW);
+     digitalWrite(DIRB, LOW);
+     delay(count-80);
+     digitalWrite(DIRA, HIGH);
+     digitalWrite(DIRB, LOW);
+     delay(del+(count-75));
+   }else{
+     digitalWrite(DIRA, HIGH);
+     digitalWrite(DIRB, LOW);
+     delay(del);
+   }
+   count +=20;
+
+   
   }else if(s1 >threshold) {
-    digitalWrite(DIRA, LOW);
-    digitalWrite(DIRB, HIGH);
-    delay(del);
+    
+    if (count >= 100){
+     digitalWrite(DIRA, LOW);
+     digitalWrite(DIRB, LOW);
+     delay(count-80);
+     
+     digitalWrite(DIRA, LOW);
+     digitalWrite(DIRB, HIGH);
+     delay(del+count-75);
+    }else{
+      digitalWrite(DIRA, LOW);
+      digitalWrite(DIRB, HIGH);
+      delay(del);
+    }
+     count +=20;
   }else {
    digitalWrite(DIRA, LOW);
    digitalWrite(DIRB, LOW);
+   count = 0;
   }  
   
   
