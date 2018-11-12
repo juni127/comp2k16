@@ -10,7 +10,7 @@ int i;
 
 int s1, s2;
 
-int o1,o2,threshold;
+int o1,o2,threshold, del;
 byte teste;
 
 
@@ -36,39 +36,30 @@ void setup(){
   pinMode(PWMB, OUTPUT);
   pinMode(DIRB, OUTPUT);
   
-  
   o1 = MAXVEL;
   o2 = MAXVEL;
-  threshold = 600;
-
- 
+  threshold = 450;
+  del = 40;
   
   Serial.begin(9600);
 }
 
 
-
-
 void loop(){
   s1 = analogRead(0);
   s2 = analogRead(1);
-
+  
   if(s2 >threshold){
-   o1 = MAXVEL;
    digitalWrite(DIRA, HIGH);
-  }else {
-    o1=MAXVEL;
+   digitalWrite(DIRB, LOW);
+   delay(del);
+  }else if(s1 >threshold) {
     digitalWrite(DIRA, LOW);
-  }
-  
-  
-
-  if(s1 >threshold){
-    o2 = MAXVEL;
     digitalWrite(DIRB, HIGH);
+    delay(del);
   }else {
-    o2=MAXVEL;
-    digitalWrite(DIRB, LOW);
+   digitalWrite(DIRA, LOW);
+   digitalWrite(DIRB, LOW);
   }  
   
   
