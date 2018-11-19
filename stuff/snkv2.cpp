@@ -1,3 +1,4 @@
+
 /*
 	JOGO DA COBRINHA v2
 
@@ -108,8 +109,8 @@ void gameLogic(){
 			int x;
 			for(x = 0; x < TAMANHO*TAMANHO; x++){
 				vector * n = (vector*)malloc(sizeof(vector));
-				n->x = x%TAMANHO - 40;
-				n->y = (x - n->x)/TAMANHO - 40;
+				n->x = x%TAMANHO - 39;
+				n->y = (x - n->x)/TAMANHO - 39;
 				posl = add_end_vector(posl, n);
 			}
 			for(aux = snk; aux != NULL; aux = aux->NEXT)

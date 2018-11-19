@@ -4,13 +4,13 @@
 #define PWMB 5
 #define DIRB 7
 
-#define MAXVEL 110
+#define MAXVEL 125
 
 int i;
 
 int s1, s2;
 
-int o1,o2,threshold, del;
+int threshold, del = 20;
 byte teste;
 
 
@@ -36,63 +36,36 @@ void setup(){
   pinMode(PWMB, OUTPUT);
   pinMode(DIRB, OUTPUT);
   
-  o1 = MAXVEL;
-  o2 = MAXVEL;
-  threshold = 400;
-  del = 35;
+  threshold = 500;
   
   Serial.begin(9600);
+  digitalWrite(DIRA, LOW);
+  digitalWrite(DIRB, LOW);
+  analogWrite(PWMA, MAXVEL);
+  analogWrite(PWMB, MAXVEL);
 }
 
-int count=0;
+
+
+
 void loop(){
   s1 = analogRead(0);
   s2 = analogRead(1);
-  
-  if(s2 >threshold){
-   if (count >= 100){
-     digitalWrite(DIRA, LOW);
-     digitalWrite(DIRB, LOW);
-     delay(count-80);
-     digitalWrite(DIRA, HIGH);
-     digitalWrite(DIRB, LOW);
-     delay(del+(count-75));
-   }else{
-     digitalWrite(DIRA, HIGH);
-     digitalWrite(DIRB, LOW);
-     delay(del);
-   }
-   count +=20;
 
-   
-  }else if(s1 >threshold) {
-    
-    if (count >= 100){
-     digitalWrite(DIRA, LOW);
-     digitalWrite(DIRB, LOW);
-     delay(count-80);
-     
-     digitalWrite(DIRA, LOW);
-     digitalWrite(DIRB, HIGH);
-     delay(del+count-75);
-    }else{
-      digitalWrite(DIRA, LOW);
-      digitalWrite(DIRB, HIGH);
-      delay(del);
-    }
-     count +=20;
+  if(s2 >threshold){
+   digitalWrite(DIRA, HIGH);
+   delay(del);
+  }else if(s1 >threshold){
+    digitalWrite(DIRB, HIGH);
+    delay(del);
   }else {
-   digitalWrite(DIRA, LOW);
-   digitalWrite(DIRB, LOW);
-   count = 0;
+    digitalWrite(DIRA, LOW);
+    digitalWrite(DIRB, LOW);
   }  
   
   
   //Essa funço tem que ser descomentada apenas quando for testar os sensores com os motores DESLIGADOS
-  //printsensors(s1,s2);
-  
-  analogWrite(PWMA, o1);
-  analogWrite(PWMB, o2);
-  
+  //printsensors(s1,s2);  
   
 }
+
