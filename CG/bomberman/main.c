@@ -16,7 +16,7 @@
 #include <mpg123.h>
 
 //Organizacional
-#include"lib/imgs.h"
+#include"lib/texture.h"
 #include"lib/audio.h"
 
 #define DEFAULT_WIDTH  640
@@ -77,9 +77,6 @@ void initGL(int w, int h)
 int main(int argc, char **argv) 
 {
  
-
-    GLuint texid;
-    int    image;
  
     /* GLUT init */
     glutInit(&argc, argv);
@@ -91,38 +88,19 @@ int main(int argc, char **argv)
     pthread_t thread_musica, musica2;
     int arg = 0x01;
     pthread_create(&thread_musica, NULL, tocar_audio, &arg);
- 
+
+
     /* Initialization of DevIL */
-     if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
-     {
-           printf("wrong DevIL version \n");
-           return -1;
-     }
-     ilInit(); 
- 
- 
-    /* load the file picture with DevIL */
-    image = LoadImage("img/main.png");
-    if ( image == -1 )
-    {
-        printf("Can't load picture file %s by DevIL \n", argv[1]);
-        return -1;
-    }
- 
-    /* OpenGL texture binding of the image loaded by DevIL  */
-       glGenTextures(1, &texid); /* Texture name generation */
-       glBindTexture(GL_TEXTURE_2D, texid); /* Binding of texture name */
-       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear interpolation for magnification filter */
-       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear interpolation for minifying filter */
-       glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
-        0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */
+    initDevil();
+    openAndBind("img/main.png", 0);
+    //openAndBind("img/osama.png", 1);
 
     /* Main loop */
     glutMainLoop();
  
     /* Delete used resources and quit */
-     ilDeleteImages(1, &image); /* Because we have already copied image data into texture data we can release memory used by image. */
-     glDeleteTextures(1, &texid);
+     ilDeleteImages(1, &(image[0])); /* Because we have already copied image data into texture data we can release memory used by image. */
+     glDeleteTextures(1, &(texid[0]));
 
      finaliza_audio();
 
