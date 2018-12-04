@@ -25,22 +25,45 @@
 int width  = DEFAULT_WIDTH;
 int height = DEFAULT_HEIGHT;
 
+int ESTADO = 0;
+
+void menu_principal(){
+    /* Draw a quad */
+    abrir_imagem("img/fundo_titulo.png", 0);
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2i(0,   0);
+        glTexCoord2i(0, 1); glVertex2i(0,   height+5);
+        glTexCoord2i(1, 1); glVertex2i(width+5, height+5);
+        glTexCoord2i(1, 0); glVertex2i(width+5, 0);
+    glEnd();
+
+    abrir_imagem("img/dirigivel_maior.png", 1);
+
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2i(0,   0);
+        glTexCoord2i(0, 1); glVertex2i(0,   100);
+        glTexCoord2i(1, 1); glVertex2i(200, 100);
+        glTexCoord2i(1, 0); glVertex2i(200, 0);
+    glEnd();
+}
+
 /* Handler for window-repaint event. Called back when the window first appears and
    whenever the window needs to be re-painted. */
-void display() 
-{
+void display() {
+    /* Comum */
     // Clear color and depth buffers
-       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-       glMatrixMode(GL_MODELVIEW);     // Operate on model-view matrix
- 
-    /* Draw a quad */
-       glBegin(GL_QUADS);
-           glTexCoord2i(0, 0); glVertex2i(0,   0);
-           glTexCoord2i(0, 1); glVertex2i(0,   height);
-           glTexCoord2i(1, 1); glVertex2i(width, height);
-           glTexCoord2i(1, 0); glVertex2i(width, 0);
-       glEnd();
- 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+    glMatrixMode(GL_MODELVIEW);     // Operate on model-view matrix
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+    switch(ESTADO){
+        case 0:
+            //Menu principal
+            menu_principal();
+            break;
+    }
+
     glutSwapBuffers();
 }
 
@@ -54,30 +77,27 @@ void reshape(int width, int height) {
 /* Initialize OpenGL Graphics */
 void initGL(int w, int h) 
 {
-  glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
-  glutInitWindowSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);   // Set the window's initial width & height
-  glutCreateWindow("Bomberman");      // Create window with the name of the executable
-  glutDisplayFunc(display);       // Register callback handler for window re-paint event
-  glutReshapeFunc(reshape);
-  glViewport(0, 0, w, h); // use a screen size of WIDTH x HEIGHT
-  glEnable(GL_TEXTURE_2D);     // Enable 2D texturing
+    glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
+    glutInitWindowSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);   // Set the window's initial width & height
+    glutCreateWindow("Bomberman");      // Create window with the name of the executable
+    glutDisplayFunc(display);       // Register callback handler for window re-paint event
+    glutReshapeFunc(reshape);
+    glViewport(0, 0, w, h); // use a screen size of WIDTH x HEIGHT
+    glEnable(GL_TEXTURE_2D);     // Enable 2D texturing
  
-  glMatrixMode(GL_PROJECTION);     // Make a simple 2D projection on the entire window
-  glLoadIdentity();
-  glOrtho(0.0, w, h, 0.0, 0.0, 100.0);
+    glMatrixMode(GL_PROJECTION);     // Make a simple 2D projection on the entire window
+    glLoadIdentity();
+    glOrtho(0.0, w, h, 0.0, 0.0, 100.0);
  
-  glMatrixMode(GL_MODELVIEW);    // Set the matrix mode to object modeling
+    glMatrixMode(GL_MODELVIEW);    // Set the matrix mode to object modeling
  
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
-  glClearDepth(0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the window
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
+    glClearDepth(0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the window
 }
 
  
-int main(int argc, char **argv) 
-{
- 
- 
+int main(int argc, char **argv) {
     /* GLUT init */
     glutInit(&argc, argv);
     initGL(DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -91,18 +111,16 @@ int main(int argc, char **argv)
 
 
     /* Initialization of DevIL */
-    initDevil();
-    openAndBind("img/main.png", 0);
-    //openAndBind("img/osama.png", 1);
+    inicia_textura();
 
     /* Main loop */
     glutMainLoop();
  
     /* Delete used resources and quit */
-     ilDeleteImages(1, &(image[0])); /* Because we have already copied image data into texture data we can release memory used by image. */
-     glDeleteTextures(1, &(texid[0]));
+    ilDeleteImages(1, &(image[0])); /* Because we have already copied image data into texture data we can release memory used by image. */
+    glDeleteTextures(1, &(texid[0]));
 
-     finaliza_audio();
+    finaliza_audio();
 
-     return 0;
+    return 0;
 }
