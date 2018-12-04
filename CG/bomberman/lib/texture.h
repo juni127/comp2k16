@@ -54,3 +54,12 @@ void escolher_imagem(int slot){
     glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
     0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */    
 }
+
+void desenhar_imagem(float x, float y){
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2f(x,   y);
+        glTexCoord2i(0, 1); glVertex2f(x,   y + ilGetInteger(IL_IMAGE_HEIGHT));
+        glTexCoord2i(1, 1); glVertex2f(x + ilGetInteger(IL_IMAGE_WIDTH), y + ilGetInteger(IL_IMAGE_HEIGHT));
+        glTexCoord2i(1, 0); glVertex2f(x + ilGetInteger(IL_IMAGE_WIDTH), y);
+    glEnd();
+}

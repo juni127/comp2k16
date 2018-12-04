@@ -30,21 +30,16 @@ int ESTADO = 0;
 void menu_principal(){
     /* Draw a quad */
     abrir_imagem("img/fundo_titulo.png", 0);
-    glBegin(GL_QUADS);
-        glTexCoord2i(0, 0); glVertex2i(0,   0);
-        glTexCoord2i(0, 1); glVertex2i(0,   height+5);
-        glTexCoord2i(1, 1); glVertex2i(width+5, height+5);
-        glTexCoord2i(1, 0); glVertex2i(width+5, 0);
-    glEnd();
+    desenhar_imagem(0, 0);
 
     abrir_imagem("img/dirigivel_maior.png", 1);
+    desenhar_imagem(480, 180);
 
-    glBegin(GL_QUADS);
-        glTexCoord2i(0, 0); glVertex2i(0,   0);
-        glTexCoord2i(0, 1); glVertex2i(0,   100);
-        glTexCoord2i(1, 1); glVertex2i(200, 100);
-        glTexCoord2i(1, 0); glVertex2i(200, 0);
-    glEnd();
+    abrir_imagem("img/dirigivel_menor.png", 2);
+    desenhar_imagem(0, 225);
+
+    abrir_imagem("img/balao.png", 3);
+    desenhar_imagem(50, 25);
 }
 
 /* Handler for window-repaint event. Called back when the window first appears and
