@@ -47,6 +47,7 @@ void animacoes(){
 
 	end = clock();
 	tempo_passado = (end - start)*1000/CLOCKS_PER_SEC;
+	start = clock();
 
 	for(x = 0; x < MAX_ANIMACAO; x++){
 		if(flags[x]&0x80){
@@ -70,6 +71,4 @@ void animacoes(){
     		//printf("%d: %f %f | %f %f\n", x, pos[x].x, pos[x].y, caminho[x][passo[x]].x, caminho[x][passo[x]].y);
 		}
 	}
-
-	start = clock();
 }

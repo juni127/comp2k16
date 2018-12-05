@@ -34,41 +34,13 @@ pthread_t thread_sfx;
 
 vertex canos[MAX_CANO];
 float acel = 120, vel = 0, posicao = 240, temp = 0.05, vel_cano = -3;
-char gameover = 0, caindo = 0;
+char gameover = 0, caindo = 0, gamemode = 0;
 
 
-/* Handler for window-repaint event. Called back when the window first appears and
-   whenever the window needs to be re-painted. */
-void display() {
-    /* Comum */
-    // Clear color and depth buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-    glMatrixMode(GL_MODELVIEW);     // Operate on model-view matrix
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-    end = clock();
-    tempo_passado += (end - start)*10000/CLOCKS_PER_SEC;
-
+void jogo2d(){
     int x;
     escolher_imagem(0);
     desenhar_imagem(0, 0);
-
-
-    if(tempo_passado > 1 && !gameover){
-        tempo_passado = 0;
-
-        posicao = posicao + vel * temp + acel * temp * temp/2;
-        vel = vel + acel * temp;
-
-        for(x = 0; x < MAX_CANO && !caindo; x++){
-            canos[x].x += vel_cano;
-            if(canos[x].x < -100){
-                canos[x].x = 640;
-                canos[x].y = rand()%300 + 100;
-            }
-        }
-    }
 
     for(x = 0; x < MAX_CANO; x++){
         escolher_imagem(3);
@@ -109,9 +81,62 @@ void display() {
     escolher_imagem(1);
     desenhar_imagem(0, 400);
 
-    glutSwapBuffers();
- 
+}
+
+void jogo3d(){
+
+}
+
+void jogo1pessoa(){
+
+}
+
+/* Handler for window-repaint event. Called back when the window first appears and
+   whenever the window needs to be re-painted. */
+void display() {
+    /* Comum */
+    // Clear color and depth buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+    glMatrixMode(GL_MODELVIEW);     // Operate on model-view matrix
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+    end = clock();
+    tempo_passado += (end - start)*10000/CLOCKS_PER_SEC;
     start = clock();
+
+    int x;
+
+    switch(gamemode){
+        case 0:
+            jogo2d();
+            break;
+        case 1:
+            jogo3d();
+            break;
+        case 2:
+            jogo1pessoa();
+            break;
+    }
+
+
+    if(tempo_passado > 1 && !gameover){
+        tempo_passado = 0;
+
+        posicao = posicao + vel * temp + acel * temp * temp/2;
+        vel = vel + acel * temp;
+
+        for(x = 0; x < MAX_CANO && !caindo; x++){
+            canos[x].x += vel_cano;
+            if(canos[x].x < -100){
+                canos[x].x = 640;
+                canos[x].y = rand()%300 + 100;
+            }
+        }
+    }
+
+
+    glutSwapBuffers();
 }
 
 void reshape(int width, int height) {
