@@ -60,8 +60,10 @@ void animacoes(){
 						pos[x] = caminho[x][0];
 						passo[x] = 0;
 					}
-				if(pos[x].x != caminho[x][passo[x]].x)pos[x].x = (pos[x].x < caminho[x][passo[x]].x)?pos[x].x+1:pos[x].x-1;
-				if(pos[x].y != caminho[x][passo[x]].y)pos[x].y = (pos[x].y < caminho[x][passo[x]].y)?pos[x].y+1:pos[x].y-1;
+				if(pos[x].x != caminho[x][passo[x]].x)
+					pos[x].x = (pos[x].x < caminho[x][passo[x]].x)?pos[x].x+1:pos[x].x-1;
+				if(pos[x].y != caminho[x][passo[x]].y)
+					pos[x].y = (pos[x].y < caminho[x][passo[x]].y)?pos[x].y+1:pos[x].y-1;
 			}
 			escolher_imagem(imagem[x]);
     		desenhar_imagem(pos[x].x, pos[x].y);

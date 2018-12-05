@@ -36,7 +36,7 @@ void menu_principal(){
 
     animacoes();
     
-    abrir_imagem("img/titulo.png", 4);
+    abrir_imagem("img/titulo.png", 5);
     desenhar_imagem(0, -100);
 }
 
@@ -121,6 +121,20 @@ int main(int argc, char **argv) {
     c2[1].x = -200; c2[1].y = 180;
     setar_animacao(c2, 2, 100.0, 0, 1, 2);
     tocar_animacao(1);
+
+    abrir_imagem("img/balao.png", 3);
+    vertex c3[7];
+    c3[0].x = -150; c3[0].y = 140;
+    c3[1].x = -10; c3[1].y = 0;
+    c3[2].x = 130; c3[2].y = 140;
+    c3[3].x = 270; c3[3].y = 0;
+    c3[4].x = 410; c3[4].y = 140;
+    c3[5].x = 550; c3[5].y = 0;
+    c3[6].x = 690; c3[6].y = 140;
+    setar_animacao(c3, 7, 75.0, 0, 2, 3);
+    tocar_animacao(2);
+
+
 /*
     abrir_imagem("img/dirigivel_menor.png", 2);
     desenhar_imagem(0, 225);
