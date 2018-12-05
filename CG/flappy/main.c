@@ -34,6 +34,8 @@ pthread_t thread_sfx;
 
 vertex canos[MAX_CANO];
 float acel = 120, vel = 0, posicao = 240, temp = 0.05, vel_cano = -3;
+char gameover = 0, caindo = 0;
+
 
 /* Handler for window-repaint event. Called back when the window first appears and
    whenever the window needs to be re-painted. */
@@ -53,13 +55,13 @@ void display() {
     desenhar_imagem(0, 0);
 
 
-    if(tempo_passado > 1){
+    if(tempo_passado > 1 && !gameover){
         tempo_passado = 0;
 
         posicao = posicao + vel * temp + acel * temp * temp/2;
         vel = vel + acel * temp;
 
-        for(x = 0; x < MAX_CANO; x++){
+        for(x = 0; x < MAX_CANO && !caindo; x++){
             canos[x].x += vel_cano;
             if(canos[x].x < -100){
                 canos[x].x = 640;
@@ -70,9 +72,34 @@ void display() {
 
     for(x = 0; x < MAX_CANO; x++){
         escolher_imagem(3);
-        desenhar_imagem(canos[x].x, canos[x].y+50);
+        desenhar_imagem(canos[x].x, canos[x].y+40);
         escolher_imagem(4);
         desenhar_imagem(canos[x].x, canos[x].y - 570);
+
+        // Colisão com o cano
+        //printf("pos: %f  x: %f y: %f\n", posicao, canos[x].x, canos[x].y);
+        if(!caindo && 360 > canos[x].x && 300 < canos[x].x && (posicao < canos[x].y-90 || posicao > canos[x].y+20)){
+            pthread_cancel(&thread_sfx);
+            abrir_audio("sng/queda.mp3");
+            pthread_create(&thread_sfx, NULL, tocar_audio, NULL);
+            caindo = 1;
+            vel = 0;
+        }
+    }
+
+    // Colisão com o chão
+    if(posicao + 25 > 400){
+        gameover = 1;
+
+        //pthread_cancel(&thread_sfx);
+        //abrir_audio("sng/colisao.mp3");
+        //pthread_create(&thread_sfx, NULL, tocar_audio, NULL);
+    }
+
+    // Colisão com o teto
+    if(posicao < 0){
+        vel = 0;
+        posicao = 0;
     }
 
     escolher_imagem(2);
@@ -117,11 +144,13 @@ void initGL(int w, int h)
 }
 
 void processKeys(unsigned char key, int x, int y){
-    if(key == 32){
+    if(key == 32 && !caindo){
         vel = -150;
-        pthread_cancel(&thread_sfx);
-        abrir_audio("sng/batida.mp3");
-        pthread_create(&thread_sfx, NULL, tocar_audio, NULL);
+        
+        // Tocar som da batida das asas
+        //pthread_cancel(&thread_sfx);
+        //abrir_audio("sng/batida.mp3");
+        //pthread_create(&thread_sfx, NULL, tocar_audio, NULL);
     }
 }
 
@@ -145,7 +174,7 @@ int main(int argc, char **argv) {
     srand (time(NULL));
 
     for(x = 0; x < MAX_CANO; x++){
-        canos[x].x = x*(640/MAX_CANO);
+        canos[x].x = 680 + x*(640/MAX_CANO);
         canos[x].y = rand()%320 + 80;
     }
 
