@@ -16,16 +16,24 @@
 #define W 480
 #define H 640
 
+#define MAXIMO_CANOS 2
+
 //DeclaraÃ§Ã£o de variaveis
 
 
-//Protótipos das Funções
+//Prot?ipos das Fun?es
 void Display();
 void logicaJogo();
 void keyboard (unsigned char key, int x, int y);
 void TeclasEspeciais (int key, int x, int y);
 
-float s= 0, v = 0, a = -10, t = 0, tempo;
+// Status 0x1 - gamemode
+char status = 0;
+
+// Fisica
+float s = 0, v = 0, a = -10, t = 0.01, tempo, taxa = 0, pulo = 5;
+
+float canos[MAXIMO_CANOS][2];
 
 clock_t start, end;
 
@@ -35,14 +43,15 @@ void logicaJogo(){
     tempo = (end - start)*100.0/CLOCKS_PER_SEC;
     start = clock();
 
-    t += tempo;
+    taxa += tempo;
 
-    printf("t: %f\n", s);
-    if(t > 0.1){
-        s = s + v*t/10.0 + a*t*t/20.0;
-        v = v + a*t/10.0;
+    
+    if(taxa > 0.01){
+        printf("v: %f\n", v);
+        s = s + v*t + a*t*t/2.0;
+        v = v + a*t;
 
-        t = 0;
+        taxa = 0;
     }
 }
 
@@ -61,31 +70,38 @@ void Display()
    glClearColor(0.0, 0.0, 0.0, 0.0);
 
 
-   glMatrixMode(GL_PROJECTION);/*glMatrixMode()- define qual matriz será alterada. SEMPRE defina o tipo de apresentação 
+   glMatrixMode(GL_PROJECTION);/*glMatrixMode()- define qual matriz ser?alterada. SEMPRE defina o tipo de apresenta?o 
                               (Ortogonal ou Perspectiva) na matriz PROJECTION.*/
-   glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo possíveis erros.
+   glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo poss?eis erros.
 
 
-   gluPerspective(45,1,1,150);
-   //glOrtho(-8, 8, -8, 8, -150, 150);
+    if(status&0x1)
+        gluPerspective(45,1,1,150);
+    else
+        glOrtho(-8, 8, -8, 8, -150, 150);
 
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
-   gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0); //Define a pos da câmera, para onde olha e qual eixo está na vertical.
+   gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0); //Define a pos da c?era, para onde olha e qual eixo est?na vertical.
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glColor3ub(255, 255, 255);
 
 
-   logicaJogo();
+    logicaJogo();
 
-   glPushMatrix();
-   glTranslatef(0, s, 0);
-   glutWireCube(1);
-   glPopMatrix();
+    // Passaro
+    glTranslatef(0, s, 0);
+    glPushMatrix();
+        // RotaÃ§Ã£o
+        glRotatef(-5.0*v, 0, 0, 1);
+
+        glutSolidCube(1);
+    glPopMatrix();
+    glTranslatef(0, -s, 0);
 
 
-    glutSwapBuffers(); //Executa a Cena. SwapBuffers dá suporte para mais de um buffer, permitindo execução de animações sem cintilações.
+    glutSwapBuffers(); //Executa a Cena. SwapBuffers d?suporte para mais de um buffer, permitindo execu?o de anima?es sem cintila?es.
     glutPostRedisplay(); //Executa novamente
 }
 
@@ -106,7 +122,7 @@ void TeclasEspeciais (int key, int x, int y)
 
 void TeclasNormais(unsigned char key, int x, int y){
     if(key == 32)
-        v = 5;
+        v = pulo;
 }
 
 
@@ -118,7 +134,7 @@ int main(int argc,char **argv)
    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
    glutInitWindowSize(W, H);
-   glutInitWindowPosition(100, 100);
+   glutInitWindowPosition(10, 10);
    glutCreateWindow("Flappy Bird");
    glutDisplayFunc(Display);
    glutSpecialFunc(TeclasEspeciais);
