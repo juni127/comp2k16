@@ -55,7 +55,7 @@ void escolher_imagem(int slot){
     0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */    
 }
 
-void desenhar_imagem(float x, float y){
+void desenhar_imagem(float x, float y, float z){
     glBegin(GL_QUADS);
         glTexCoord2i(0, 0); glVertex2f(x,   y);
         glTexCoord2i(0, 1); glVertex2f(x,   y + ilGetInteger(IL_IMAGE_HEIGHT));

@@ -13,6 +13,9 @@
 //Threads
 #include<pthread.h>
 
+//DevIL - Imagens
+#include"lib/texture.h"
+
 #define W 480
 #define H 640
 
@@ -26,6 +29,10 @@ void Display();
 void logicaJogo();
 void keyboard (unsigned char key, int x, int y);
 void TeclasEspeciais (int key, int x, int y);
+
+// Imagens
+//GLuint texid;
+//ILuint image;
 
 // Status 0x1 - gamemode
 char status = 0;
@@ -47,7 +54,6 @@ void logicaJogo(){
 
     
     if(taxa > 0.01){
-        printf("v: %f\n", v);
         s = s + v*t + a*t*t/2.0;
         v = v + a*t;
 
@@ -55,24 +61,22 @@ void logicaJogo(){
     }
 }
 
-void Display()
-{
+void Display(){
 
-   glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
+    glEnable(GL_SMOOTH);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
 
-   glEnable(GL_LINE_SMOOTH);
-   glEnable(GL_POLYGON_SMOOTH);
-
-
-   glEnable(GL_SMOOTH);
-   glEnable(GL_BLEND);
-
-   glClearColor(0.0, 0.0, 0.0, 0.0);
+    //glClearDepth(0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 
-   glMatrixMode(GL_PROJECTION);/*glMatrixMode()- define qual matriz ser?alterada. SEMPRE defina o tipo de apresenta?o 
+    glMatrixMode(GL_PROJECTION);/*glMatrixMode()- define qual matriz ser?alterada. SEMPRE defina o tipo de apresenta?o 
                               (Ortogonal ou Perspectiva) na matriz PROJECTION.*/
-   glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo poss?eis erros.
+    glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo poss?eis erros.
 
 
     if(status&0x1)
@@ -80,15 +84,25 @@ void Display()
     else
         glOrtho(-8, 8, -8, 8, -150, 150);
 
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0); //Define a pos da c?era, para onde olha e qual eixo est?na vertical.
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-   glColor3ub(255, 255, 255);
-
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0); //Define a pos da c?era, para onde olha e qual eixo est?na vertical.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     logicaJogo();
+    glColor3ub(0, 255, 255);
+
+    // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2f(-240,   -320);//, -5);
+        glTexCoord2i(0, 1); glVertex2f(-240,   320);//, -5);
+        glTexCoord2i(1, 1); glVertex2f(240, 320);//, -5);
+        glTexCoord2i(1, 0); glVertex2f(240, -320);//, -5);
+    glEnd();
+
+    glPushMatrix();
+    glColor3ub(255, 255, 0);
 
     // Passaro
     glTranslatef(0, s, 0);
@@ -99,14 +113,14 @@ void Display()
         glutSolidCube(1);
     glPopMatrix();
     glTranslatef(0, -s, 0);
+    glPopMatrix();
 
 
     glutSwapBuffers(); //Executa a Cena. SwapBuffers d?suporte para mais de um buffer, permitindo execu?o de anima?es sem cintila?es.
     glutPostRedisplay(); //Executa novamente
 }
 
-void TeclasEspeciais (int key, int x, int y)
-{
+void TeclasEspeciais (int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
 			break;
@@ -128,18 +142,22 @@ void TeclasNormais(unsigned char key, int x, int y){
 
 int main(int argc,char **argv)
 {
-   glutInit(&argc, argv); // Initializes glut
+    glutInit(&argc, argv); // Initializes glut
+    
+    // Abrindo background
+    inicia_textura();
+    abrir_imagem("img/background.png", 0);
 
 
-   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-   glutInitWindowSize(W, H);
-   glutInitWindowPosition(10, 10);
-   glutCreateWindow("Flappy Bird");
-   glutDisplayFunc(Display);
-   glutSpecialFunc(TeclasEspeciais);
-   glutKeyboardFunc(TeclasNormais);
-   glutMainLoop();
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(W, H);
+    glutInitWindowPosition(10, 10);
+    glutCreateWindow("Flappy Bird");
+    glutDisplayFunc(Display);
+    glutSpecialFunc(TeclasEspeciais);
+    glutKeyboardFunc(TeclasNormais);
+    glutMainLoop();
 
    return 0; 
 }
