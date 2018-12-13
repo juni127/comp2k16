@@ -19,9 +19,14 @@
 #define W 480
 #define H 640
 
-#define MAXIMO_CANOS 2
+#define MAXIMO_CANOS 4
+#define VELOCIDADE -5.0
+#define DISTANCIA 800
 
 //Declaração de variaveis
+
+// Quadric obj
+GLUquadricObj *quadratic;
 
 
 //Prot?ipos das Fun?es
@@ -35,7 +40,7 @@ GLuint texid;
 ILuint image;
 
 // Status 0x1 - gamemode
-char status = 0;
+char status = 1;
 
 // Fisica
 float s = 0, v = 0, a = -10, t = 0.01, tempo, taxa = 0, pulo = 5;
@@ -52,6 +57,15 @@ void logicaJogo(){
 
     taxa += tempo;
 
+    int x;
+
+    for(x = 0; x < MAXIMO_CANOS; x++){
+        canos[x][0] += VELOCIDADE*tempo;
+        if(canos[x][0] < -300){
+            canos[x][0] = 1000;
+            canos[x][1] = 0;
+        }
+    }
     
     if(taxa > 0.01){
         s = s + v*t + a*t*t/2.0;
@@ -77,31 +91,45 @@ void Display(){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo poss?eis erros.
 
-    //if(status&0x1)
-        gluPerspective(45,1,1,150);
-    //else
-    //    glOrtho(-240.0, 240.0, -320.0, 320.0, -5.0, 100);
+    if(status&0x1){
+        gluPerspective(45,1,50,1100);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(0, 0 , 30, 0, 0, 0, 0, 1, 0); //Define a pos da c?era, para onde olha e qual eixo est?na vertical.
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        gluLookAt(0, s, 0, 30, s, 0, 0, 1, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    }else{
+        glOrtho(-W/2.0, W/2.0, -H/2.0, H/2.0, -5.0, 200);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        gluLookAt(0, 0 , 30, 0, 0, 0, 0, 1, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    }
 
     logicaJogo();
-    //glColor3ub(0, 255, 255);
+
+    glColor3ub(255, 255, 255);
 
     // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 0, 0); glVertex3f(-240,   -320, -5);
-        glTexCoord3i(0, 1, 0); glVertex3f(-240,   320, -5);
-        glTexCoord3i(1, 1, 0); glVertex3f(240, 320, -5);
-        glTexCoord3i(1, 0, 0); glVertex3f(240, -320, -5);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -100);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -100);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -100);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -100);
+    glEnd();
+
+    glBegin(GL_QUADS);
+        glTexCoord3i(0, 1, 0); glVertex3f(1000,   -H, -W);
+        glTexCoord3i(0, 0, 0); glVertex3f(1000,   H, -W);
+        glTexCoord3i(1, 0, 0); glVertex3f(1000, H, W);
+        glTexCoord3i(1, 1, 0); glVertex3f(1000, -H, W);
     glEnd();
 
     glPushMatrix();
     //glColor3ub(255, 255, 0);
-    printf("%f\n", s);
     // Passaro
     glTranslatef(0, s, 0);
     glPushMatrix();
@@ -112,6 +140,30 @@ void Display(){
     glPopMatrix();
     glTranslatef(0, -s, 0);
     glPopMatrix();
+
+    // Canos 
+    int x;
+    glColor3ub(50, 255, 50);
+    for(x = 0; x < MAXIMO_CANOS; x++){
+        glPushMatrix();
+            glTranslatef(canos[x][0], 0, 0);
+
+            glPushMatrix();
+                glTranslatef(0, canos[x][1]+80, 0);
+                glRotatef(90.0, -1, 0, 0);
+                gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
+                gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
+            glPopMatrix();
+
+            glPushMatrix();
+                glTranslatef(0, canos[x][1]-80, 0);
+                glRotatef(90.0, 1, 0, 0);
+                gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
+                gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
+            glPopMatrix();
+
+        glPopMatrix();
+    }
 
     glutSwapBuffers(); //Executa a Cena. SwapBuffers d?suporte para mais de um buffer, permitindo execu?o de anima?es sem cintila?es.
     glutPostRedisplay(); //Executa novamente
@@ -148,6 +200,14 @@ int main(int argc,char **argv)
     glutCreateWindow("Flappy Bird");
     glutInitWindowPosition(100, 100);
     glutDisplayFunc(Display);
+
+    quadratic = gluNewQuadric();
+
+    int x;
+    for(x = 0; x < MAXIMO_CANOS; x++){
+        canos[x][0] += x*DISTANCIA+100;
+        canos[x][1] = 0;
+    }
     
     // Abrindo background
     /* Initialization of DevIL */
