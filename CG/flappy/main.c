@@ -28,6 +28,8 @@
 // Quadric obj
 GLUquadricObj *quadratic;
 
+// Imagens
+GLuint texid_bg; ILuint image_bg; // Background 2d
 
 //Prot?ipos das Fun?es
 void Display();
@@ -35,12 +37,11 @@ void logicaJogo();
 void keyboard (unsigned char key, int x, int y);
 void TeclasEspeciais (int key, int x, int y);
 
-// Imagens
-GLuint texid;
-ILuint image;
+void abrirImagem(GLuint * texid, ILuint * image, char * path);
+void selecionarImagem(GLuint texid, ILuint image);
 
 // Status 0x1 - gamemode
-char status = 1;
+char status = 0;
 
 // Fisica
 float s = 0, v = 0, a = -10, t = 0.01, tempo, taxa = 0, pulo = 5;
@@ -48,6 +49,26 @@ float s = 0, v = 0, a = -10, t = 0.01, tempo, taxa = 0, pulo = 5;
 float canos[MAXIMO_CANOS][2];
 
 clock_t start, end;
+
+void abrirImagem(GLuint * texid, ILuint * image, char * path){
+    ilGenImages(1, image); /* Generation of one image name */
+    glGenTextures(1, texid);
+
+
+    ilBindImage(*image); /* Binding of image name */
+    ilLoadImage(path); /* Loading of the image filename by DevIL */
+    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); 
+}
+
+void selecionarImagem(GLuint texid, ILuint image){
+    /* OpenGL texture binding of the image loaded by DevIL  */
+    ilBindImage(image); /* Binding of image name */
+    glBindTexture(GL_TEXTURE_2D, texid); /* Binding of texture name */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear interpolation for magnification filter */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear interpolation for minifying filter */
+    glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
+    0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */
+}
 
 void logicaJogo(){
 
@@ -114,6 +135,7 @@ void Display(){
     glColor3ub(255, 255, 255);
 
     // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
+    selecionarImagem(texid_bg, image_bg);
     glBegin(GL_QUADS);
         glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -100);
         glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -100);
@@ -213,21 +235,24 @@ int main(int argc,char **argv)
     /* Initialization of DevIL */
     ilInit(); 
 
-    ilGenImages(1, &image); /* Generation of one image name */
+    abrirImagem(&texid_bg, &image_bg, "img/background.png");
+
+    /*
+    ilGenImages(1, &image); // Generation of one image name 
     glGenTextures(1, &texid);
 
 
-    ilBindImage(image); /* Binding of image name */
-    ilLoadImage("img/background.png"); /* Loading of the image filename by DevIL */
+    ilBindImage(image); // Binding of image name 
+    ilLoadImage(); // Loading of the image filename by DevIL 
     ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); 
  
-    /* OpenGL texture binding of the image loaded by DevIL  */
-    glBindTexture(GL_TEXTURE_2D, texid); /* Binding of texture name */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear interpolation for magnification filter */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear interpolation for minifying filter */
+    // OpenGL texture binding of the image loaded by DevIL  
+    glBindTexture(GL_TEXTURE_2D, texid); // Binding of texture name 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // We will use linear interpolation for magnification filter 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // We will use linear interpolation for minifying filter 
     glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
-    0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */
-
+    0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); // Texture specification 
+    */
 
 
 
