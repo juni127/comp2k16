@@ -29,7 +29,10 @@
 GLUquadricObj *quadratic;
 
 // Imagens
-GLuint texid_bg; ILuint image_bg; // Background 2d
+GLuint txd_default; ILuint img_default; // Background 2d
+GLuint texid_clouds; ILuint image_clouds; // Background 2d
+GLuint texid_city; ILuint image_city; // Background 2d
+GLuint texid_grass; ILuint image_grass; // Background 2d
 
 //Prot?ipos das Fun?es
 void Display();
@@ -84,7 +87,7 @@ void logicaJogo(){
         canos[x][0] += VELOCIDADE*tempo;
         if(canos[x][0] < -300){
             canos[x][0] = 1000;
-            canos[x][1] = 0;
+            canos[x][1] = rand()%200 - 100;
         }
     }
     
@@ -106,7 +109,7 @@ void Display(){
     glEnable(GL_TEXTURE_2D);
 
     //glClearDepth(0.0f);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.41568627451f, 0.76862745098f, 0.81960784313f, 1.0f);
 
 
     glMatrixMode(GL_PROJECTION);
@@ -135,20 +138,56 @@ void Display(){
     glColor3ub(255, 255, 255);
 
     // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
-    selecionarImagem(texid_bg, image_bg);
+    selecionarImagem(texid_clouds, image_clouds);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -100);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -100);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -100);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -100);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -103);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -103);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -103);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -103);
     glEnd();
 
+    selecionarImagem(texid_city, image_city);
+    glBegin(GL_QUADS);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -102);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -102);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -102);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -102);
+    glEnd();
+
+    selecionarImagem(texid_grass, image_grass);
+    glBegin(GL_QUADS);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -101);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -101);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -101);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -101);
+    glEnd();
+
+
+    selecionarImagem(texid_clouds, image_clouds);
+    glBegin(GL_QUADS);
+        glTexCoord3i(0, 1, 0); glVertex3f(1400,   -H, -W);
+        glTexCoord3i(0, 0, 0); glVertex3f(1400,   H, -W);
+        glTexCoord3i(1, 0, 0); glVertex3f(1400, H, W);
+        glTexCoord3i(1, 1, 0); glVertex3f(1400, -H, W);
+    glEnd();
+    
+    selecionarImagem(texid_city, image_city);
     glBegin(GL_QUADS);
         glTexCoord3i(0, 1, 0); glVertex3f(1000,   -H, -W);
         glTexCoord3i(0, 0, 0); glVertex3f(1000,   H, -W);
         glTexCoord3i(1, 0, 0); glVertex3f(1000, H, W);
         glTexCoord3i(1, 1, 0); glVertex3f(1000, -H, W);
     glEnd();
+    
+    selecionarImagem(texid_grass, image_grass);
+    glBegin(GL_QUADS);
+        glTexCoord3i(0, 1, 0); glVertex3f(600,   -H+100, -W);
+        glTexCoord3i(0, 0, 0); glVertex3f(600,   H+100, -W);
+        glTexCoord3i(1, 0, 0); glVertex3f(600, H+100, W);
+        glTexCoord3i(1, 1, 0); glVertex3f(600, -H+100, W);
+    glEnd();
+
+    selecionarImagem(txd_default, img_default);
 
     glPushMatrix();
     //glColor3ub(255, 255, 0);
@@ -225,36 +264,23 @@ int main(int argc,char **argv)
 
     quadratic = gluNewQuadric();
 
+    srand(time(NULL));
+
     int x;
     for(x = 0; x < MAXIMO_CANOS; x++){
         canos[x][0] += x*DISTANCIA+100;
-        canos[x][1] = 0;
+        canos[x][1] = rand()%200 - 100;
     }
     
     // Abrindo background
     /* Initialization of DevIL */
     ilInit(); 
 
-    abrirImagem(&texid_bg, &image_bg, "img/background.png");
 
-    /*
-    ilGenImages(1, &image); // Generation of one image name 
-    glGenTextures(1, &texid);
-
-
-    ilBindImage(image); // Binding of image name 
-    ilLoadImage(); // Loading of the image filename by DevIL 
-    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); 
- 
-    // OpenGL texture binding of the image loaded by DevIL  
-    glBindTexture(GL_TEXTURE_2D, texid); // Binding of texture name 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // We will use linear interpolation for magnification filter 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // We will use linear interpolation for minifying filter 
-    glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
-    0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); // Texture specification 
-    */
-
-
+    abrirImagem(&txd_default, &img_default, "img/default.png");
+    abrirImagem(&texid_clouds, &image_clouds, "img/clouds.png");
+    abrirImagem(&texid_city, &image_city, "img/city.png");
+    abrirImagem(&texid_grass, &image_grass, "img/grass.png");
 
 
     glutSpecialFunc(TeclasEspeciais);
