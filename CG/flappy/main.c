@@ -19,7 +19,7 @@
 #define W 480
 #define H 640
 
-#define MAXIMO_CANOS 4
+#define MAXIMO_CANOS 8
 #define VELOCIDADE -5.0
 #define DISTANCIA 800
 
@@ -47,7 +47,7 @@ void selecionarImagem(GLuint texid, ILuint image);
 char status = 0;
 
 // Fisica
-float s = 0, v = 0, a = -10, t = 0.01, tempo, taxa = 0, pulo = 5;
+float s = 0, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50;
 
 float canos[MAXIMO_CANOS][2];
 
@@ -73,71 +73,7 @@ void selecionarImagem(GLuint texid, ILuint image){
     0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */
 }
 
-void logicaJogo(){
-
-    end = clock();
-    tempo = (end - start)*100.0/CLOCKS_PER_SEC;
-    start = clock();
-
-    taxa += tempo;
-
-    int x;
-
-    for(x = 0; x < MAXIMO_CANOS; x++){
-        canos[x][0] += VELOCIDADE*tempo;
-        if(canos[x][0] < -300){
-            canos[x][0] = 1000;
-            canos[x][1] = rand()%200 - 100;
-        }
-    }
-    
-    if(taxa > 0.01){
-        s = s + v*t + a*t*t/2.0;
-        v = v + a*t;
-
-        taxa = 0;
-    }
-}
-
-void Display(){
-
-    //glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POLYGON_SMOOTH);
-    glEnable(GL_SMOOTH);
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
-
-    //glClearDepth(0.0f);
-    glClearColor(0.41568627451f, 0.76862745098f, 0.81960784313f, 1.0f);
-
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo poss?eis erros.
-
-    if(status&0x1){
-        gluPerspective(45,1,50,1100);
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        gluLookAt(0, s, 0, 30, s, 0, 0, 1, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    }else{
-        glOrtho(-W/2.0, W/2.0, -H/2.0, H/2.0, -5.0, 200);
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        gluLookAt(0, 0 , 30, 0, 0, 0, 0, 1, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    logicaJogo();
-
-    glColor3ub(255, 255, 255);
-
-    // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
+void fundo2d(){
     selecionarImagem(texid_clouds, image_clouds);
     glBegin(GL_QUADS);
         glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -103);
@@ -161,31 +97,103 @@ void Display(){
         glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -101);
         glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -101);
     glEnd();
+}
 
-
+void fundo3d(){
     selecionarImagem(texid_clouds, image_clouds);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(1400,   -H, -W);
-        glTexCoord3i(0, 0, 0); glVertex3f(1400,   H, -W);
-        glTexCoord3i(1, 0, 0); glVertex3f(1400, H, W);
-        glTexCoord3i(1, 1, 0); glVertex3f(1400, -H, W);
+        glTexCoord3i(0, 1, 0); glVertex3f(4800,   -H, -W);
+        glTexCoord3i(0, 0, 0); glVertex3f(4800,   H, -W);
+        glTexCoord3i(1, 0, 0); glVertex3f(4800, H, W);
+        glTexCoord3i(1, 1, 0); glVertex3f(4800, -H, W);
     glEnd();
     
     selecionarImagem(texid_city, image_city);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(1000,   -H, -W);
-        glTexCoord3i(0, 0, 0); glVertex3f(1000,   H, -W);
-        glTexCoord3i(1, 0, 0); glVertex3f(1000, H, W);
-        glTexCoord3i(1, 1, 0); glVertex3f(1000, -H, W);
+        glTexCoord3i(0, 1, 0); glVertex3f(4400,   -H, -W);
+        glTexCoord3i(0, 0, 0); glVertex3f(4400,   H, -W);
+        glTexCoord3i(1, 0, 0); glVertex3f(4400, H, W);
+        glTexCoord3i(1, 1, 0); glVertex3f(4400, -H, W);
     glEnd();
     
     selecionarImagem(texid_grass, image_grass);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(600,   -H+100, -W);
-        glTexCoord3i(0, 0, 0); glVertex3f(600,   H+100, -W);
-        glTexCoord3i(1, 0, 0); glVertex3f(600, H+100, W);
-        glTexCoord3i(1, 1, 0); glVertex3f(600, -H+100, W);
+        glTexCoord3i(0, 1, 0); glVertex3f(4000,   -H+100, -W);
+        glTexCoord3i(0, 0, 0); glVertex3f(4000,   H+100, -W);
+        glTexCoord3i(1, 0, 0); glVertex3f(4000, H+100, W);
+        glTexCoord3i(1, 1, 0); glVertex3f(4000, -H+100, W);
     glEnd();
+}
+
+void logicaJogo(){
+
+    end = clock();
+    tempo = (end - start)*100.0/CLOCKS_PER_SEC;
+    start = clock();
+
+    taxa += tempo;
+
+    int x;
+
+    for(x = 0; x < MAXIMO_CANOS; x++){
+        canos[x][0] += VELOCIDADE*tempo;
+        if(canos[x][0] < -300){
+            canos[x][0] = (DISTANCIA * MAXIMO_CANOS) - 300;
+            canos[x][1] = rand()%200 - 100;
+        }
+    }
+    
+    if(taxa > 0.01){
+        s = s + v*t + a*t*t/2.0;
+        v = v + a*t;
+
+        taxa = 0;
+    }
+}
+
+void Display(){
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
+    glEnable(GL_SMOOTH);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+
+    //glClearDepth(0.0f);
+    glClearColor(0.41568627451f, 0.76862745098f, 0.81960784313f, 1.0f);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();//"Limpa" ou "transforma" a matriz em identidade, reduzindo poss?eis erros.
+
+    if(status&0x1){
+        gluPerspective(45,1,50,5000);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        gluLookAt(0, s, 0, 30, s, 0, 0, 1, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    }else{
+        glOrtho(-W/2.0, W/2.0, -H/2.0, H/2.0, -50.0f, 200);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        gluLookAt(0, 0 , 30, 0, 0, 0, 0, 1, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    logicaJogo();
+
+    glColor3ub(255, 255, 255);
+
+    // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
+    if(status&0x1)
+        fundo3d();
+    else
+        fundo2d();
 
     selecionarImagem(txd_default, img_default);
 
@@ -204,7 +212,7 @@ void Display(){
 
     // Canos 
     int x;
-    glColor3ub(50, 255, 50);
+    glColor3ub(116, 191, 46);
     for(x = 0; x < MAXIMO_CANOS; x++){
         glPushMatrix();
             glTranslatef(canos[x][0], 0, 0);
@@ -226,6 +234,21 @@ void Display(){
         glPopMatrix();
     }
 
+    // Chão
+    glColor3ub(158, 235, 94);
+    glPushMatrix();
+        glTranslatef(16, -200, 0);
+        glScalef(128.0f, 0.3f, 3.0f);
+        glutSolidCube(50);
+    glPopMatrix();
+
+    glColor3ub(211, 216, 148);
+    glPushMatrix();
+        glTranslatef(0, -300, 0);
+        glScalef(16.0f, 4.0f, 2.5f);
+        glutSolidCube(50);
+    glPopMatrix();
+
     glutSwapBuffers(); //Executa a Cena. SwapBuffers d?suporte para mais de um buffer, permitindo execu?o de anima?es sem cintila?es.
     glutPostRedisplay(); //Executa novamente
 }
@@ -235,10 +258,12 @@ void Display(){
 void TeclasEspeciais (int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
+            status = 1;
 			break;
 		case GLUT_KEY_UP:
 			break;
 		case GLUT_KEY_LEFT:
+            status = 0;
 			break;
 		case GLUT_KEY_DOWN:
 			break;
