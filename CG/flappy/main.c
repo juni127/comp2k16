@@ -48,11 +48,13 @@ void TeclasEspeciais (int key, int x, int y);
 void abrirImagem(GLuint * texid, ILuint * image, char * path);
 void selecionarImagem(GLuint texid, ILuint image);
 
-// Status 0x1 - gamemode
+// Status 0x1 - gamemode / 0x2 e 0x4 - gamestate
 char status = 0x1;
 
+int pontos = 0;
+
 // Fisica
-float s = -85, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50;
+float s = -85, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50, raio = 50;
 
 float canos[MAXIMO_CANOS][2];
 
@@ -163,9 +165,11 @@ void logicaJogo(){
     if(taxa > 0.01){
         s = s + v*t + a*t*t/2.0;
         v = v + a*t;
-
         taxa = 0;
     }
+
+    if(s - raio <= -200)
+        status ^= 0x6;
 }
 
 void Display(){
@@ -227,40 +231,40 @@ void Display(){
     selecionarImagem(txd_default, img_default);
 
     glPushMatrix();
-    //glColor3ub(255, 255, 0);
-    // Passaro
-    glTranslatef(0, s, 0);
-    glPushMatrix();
-        // Rotação
-        glRotatef(-5.0*v, 0, 0, 1);
-
-        glutSolidCube(50);
-    glPopMatrix();
-    glTranslatef(0, -s, 0);
-    glPopMatrix();
-
-    // Canos 
-    int x;
-    glColor3ub(116, 191, 46);
-    for(x = 0; x < MAXIMO_CANOS; x++){
+        glTranslatef(0, s, 0);
         glPushMatrix();
-            glTranslatef(canos[x][0], 0, 0);
+            // Rotação
+            glRotatef(v*90.0/104.0, 0, 0, 1);
 
-            glPushMatrix();
-                glTranslatef(0, canos[x][1]+80, 0);
-                glRotatef(90.0, -1, 0, 0);
-                gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
-                gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef(0, canos[x][1]-80, 0);
-                glRotatef(90.0, 1, 0, 0);
-                gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
-                gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
-            glPopMatrix();
-
+            glutSolidCube(50);
         glPopMatrix();
+        glTranslatef(0, -s, 0);
+    glPopMatrix();
+
+    // Canos (somente se estiver no jogo)
+    if(status&0x06){
+        int x;
+        glColor3ub(116, 191, 46);
+        for(x = 0; x < MAXIMO_CANOS; x++){
+            glPushMatrix();
+                glTranslatef(canos[x][0], 0, 0);
+
+                glPushMatrix();
+                    glTranslatef(0, canos[x][1]+80, 0);
+                    glRotatef(90.0, -1, 0, 0);
+                    gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
+                    gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(0, canos[x][1]-80, 0);
+                    glRotatef(90.0, 1, 0, 0);
+                    gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
+                    gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
+                glPopMatrix();
+
+            glPopMatrix();
+        }
     }
 
     // Chão
@@ -286,10 +290,10 @@ void Display(){
         else selecionarImagem(texid_gameover, image_gameover);
         if(status&0x1){
             glBegin(GL_QUADS);
-                glTexCoord3i(0, 1, 0); glVertex3f(300,  -178, -77.5f);
-                glTexCoord3i(0, 0, 0); glVertex3f(300,  8.25f, -77.5f);
-                glTexCoord3i(1, 0, 0); glVertex3f(300, 8.25f, 77.5f);
-                glTexCoord3i(1, 1, 0); glVertex3f(300, -178, 77.5f);
+                glTexCoord3i(0, 1, 0); glVertex3f(300,  -93+s, -77.5f);
+                glTexCoord3i(0, 0, 0); glVertex3f(300,  93.25f+s, -77.5f);
+                glTexCoord3i(1, 0, 0); glVertex3f(300, 93.25f+s, 77.5f);
+                glTexCoord3i(1, 1, 0); glVertex3f(300, -93+s, 77.5f);
             glEnd();
         }else{
             glBegin(GL_QUADS);
@@ -329,7 +333,8 @@ void TeclasNormais(unsigned char key, int x, int y){
             // Inicio
             if(key == KEY_SPACE){
                 iniciaCanos();
-                v = pulo;
+                pontos = 0;
+                //v = pulo;
                 status ^= 0x02;
             }
             break;
@@ -340,13 +345,16 @@ void TeclasNormais(unsigned char key, int x, int y){
             break;
         case 2:
             // Scoreboard
+            if(key == KEY_SPACE){
+                s = -85;
+                status &= 0xF9;
+            }
             break;
     }
 }
 
 
-int main(int argc,char **argv)
-{
+int main(int argc,char **argv){
     glutInit(&argc, argv); // Initializes glut
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
