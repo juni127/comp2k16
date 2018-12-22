@@ -16,6 +16,9 @@
 //DevIL - Imagens
 #include<IL/il.h>
 
+// Valores
+#include"lib/values.h"
+
 #define W 480
 #define H 640
 
@@ -33,6 +36,8 @@ GLuint txd_default; ILuint img_default; // Background 2d
 GLuint texid_clouds; ILuint image_clouds; // Background 2d
 GLuint texid_city; ILuint image_city; // Background 2d
 GLuint texid_grass; ILuint image_grass; // Background 2d
+GLuint texid_message; ILuint image_message; // Instrução do inicio
+GLuint texid_gameover; ILuint image_gameover; // Gameover
 
 //Prot?ipos das Fun?es
 void Display();
@@ -44,10 +49,10 @@ void abrirImagem(GLuint * texid, ILuint * image, char * path);
 void selecionarImagem(GLuint texid, ILuint image);
 
 // Status 0x1 - gamemode
-char status = 0;
+char status = 0x1;
 
 // Fisica
-float s = 0, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50;
+float s = -85, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50;
 
 float canos[MAXIMO_CANOS][2];
 
@@ -76,53 +81,65 @@ void selecionarImagem(GLuint texid, ILuint image){
 void fundo2d(){
     selecionarImagem(texid_clouds, image_clouds);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -103);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -103);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -103);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -103);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -W+100, -102);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   W+100, -102);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, W+100, -102);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -W+100, -102);
     glEnd();
 
     selecionarImagem(texid_city, image_city);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -102);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -102);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -102);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -102);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -W+100, -101);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   W+100, -101);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, W+100, -101);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -W+100, -101);
     glEnd();
 
     selecionarImagem(texid_grass, image_grass);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -H/2.0, -101);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   H/2.0, -101);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, H/2.0, -101);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -H/2.0, -101);
+        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -W+100, -100);
+        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   W+100, -100);
+        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, W+100, -100);
+        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -W+100, -100);
     glEnd();
 }
 
 void fundo3d(){
     selecionarImagem(texid_clouds, image_clouds);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(4800,   -H, -W);
-        glTexCoord3i(0, 0, 0); glVertex3f(4800,   H, -W);
-        glTexCoord3i(1, 0, 0); glVertex3f(4800, H, W);
-        glTexCoord3i(1, 1, 0); glVertex3f(4800, -H, W);
+        glTexCoord3i(0, 1, 0); glVertex3f(4900, -2080, -2140);
+        glTexCoord3i(0, 0, 0); glVertex3f(4900, 3480, -2140);
+        glTexCoord3i(1, 0, 0); glVertex3f(4900, 3480, 2140);
+        glTexCoord3i(1, 1, 0); glVertex3f(4900, -2080, 2140);
     glEnd();
     
     selecionarImagem(texid_city, image_city);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(4400,   -H, -W);
-        glTexCoord3i(0, 0, 0); glVertex3f(4400,   H, -W);
-        glTexCoord3i(1, 0, 0); glVertex3f(4400, H, W);
-        glTexCoord3i(1, 1, 0); glVertex3f(4400, -H, W);
+        glTexCoord3i(0, 1, 0); glVertex3f(4400, -1980, -2040);
+        glTexCoord3i(0, 0, 0); glVertex3f(4400, 3380, -2040);
+        glTexCoord3i(1, 0, 0); glVertex3f(4400, 3380, 2040);
+        glTexCoord3i(1, 1, 0); glVertex3f(4400, -1980, 2040);
     glEnd();
     
     selecionarImagem(texid_grass, image_grass);
     glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(4000,   -H+100, -W);
-        glTexCoord3i(0, 0, 0); glVertex3f(4000,   H+100, -W);
-        glTexCoord3i(1, 0, 0); glVertex3f(4000, H+100, W);
-        glTexCoord3i(1, 1, 0); glVertex3f(4000, -H+100, W);
+        glTexCoord3i(0, 1, 0); glVertex3f(4000, -1780, -1840);
+        glTexCoord3i(0, 0, 0); glVertex3f(4000, 3180, -1840);
+        glTexCoord3i(1, 0, 0); glVertex3f(4000, 3180, 1840);
+        glTexCoord3i(1, 1, 0); glVertex3f(4000, -1780, 1840);
     glEnd();
+}
+
+void iniciaCanos(){
+    int x;
+    for(x = 0; x < MAXIMO_CANOS; x++){
+        canos[x][0] += x*DISTANCIA+600;
+        canos[x][1] = rand()%200 - 50;
+    }
+}
+
+void logicaInicio(){
+    // inicio
 }
 
 void logicaJogo(){
@@ -139,7 +156,7 @@ void logicaJogo(){
         canos[x][0] += VELOCIDADE*tempo;
         if(canos[x][0] < -300){
             canos[x][0] = (DISTANCIA * MAXIMO_CANOS) - 300;
-            canos[x][1] = rand()%200 - 100;
+            canos[x][1] = rand()%200 - 50;
         }
     }
     
@@ -176,7 +193,7 @@ void Display(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     }else{
-        glOrtho(-W/2.0, W/2.0, -H/2.0, H/2.0, -50.0f, 200);
+        glOrtho(-W/2.0, W/2.0, -H/2.0, H/2.0, -80.0f, 200);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -185,9 +202,21 @@ void Display(){
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    logicaJogo();
-
     glColor3ub(255, 255, 255);
+
+    switch((status&0x06)>>1){
+        case 0:
+            // Inicio
+            logicaInicio();
+            break;
+        case 1:
+            // Jogo
+            logicaJogo();
+            break;
+        case 2:
+            // Scoreboard
+            break;
+    }
 
     // Planos de fundo (um pra visão "2d" e outro pra primeira pessoa)
     if(status&0x1)
@@ -249,6 +278,29 @@ void Display(){
         glutSolidCube(50);
     glPopMatrix();
 
+    glColor3ub(255, 255, 255);
+
+    // HUD
+    if(!((status&0x02)>>1)){
+        if(!(status&0x04))selecionarImagem(texid_message, image_message);
+        else selecionarImagem(texid_gameover, image_gameover);
+        if(status&0x1){
+            glBegin(GL_QUADS);
+                glTexCoord3i(0, 1, 0); glVertex3f(300,  -178, -77.5f);
+                glTexCoord3i(0, 0, 0); glVertex3f(300,  8.25f, -77.5f);
+                glTexCoord3i(1, 0, 0); glVertex3f(300, 8.25f, 77.5f);
+                glTexCoord3i(1, 1, 0); glVertex3f(300, -178, 77.5f);
+            glEnd();
+        }else{
+            glBegin(GL_QUADS);
+                glTexCoord3i(0, 1, 0); glVertex3f(-150,  -240, 76);
+                glTexCoord3i(0, 0, 0); glVertex3f(-150,  240, 76);
+                glTexCoord3i(1, 0, 0); glVertex3f(150, 240, 76);
+                glTexCoord3i(1, 1, 0); glVertex3f(150, -240, 76);
+            glEnd();
+        }
+    }
+
     glutSwapBuffers(); //Executa a Cena. SwapBuffers d?suporte para mais de um buffer, permitindo execu?o de anima?es sem cintila?es.
     glutPostRedisplay(); //Executa novamente
 }
@@ -258,12 +310,12 @@ void Display(){
 void TeclasEspeciais (int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
-            status = 1;
+            status |= 0x1;
 			break;
 		case GLUT_KEY_UP:
 			break;
 		case GLUT_KEY_LEFT:
-            status = 0;
+            status &= 0xFE;
 			break;
 		case GLUT_KEY_DOWN:
 			break;
@@ -272,8 +324,24 @@ void TeclasEspeciais (int key, int x, int y){
 }
 
 void TeclasNormais(unsigned char key, int x, int y){
-    if(key == 32)
-        v = pulo;
+    switch((status&0x06)>>1){
+        case 0:
+            // Inicio
+            if(key == KEY_SPACE){
+                iniciaCanos();
+                v = pulo;
+                status ^= 0x02;
+            }
+            break;
+        case 1:
+            // Jogo
+            if(key == KEY_SPACE)
+                v = pulo;
+            break;
+        case 2:
+            // Scoreboard
+            break;
+    }
 }
 
 
@@ -290,22 +358,17 @@ int main(int argc,char **argv)
     quadratic = gluNewQuadric();
 
     srand(time(NULL));
-
-    int x;
-    for(x = 0; x < MAXIMO_CANOS; x++){
-        canos[x][0] += x*DISTANCIA+100;
-        canos[x][1] = rand()%200 - 100;
-    }
     
     // Abrindo background
     /* Initialization of DevIL */
-    ilInit(); 
-
+    ilInit();
 
     abrirImagem(&txd_default, &img_default, "img/default.png");
-    abrirImagem(&texid_clouds, &image_clouds, "img/clouds.png");
-    abrirImagem(&texid_city, &image_city, "img/city.png");
-    abrirImagem(&texid_grass, &image_grass, "img/grass.png");
+    abrirImagem(&texid_clouds, &image_clouds, "img/bg/clouds.png");
+    abrirImagem(&texid_city, &image_city, "img/bg/city.png");
+    abrirImagem(&texid_grass, &image_grass, "img/bg/grass.png");
+    abrirImagem(&texid_message, &image_message, "img/menu/message.png");
+    abrirImagem(&texid_gameover, &image_gameover, "img/menu/gameover.png");
 
 
     glutSpecialFunc(TeclasEspeciais);
