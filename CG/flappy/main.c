@@ -28,6 +28,9 @@
 
 //Declaração de variaveis
 
+// Persistencia
+FILE * savedata;
+
 // Quadric obj
 GLUquadricObj *quadratic;
 
@@ -38,6 +41,8 @@ GLuint texid_city; ILuint image_city; // Background 2d
 GLuint texid_grass; ILuint image_grass; // Background 2d
 GLuint texid_message; ILuint image_message; // Instrução do inicio
 GLuint texid_gameover; ILuint image_gameover; // Gameover
+GLuint texid_novo; ILuint image_novo; // Novo recorde
+GLuint texid_numeros[10]; ILuint image_numeros[10]; // Gameover
 
 //Prot?ipos das Fun?es
 void Display();
@@ -48,10 +53,10 @@ void TeclasEspeciais (int key, int x, int y);
 void abrirImagem(GLuint * texid, ILuint * image, char * path);
 void selecionarImagem(GLuint texid, ILuint image);
 
-// Status 0x1 - gamemode / 0x2 e 0x4 - gamestate
-char status = 0x1;
+// Status 0x1 - gamemode / 0x2 e 0x4 - gamestate / 0x8 novo recorde
+char status = 0x0;
 
-int pontos = 0;
+int pontos = 0, melhor = 0, pc = 0;
 
 // Fisica
 float s = -85, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50, raio = 50;
@@ -78,6 +83,19 @@ void selecionarImagem(GLuint texid, ILuint image){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear interpolation for minifying filter */
     glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
     0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */
+}
+
+void printaNumero(int numero){
+    int x;
+    for(x = 0; numero > 0 || x == 0; numero /= 10, x++){
+        selecionarImagem(texid_numeros[numero%10], image_numeros[numero%10]);
+        glBegin(GL_QUADS);
+            glTexCoord3i(0, 1, 0); glVertex3f( 0-(x*18), 0, 0);
+            glTexCoord3i(0, 0, 0); glVertex3f( 0-(x*18), 16, 0);
+            glTexCoord3i(1, 0, 0); glVertex3f( 16-(x*18), 16, 0);
+            glTexCoord3i(1, 1, 0); glVertex3f( 16-(x*18), 0, 0);
+        glEnd();
+    }
 }
 
 void fundo2d(){
@@ -140,6 +158,22 @@ void iniciaCanos(){
     }
 }
 
+void gameOver(){
+    status ^= 0x6;
+    if(pontos > melhor){
+        status ^= 0x8;
+        melhor = pontos;
+        fwrite(&melhor, sizeof(int), 1, savedata);
+        fseek(savedata, 0, SEEK_SET);
+    }
+}
+
+void novoJogo(){
+    s = -85;
+    pontos = pc = 0;
+    status &= 0x01;
+}
+
 void logicaInicio(){
     // inicio
 }
@@ -161,6 +195,13 @@ void logicaJogo(){
             canos[x][1] = rand()%200 - 50;
         }
     }
+
+    printf("cano 1: %f\n", canos[0][0]);
+
+    if(canos[pc][0] < 0){
+        pontos++;
+        pc = (pc == MAXIMO_CANOS-1)?0:pc+1;
+    }
     
     if(taxa > 0.01){
         s = s + v*t + a*t*t/2.0;
@@ -169,7 +210,7 @@ void logicaJogo(){
     }
 
     if(s - raio <= -200)
-        status ^= 0x6;
+        gameOver();
 }
 
 void Display(){
@@ -302,6 +343,40 @@ void Display(){
                 glTexCoord3i(1, 0, 0); glVertex3f(150, 240, 76);
                 glTexCoord3i(1, 1, 0); glVertex3f(150, -240, 76);
             glEnd();
+            if(status&0x4){
+                glPushMatrix();
+                    glTranslatef(90.0f, -35.0f, 77);
+                    printaNumero(melhor);
+                glPopMatrix();
+                glPushMatrix();
+                    glTranslatef(90.0f, 10.0f, 77);
+                    printaNumero(pontos);
+                glPopMatrix();
+
+                if(status&0x8){
+                    selecionarImagem(texid_novo, image_novo);
+                    glBegin(GL_QUADS);
+                        glTexCoord3i(0, 1, 0); glVertex3f(32,  -25, 77);
+                        glTexCoord3i(0, 0, 0); glVertex3f(32,  7, 77);
+                        glTexCoord3i(1, 0, 0); glVertex3f(64, 7, 77);
+                        glTexCoord3i(1, 1, 0); glVertex3f(64, -25, 77);
+                    glEnd();
+                }
+            }
+        }
+    }else{
+        // Pontuação
+        if(status&0x1){
+            glPushMatrix();
+                glTranslatef(740.0f, s + 285.0f, 285.0f);
+                glRotatef(-90.0f, 0, 1, 0);
+                printaNumero(21);
+            glPopMatrix();
+        }else{
+            glPushMatrix();
+                glTranslatef(220.0f, 300.0f, 75);
+                printaNumero(pontos);
+            glPopMatrix();
         }
     }
 
@@ -309,19 +384,20 @@ void Display(){
     glutPostRedisplay(); //Executa novamente
 }
 
-
-
 void TeclasEspeciais (int key, int x, int y){
 	switch(key){
 		case GLUT_KEY_RIGHT:
             status |= 0x1;
 			break;
 		case GLUT_KEY_UP:
+            status |= 0x8;
 			break;
 		case GLUT_KEY_LEFT:
             status &= 0xFE;
 			break;
 		case GLUT_KEY_DOWN:
+            status &= 0xfd;
+            status |= 0x04;
 			break;
 	}
 	glutPostRedisplay();
@@ -334,7 +410,7 @@ void TeclasNormais(unsigned char key, int x, int y){
             if(key == KEY_SPACE){
                 iniciaCanos();
                 pontos = 0;
-                //v = pulo;
+                v = pulo;
                 status ^= 0x02;
             }
             break;
@@ -345,16 +421,28 @@ void TeclasNormais(unsigned char key, int x, int y){
             break;
         case 2:
             // Scoreboard
-            if(key == KEY_SPACE){
-                s = -85;
-                status &= 0xF9;
-            }
+            if(key == KEY_SPACE)
+                novoJogo();
             break;
     }
 }
 
 
 int main(int argc,char **argv){
+
+    // Persistencia de dados
+    savedata = fopen("save.dat", "rb");
+    if(savedata == NULL){
+        savedata = fopen("save.dat", "wb");
+        fwrite(&melhor, sizeof(int), 1, savedata);
+    }else{
+        fread(&melhor, sizeof(int), 1, savedata);
+        fclose(savedata);
+        savedata = fopen("save.dat", "wb");
+    }
+    fseek(savedata, 0, SEEK_SET);
+
+
     glutInit(&argc, argv); // Initializes glut
 
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -377,11 +465,22 @@ int main(int argc,char **argv){
     abrirImagem(&texid_grass, &image_grass, "img/bg/grass.png");
     abrirImagem(&texid_message, &image_message, "img/menu/message.png");
     abrirImagem(&texid_gameover, &image_gameover, "img/menu/gameover.png");
+    abrirImagem(&texid_novo, &image_novo, "img/menu/novo.png");
 
+    int x;
+    char path[18] = "img/numeros/0.png";
+    for(x = 0; x < 10; x++){
+        path[12] = x+48;
+        abrirImagem(texid_numeros+x, image_numeros+x, path);
+    }
 
     glutSpecialFunc(TeclasEspeciais);
     glutKeyboardFunc(TeclasNormais);
     glutMainLoop();
 
-   return 0; 
+
+
+    fclose(savedata);
+    
+    return 0; 
 }
