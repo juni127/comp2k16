@@ -1,30 +1,5 @@
-
-#include<stdio.h>
-#include<stdlib.h>
-
-// Tempo
-#include<time.h>
-
-// Glut
-#include <GL/glut.h>
-#include <GL/glu.h>
-#include <GL/gl.h>
-
-//Threads
-#include<pthread.h>
-
-//DevIL - Imagens
-#include<IL/il.h>
-
-// Valores
-#include"lib/values.h"
-
-#define W 480
-#define H 640
-
-#define MAXIMO_CANOS 8
-#define VELOCIDADE -5.0
-#define DISTANCIA 800
+// Tudo
+#include"lib/cabeca.h"
 
 //Declaração de variaveis
 
@@ -42,28 +17,42 @@ GLuint texid_grass; ILuint image_grass; // Background 2d
 GLuint texid_message; ILuint image_message; // Instrução do inicio
 GLuint texid_gameover; ILuint image_gameover; // Gameover
 GLuint texid_novo; ILuint image_novo; // Novo recorde
+GLuint texid_bronze; ILuint image_bronze; // Medalha de bronze
+GLuint texid_prata; ILuint image_prata; // Medalha de prata
+GLuint texid_ouro; ILuint image_ouro; // Medalha de ouro
 GLuint texid_numeros[10]; ILuint image_numeros[10]; // Gameover
 
-//Prot?ipos das Fun?es
-void Display();
-void logicaJogo();
-void keyboard (unsigned char key, int x, int y);
-void TeclasEspeciais (int key, int x, int y);
 
-void abrirImagem(GLuint * texid, ILuint * image, char * path);
-void selecionarImagem(GLuint texid, ILuint image);
 
 // Status 0x1 - gamemode / 0x2 e 0x4 - gamestate / 0x8 novo recorde
 char status = 0x0;
 
-int pontos = 0, melhor = 0, pc = 0;
-
-// Fisica
-float s = -85, v = 0, a = -10, t = 0.1, tempo, taxa = 0, pulo = 50, raio = 50;
-
-float canos[MAXIMO_CANOS][2];
+int pontos = 0, melhor = 0, apagar = 0;
 
 clock_t start, end;
+float tempo, taxa = 0;
+
+
+void abrirDados(){
+    savedata = fopen("save.dat", "rb");
+    if(savedata == NULL){
+        savedata = fopen("save.dat", "wb");
+        fwrite(&melhor, sizeof(int), 1, savedata);
+    }else{
+        fread(&melhor, sizeof(int), 1, savedata);
+        fclose(savedata);
+    }
+}
+
+void salvarDados(){
+    savedata = fopen("save.dat", "wb");
+    fwrite(&melhor, sizeof(int), 1, savedata);
+    fclose(savedata);
+}
+
+void atualizarPontos(){
+    pontos++;
+}
 
 void abrirImagem(GLuint * texid, ILuint * image, char * path){
     ilGenImages(1, image); /* Generation of one image name */
@@ -150,27 +139,18 @@ void fundo3d(){
     glEnd();
 }
 
-void iniciaCanos(){
-    int x;
-    for(x = 0; x < MAXIMO_CANOS; x++){
-        canos[x][0] += x*DISTANCIA+600;
-        canos[x][1] = rand()%200 - 50;
-    }
-}
-
 void gameOver(){
     status ^= 0x6;
     if(pontos > melhor){
         status ^= 0x8;
         melhor = pontos;
-        fwrite(&melhor, sizeof(int), 1, savedata);
-        fseek(savedata, 0, SEEK_SET);
+        salvarDados();
     }
 }
 
 void novoJogo(){
-    s = -85;
-    pontos = pc = 0;
+    setAlturaPassaro(-85);
+    pontos = 0;
     status &= 0x01;
 }
 
@@ -188,29 +168,102 @@ void logicaJogo(){
 
     int x;
 
-    for(x = 0; x < MAXIMO_CANOS; x++){
-        canos[x][0] += VELOCIDADE*tempo;
-        if(canos[x][0] < -300){
-            canos[x][0] = (DISTANCIA * MAXIMO_CANOS) - 300;
-            canos[x][1] = rand()%200 - 50;
-        }
-    }
-
-    printf("cano 1: %f\n", canos[0][0]);
-
-    if(canos[pc][0] < 0){
-        pontos++;
-        pc = (pc == MAXIMO_CANOS-1)?0:pc+1;
-    }
+    //printf("s: %f\n", s);
+    proximoCano();
     
     if(taxa > 0.01){
-        s = s + v*t + a*t*t/2.0;
-        v = v + a*t;
+        // Fisica
+        atualizarFisica();
+
+        // Canos
+        atualizarCanos();
+
         taxa = 0;
     }
 
-    if(s - raio <= -200)
+    // Colisões
+
+    // Chão
+    if(colisaoChao())
         gameOver();
+
+    // Teto
+    colisaoTeto();
+
+    // Cano
+    if(colisaoCano(getDistanciaCano(), getAlturaCano()))
+        gameOver();
+}
+
+void interface(){
+
+    // Salva o estado
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-W/2.0, W/2.0, -H/2.0, H/2.0, -80.0f, 200);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    if(!((status&0x02)>>1)){
+        // Selecionar textura de gameover ou de inico
+        if(!(status&0x04))selecionarImagem(texid_message, image_message);
+        else selecionarImagem(texid_gameover, image_gameover);
+        glBegin(GL_QUADS);
+            glTexCoord3i(0, 1, 0); glVertex3f(-150,  -240, 76);
+            glTexCoord3i(0, 0, 0); glVertex3f(-150,  240, 76);
+            glTexCoord3i(1, 0, 0); glVertex3f(150, 240, 76);
+            glTexCoord3i(1, 1, 0); glVertex3f(150, -240, 76);
+        glEnd();
+        // Se for gameover mostrar as informaçẽos 
+        if(status&0x4){
+            glPushMatrix();
+                glTranslatef(90.0f, -35.0f, 77);
+                printaNumero(melhor);
+            glPopMatrix();
+            glPushMatrix();
+                glTranslatef(90.0f, 10.0f, 77);
+                printaNumero(pontos);
+            glPopMatrix();
+
+            if(status&0x8){
+                selecionarImagem(texid_novo, image_novo);
+                glBegin(GL_QUADS);
+                    glTexCoord3i(0, 1, 0); glVertex3f(32,  -25, 77);
+                    glTexCoord3i(0, 0, 0); glVertex3f(32,  7, 77);
+                    glTexCoord3i(1, 0, 0); glVertex3f(64, 7, 77);
+                    glTexCoord3i(1, 1, 0); glVertex3f(64, -25, 77);
+                glEnd();
+            }
+
+            if(pontos >= GOLD)
+                selecionarImagem(texid_ouro, image_ouro);
+            else if(pontos >= SILVER)
+                selecionarImagem(texid_prata, image_prata);
+            else if(pontos >= BRONZE)
+                selecionarImagem(texid_bronze, image_bronze);
+
+            if(pontos >= BRONZE){
+                glBegin(GL_QUADS);
+                    glTexCoord3i(0, 1, 0); glVertex3f(-106,  -42, 78);
+                    glTexCoord3i(0, 0, 0); glVertex3f(-106,  27, 78);
+                    glTexCoord3i(1, 0, 0); glVertex3f(-38, 27, 78);
+                    glTexCoord3i(1, 1, 0); glVertex3f(-38, -42, 78);
+                glEnd();
+            }
+        }
+    }else{
+        glPushMatrix();
+            glTranslatef(220.0f, 300.0f, 75);
+            printaNumero(pontos);
+        glPopMatrix();
+    }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
 }
 
 void Display(){
@@ -234,7 +287,7 @@ void Display(){
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        gluLookAt(0, s, 0, 30, s, 0, 0, 1, 0);
+        gluLookAt(0, getAlturaPassaro(), 0, 30, getAlturaPassaro(), 0, 0, 1, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     }else{
@@ -272,14 +325,14 @@ void Display(){
     selecionarImagem(txd_default, img_default);
 
     glPushMatrix();
-        glTranslatef(0, s, 0);
+        glTranslatef(0, getAlturaPassaro(), 0);
         glPushMatrix();
             // Rotação
-            glRotatef(v*90.0/104.0, 0, 0, 1);
+            glRotatef(getVelocidadePassaro()*90.0/104.0, 0, 0, 1);
 
             glutSolidCube(50);
         glPopMatrix();
-        glTranslatef(0, -s, 0);
+        glTranslatef(0, -getAlturaPassaro(), 0);
     glPopMatrix();
 
     // Canos (somente se estiver no jogo)
@@ -291,17 +344,17 @@ void Display(){
                 glTranslatef(canos[x][0], 0, 0);
 
                 glPushMatrix();
-                    glTranslatef(0, canos[x][1]+80, 0);
+                    glTranslatef(0, canos[x][1]+(ESPACO_CANO/2), 0);
                     glRotatef(90.0, -1, 0, 0);
-                    gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
-                    gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
+                    gluCylinder(quadratic, RAIO_CANO - 5.0f, RAIO_CANO - 5.0f, 500.0, 32, 32);
+                    gluCylinder(quadratic, RAIO_CANO, RAIO_CANO, 30.0, 32, 32);
                 glPopMatrix();
 
                 glPushMatrix();
-                    glTranslatef(0, canos[x][1]-80, 0);
+                    glTranslatef(0, canos[x][1]-(ESPACO_CANO/2), 0);
                     glRotatef(90.0, 1, 0, 0);
-                    gluCylinder(quadratic, 30.0f, 30.0f, 500.0, 32, 32);
-                    gluCylinder(quadratic, 35.0f, 35.0f, 30.0, 32, 32);
+                    gluCylinder(quadratic, RAIO_CANO - 5.0f, RAIO_CANO - 5.0f, 500.0, 32, 32);
+                    gluCylinder(quadratic, RAIO_CANO, RAIO_CANO, 30.0, 32, 32);
                 glPopMatrix();
 
             glPopMatrix();
@@ -326,59 +379,7 @@ void Display(){
     glColor3ub(255, 255, 255);
 
     // HUD
-    if(!((status&0x02)>>1)){
-        if(!(status&0x04))selecionarImagem(texid_message, image_message);
-        else selecionarImagem(texid_gameover, image_gameover);
-        if(status&0x1){
-            glBegin(GL_QUADS);
-                glTexCoord3i(0, 1, 0); glVertex3f(300,  -93+s, -77.5f);
-                glTexCoord3i(0, 0, 0); glVertex3f(300,  93.25f+s, -77.5f);
-                glTexCoord3i(1, 0, 0); glVertex3f(300, 93.25f+s, 77.5f);
-                glTexCoord3i(1, 1, 0); glVertex3f(300, -93+s, 77.5f);
-            glEnd();
-        }else{
-            glBegin(GL_QUADS);
-                glTexCoord3i(0, 1, 0); glVertex3f(-150,  -240, 76);
-                glTexCoord3i(0, 0, 0); glVertex3f(-150,  240, 76);
-                glTexCoord3i(1, 0, 0); glVertex3f(150, 240, 76);
-                glTexCoord3i(1, 1, 0); glVertex3f(150, -240, 76);
-            glEnd();
-            if(status&0x4){
-                glPushMatrix();
-                    glTranslatef(90.0f, -35.0f, 77);
-                    printaNumero(melhor);
-                glPopMatrix();
-                glPushMatrix();
-                    glTranslatef(90.0f, 10.0f, 77);
-                    printaNumero(pontos);
-                glPopMatrix();
-
-                if(status&0x8){
-                    selecionarImagem(texid_novo, image_novo);
-                    glBegin(GL_QUADS);
-                        glTexCoord3i(0, 1, 0); glVertex3f(32,  -25, 77);
-                        glTexCoord3i(0, 0, 0); glVertex3f(32,  7, 77);
-                        glTexCoord3i(1, 0, 0); glVertex3f(64, 7, 77);
-                        glTexCoord3i(1, 1, 0); glVertex3f(64, -25, 77);
-                    glEnd();
-                }
-            }
-        }
-    }else{
-        // Pontuação
-        if(status&0x1){
-            glPushMatrix();
-                glTranslatef(740.0f, s + 285.0f, 285.0f);
-                glRotatef(-90.0f, 0, 1, 0);
-                printaNumero(21);
-            glPopMatrix();
-        }else{
-            glPushMatrix();
-                glTranslatef(220.0f, 300.0f, 75);
-                printaNumero(pontos);
-            glPopMatrix();
-        }
-    }
+    interface();
 
     glutSwapBuffers(); //Executa a Cena. SwapBuffers d?suporte para mais de um buffer, permitindo execu?o de anima?es sem cintila?es.
     glutPostRedisplay(); //Executa novamente
@@ -410,18 +411,18 @@ void TeclasNormais(unsigned char key, int x, int y){
             if(key == KEY_SPACE){
                 iniciaCanos();
                 pontos = 0;
-                v = pulo;
+                setVelocidade(VELOCIDADE_PULO);
                 status ^= 0x02;
             }
             break;
         case 1:
             // Jogo
             if(key == KEY_SPACE)
-                v = pulo;
+                setVelocidade(VELOCIDADE_PULO);
             break;
         case 2:
             // Scoreboard
-            if(key == KEY_SPACE)
+            if(key == KEY_ENTER)
                 novoJogo();
             break;
     }
@@ -430,18 +431,9 @@ void TeclasNormais(unsigned char key, int x, int y){
 
 int main(int argc,char **argv){
 
-    // Persistencia de dados
-    savedata = fopen("save.dat", "rb");
-    if(savedata == NULL){
-        savedata = fopen("save.dat", "wb");
-        fwrite(&melhor, sizeof(int), 1, savedata);
-    }else{
-        fread(&melhor, sizeof(int), 1, savedata);
-        fclose(savedata);
-        savedata = fopen("save.dat", "wb");
-    }
-    fseek(savedata, 0, SEEK_SET);
 
+    // Persistencia de dados
+    abrirDados();
 
     glutInit(&argc, argv); // Initializes glut
 
@@ -465,6 +457,9 @@ int main(int argc,char **argv){
     abrirImagem(&texid_grass, &image_grass, "img/bg/grass.png");
     abrirImagem(&texid_message, &image_message, "img/menu/message.png");
     abrirImagem(&texid_gameover, &image_gameover, "img/menu/gameover.png");
+    abrirImagem(&texid_bronze, &image_bronze, "img/menu/bronze.png");
+    abrirImagem(&texid_prata, &image_prata, "img/menu/prata.png");
+    abrirImagem(&texid_ouro, &image_ouro, "img/menu/ouro.png");
     abrirImagem(&texid_novo, &image_novo, "img/menu/novo.png");
 
     int x;
