@@ -50,93 +50,51 @@ void salvarDados(){
     fclose(savedata);
 }
 
+void desenhaPassaro(){
+    glPushMatrix();
+        glTranslatef(-12.5, 0, 0);
+        glutSolidCube(35);
+        glColor3ub(255, 0, 0);
+    glPushMatrix();
+    glPopMatrix();
+        glTranslatef(12.5, 0, 0);
+        glutSolidCube(35);
+        glColor3ub(255, 255, 255);
+    glPopMatrix();
+}
+
 void atualizarPontos(){
     pontos++;
-}
-
-void abrirImagem(GLuint * texid, ILuint * image, char * path){
-    ilGenImages(1, image); /* Generation of one image name */
-    glGenTextures(1, texid);
-
-
-    ilBindImage(*image); /* Binding of image name */
-    ilLoadImage(path); /* Loading of the image filename by DevIL */
-    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE); 
-}
-
-void selecionarImagem(GLuint texid, ILuint image){
-    /* OpenGL texture binding of the image loaded by DevIL  */
-    ilBindImage(image); /* Binding of image name */
-    glBindTexture(GL_TEXTURE_2D, texid); /* Binding of texture name */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear interpolation for magnification filter */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear interpolation for minifying filter */
-    glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 
-    0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData()); /* Texture specification */
 }
 
 void printaNumero(int numero){
     int x;
     for(x = 0; numero > 0 || x == 0; numero /= 10, x++){
         selecionarImagem(texid_numeros[numero%10], image_numeros[numero%10]);
-        glBegin(GL_QUADS);
-            glTexCoord3i(0, 1, 0); glVertex3f( 0-(x*18), 0, 0);
-            glTexCoord3i(0, 0, 0); glVertex3f( 0-(x*18), 16, 0);
-            glTexCoord3i(1, 0, 0); glVertex3f( 16-(x*18), 16, 0);
-            glTexCoord3i(1, 1, 0); glVertex3f( 16-(x*18), 0, 0);
-        glEnd();
+        mostrarImagem(0-(x*18), 16-(x*18), 0, 16, 0, 0);
     }
 }
 
 void fundo2d(){
     selecionarImagem(texid_clouds, image_clouds);
-    glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -W+100, -102);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   W+100, -102);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, W+100, -102);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -W+100, -102);
-    glEnd();
+    mostrarImagem(-W/2.0, W/2.0, -W+100, W+100, -102, -102);
 
     selecionarImagem(texid_city, image_city);
-    glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -W+100, -101);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   W+100, -101);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, W+100, -101);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -W+100, -101);
-    glEnd();
+    mostrarImagem(-W/2.0, W/2.0, -W+100, W+100, -101, -101);
 
     selecionarImagem(texid_grass, image_grass);
-    glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(-W/2.0,   -W+100, -100);
-        glTexCoord3i(0, 0, 0); glVertex3f(-W/2.0,   W+100, -100);
-        glTexCoord3i(1, 0, 0); glVertex3f(W/2.0, W+100, -100);
-        glTexCoord3i(1, 1, 0); glVertex3f(W/2.0, -W+100, -100);
-    glEnd();
+    mostrarImagem(-W/2.0, W/2.0, -W+100, W+100, -101, -100);
 }
 
 void fundo3d(){
     selecionarImagem(texid_clouds, image_clouds);
-    glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(4900, -2080, -2140);
-        glTexCoord3i(0, 0, 0); glVertex3f(4900, 3480, -2140);
-        glTexCoord3i(1, 0, 0); glVertex3f(4900, 3480, 2140);
-        glTexCoord3i(1, 1, 0); glVertex3f(4900, -2080, 2140);
-    glEnd();
+    mostrarImagem(4900, 4900, -2080, 3480, -2140, 2140);
     
     selecionarImagem(texid_city, image_city);
-    glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(4400, -1980, -2040);
-        glTexCoord3i(0, 0, 0); glVertex3f(4400, 3380, -2040);
-        glTexCoord3i(1, 0, 0); glVertex3f(4400, 3380, 2040);
-        glTexCoord3i(1, 1, 0); glVertex3f(4400, -1980, 2040);
-    glEnd();
+    mostrarImagem(4400, 4400, -1980, 3380, -2040, 2040);
     
     selecionarImagem(texid_grass, image_grass);
-    glBegin(GL_QUADS);
-        glTexCoord3i(0, 1, 0); glVertex3f(4000, -1780, -1840);
-        glTexCoord3i(0, 0, 0); glVertex3f(4000, 3180, -1840);
-        glTexCoord3i(1, 0, 0); glVertex3f(4000, 3180, 1840);
-        glTexCoord3i(1, 1, 0); glVertex3f(4000, -1780, 1840);
-    glEnd();
+    mostrarImagem(4000, 4000, -1780, 3180, -1840, 1840);
 }
 
 void gameOver(){
@@ -210,12 +168,8 @@ void interface(){
         // Selecionar textura de gameover ou de inico
         if(!(status&0x04))selecionarImagem(texid_message, image_message);
         else selecionarImagem(texid_gameover, image_gameover);
-        glBegin(GL_QUADS);
-            glTexCoord3i(0, 1, 0); glVertex3f(-150,  -240, 76);
-            glTexCoord3i(0, 0, 0); glVertex3f(-150,  240, 76);
-            glTexCoord3i(1, 0, 0); glVertex3f(150, 240, 76);
-            glTexCoord3i(1, 1, 0); glVertex3f(150, -240, 76);
-        glEnd();
+        mostrarImagem(-150, 150, -240, 240, 76, 76);
+
         // Se for gameover mostrar as informaçẽos 
         if(status&0x4){
             glPushMatrix();
@@ -229,12 +183,7 @@ void interface(){
 
             if(status&0x8){
                 selecionarImagem(texid_novo, image_novo);
-                glBegin(GL_QUADS);
-                    glTexCoord3i(0, 1, 0); glVertex3f(32,  -25, 77);
-                    glTexCoord3i(0, 0, 0); glVertex3f(32,  7, 77);
-                    glTexCoord3i(1, 0, 0); glVertex3f(64, 7, 77);
-                    glTexCoord3i(1, 1, 0); glVertex3f(64, -25, 77);
-                glEnd();
+                mostrarImagem(32, 64, -25, 7, 77, 77);
             }
 
             if(pontos >= GOLD)
@@ -244,14 +193,8 @@ void interface(){
             else if(pontos >= BRONZE)
                 selecionarImagem(texid_bronze, image_bronze);
 
-            if(pontos >= BRONZE){
-                glBegin(GL_QUADS);
-                    glTexCoord3i(0, 1, 0); glVertex3f(-106,  -42, 78);
-                    glTexCoord3i(0, 0, 0); glVertex3f(-106,  27, 78);
-                    glTexCoord3i(1, 0, 0); glVertex3f(-38, 27, 78);
-                    glTexCoord3i(1, 1, 0); glVertex3f(-38, -42, 78);
-                glEnd();
-            }
+            if(pontos >= BRONZE)
+                mostrarImagem(-106, -38, -42, 27, 78, 78);
         }
     }else{
         glPushMatrix();
@@ -322,15 +265,16 @@ void Display(){
     else
         fundo2d();
 
+    // Textura padrão branca para os objetos ficarem opacos
     selecionarImagem(txd_default, img_default);
 
     glPushMatrix();
         glTranslatef(0, getAlturaPassaro(), 0);
         glPushMatrix();
             // Rotação
-            glRotatef(getVelocidadePassaro()*90.0/104.0, 0, 0, 1);
+            glRotatef(getVelocidadePassaro()*90.0/150.0, 0, 0, 1);
 
-            glutSolidCube(50);
+            desenhaPassaro();
         glPopMatrix();
         glTranslatef(0, -getAlturaPassaro(), 0);
     glPopMatrix();
@@ -417,8 +361,9 @@ void TeclasNormais(unsigned char key, int x, int y){
             break;
         case 1:
             // Jogo
-            if(key == KEY_SPACE)
+            if(key == KEY_SPACE){
                 setVelocidade(VELOCIDADE_PULO);
+            }
             break;
         case 2:
             // Scoreboard
@@ -447,7 +392,10 @@ int main(int argc,char **argv){
 
     srand(time(NULL));
     
-    // Abrindo background
+    // Abrindo sons
+    inicia_audio();
+
+    // Abrindo imagens
     /* Initialization of DevIL */
     ilInit();
 
@@ -474,7 +422,7 @@ int main(int argc,char **argv){
     glutMainLoop();
 
 
-
+    finaliza_audio();
     fclose(savedata);
     
     return 0; 

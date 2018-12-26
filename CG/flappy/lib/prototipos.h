@@ -28,3 +28,10 @@ void setAlturaPassaro(float altura);
 void setVelocidade(float velocidade);
 float max(float a, float b);
 float min(float a, float b);
+
+// imagem.h
+void abrirImagem(GLuint * texid, ILuint * image, char * path);
+void selecionarImagem(GLuint texid, ILuint image);
+void mostrarImagem(float x1, float x2, float y1, float y2, float z1, float z2);
+void fundo2d();
+void fundo3d();

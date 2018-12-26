@@ -1,7 +1,3 @@
-#include <ao/ao.h>
-#include <mpg123.h>
-#include<pthread.h>
-
 #define BITS 8
 
 #define REPETIR_AUDIO 1
@@ -12,12 +8,14 @@ size_t buffer_size;
 size_t done;
 int err;
 
-int driver;
+int driver, block = 0;
 ao_device *dev;
 
 ao_sample_format format;
 int channels, encoding;
 long rate;
+
+pthread_t thread_sfx;
  
 void inicia_audio(){
 	ao_initialize();
@@ -28,14 +26,19 @@ void inicia_audio(){
 	buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
 }
 
-void * tocar_audio(void * pointer){
+void * rodar(void * pointer){
 	/* decode and play */
-    while (mpg123_read(mh, buffer, buffer_size, &done) != 12){
-        ao_play(dev, buffer, done);
+    int flag = 0;
+    while (flag != 12){
+        if(!block){
+            flag = mpg123_read(mh, buffer, buffer_size, &done);
+            ao_play(dev, buffer, done);
+        }
     }
 }
 
 void abrir_audio(char * caminho){
+    block = 1;
     mpg123_open(mh, caminho);
     mpg123_getformat(mh, &rate, &channels, &encoding);
 
@@ -54,4 +57,10 @@ void finaliza_audio(){
     mpg123_delete(mh);
     mpg123_exit();
     ao_shutdown();
+}
+
+void tocar_audio(){
+    block = 0;
+    pthread_cancel(&thread_sfx);
+    pthread_create(&thread_sfx, NULL, rodar, NULL);
 }

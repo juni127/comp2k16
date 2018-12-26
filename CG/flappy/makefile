@@ -1,5 +1,5 @@
 compilar:
-	gcc main.c -o a -lglut -lGL -lGLU -lIL
+	gcc main.c -o a -lglut -lGL -lGLU -lIL -lmpg123 -lao -pthread
 
 make: main.c
 	gcc main.c -o a -lglut -lGL -lGLU -lIL -lmpg123 -lao -pthread

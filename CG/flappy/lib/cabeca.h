@@ -15,6 +15,10 @@
 //DevIL - Imagens
 #include<IL/il.h>
 
+//MPG123 - Sons
+#include <ao/ao.h>
+#include <mpg123.h>
+
 // Prototipos
 #include"prototipos.h"
 
@@ -26,3 +30,6 @@
 
 // Fisica
 #include"fisica.h"
+
+// Imagem
+#include"imagem.h"
