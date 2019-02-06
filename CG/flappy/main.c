@@ -393,7 +393,7 @@ int main(int argc,char **argv){
     srand(time(NULL));
     
     // Abrindo sons
-    inicia_audio();
+    //inicia_audio();
 
     // Abrindo imagens
     /* Initialization of DevIL */
@@ -422,7 +422,7 @@ int main(int argc,char **argv){
     glutMainLoop();
 
 
-    finaliza_audio();
+    //finaliza_audio();
     fclose(savedata);
     
     return 0; 
