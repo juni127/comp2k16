@@ -20,6 +20,7 @@ GLuint texid_novo; ILuint image_novo; // Novo recorde
 GLuint texid_bronze; ILuint image_bronze; // Medalha de bronze
 GLuint texid_prata; ILuint image_prata; // Medalha de prata
 GLuint texid_ouro; ILuint image_ouro; // Medalha de ouro
+GLuint texid_bird; ILuint image_bird; // Passarela marconi 
 GLuint texid_numeros[10]; ILuint image_numeros[10]; // Gameover
 
 
@@ -51,6 +52,13 @@ void salvarDados(){
 }
 
 void desenhaPassaro(){
+
+    glPushMatrix();
+        selecionarImagem(texid_bird, image_bird);
+        mostrarImagem(-28, 28, -28, 28, 0, 0);
+    glPopMatrix();
+    selecionarImagem(txd_default, img_default);
+    /*
     glPushMatrix();
         glTranslatef(-12.5, 0, 0);
         glutSolidCube(35);
@@ -61,6 +69,7 @@ void desenhaPassaro(){
         glutSolidCube(35);
         glColor3ub(255, 255, 255);
     glPopMatrix();
+    */
 }
 
 void atualizarPontos(){
@@ -275,6 +284,7 @@ void Display(){
             glRotatef(getVelocidadePassaro()*90.0/150.0, 0, 0, 1);
 
             desenhaPassaro();
+
         glPopMatrix();
         glTranslatef(0, -getAlturaPassaro(), 0);
     glPopMatrix();
@@ -345,7 +355,7 @@ void TeclasEspeciais (int key, int x, int y){
             status |= 0x04;
 			break;
 	}
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 
 void TeclasNormais(unsigned char key, int x, int y){
@@ -391,9 +401,6 @@ int main(int argc,char **argv){
     quadratic = gluNewQuadric();
 
     srand(time(NULL));
-    
-    // Abrindo sons
-//    inicia_audio();
 
     // Abrindo imagens
     /* Initialization of DevIL */
@@ -409,6 +416,7 @@ int main(int argc,char **argv){
     abrirImagem(&texid_prata, &image_prata, "img/menu/prata.png");
     abrirImagem(&texid_ouro, &image_ouro, "img/menu/ouro.png");
     abrirImagem(&texid_novo, &image_novo, "img/menu/novo.png");
+    abrirImagem(&texid_bird, &image_bird, "img/bird.png");
 
     int x;
     char path[18] = "img/numeros/0.png";
@@ -421,8 +429,6 @@ int main(int argc,char **argv){
     glutKeyboardFunc(TeclasNormais);
     glutMainLoop();
 
-
-  //  finaliza_audio();
     fclose(savedata);
     
     return 0; 

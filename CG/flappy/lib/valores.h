@@ -11,7 +11,7 @@
 
 #define GOLD   50
 #define SILVER 20
-#define BRONZE 10
+#define BRONZE 2
 
 #define KEY_SPACE 32
 #define KEY_ENTER 13

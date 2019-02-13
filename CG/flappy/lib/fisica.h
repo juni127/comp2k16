@@ -1,5 +1,5 @@
 // Fisica
-float s = -85, v = 0, a = -50, t = 0.1, raio = 35;
+float s = -85, v = 0, a = -50, t = 0.1, raio = 30;
 
 void atualizarFisica(){
     s = s + v*t + a*t*t/2.0;
@@ -13,7 +13,7 @@ char colisaoCano(float pos, float altura){
 	*/
 	float DeltaX = 0 - max(pos - RAIO_CANO, min(0, pos + RAIO_CANO));
 	float DeltaHY = s - max(altura + (ESPACO_CANO/2), min(s, altura + (ESPACO_CANO/2) + 500));
-	float DeltaLY = s - max(altura - (ESPACO_CANO/2), min(s, altura - (ESPACO_CANO/2) - 500));
+	float DeltaLY = s - max(altura - (ESPACO_CANO/2) - 500, min(s, altura - (ESPACO_CANO/2)));
 	return ((DeltaX * DeltaX + DeltaHY * DeltaHY) < (raio * raio)) || ((DeltaX * DeltaX + DeltaLY * DeltaLY) < (raio * raio));
 }
 
