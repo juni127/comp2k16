@@ -1,0 +1,29 @@
+#define PWMA 6
+#define DIRA 8
+#define PWMB 5
+#define DIRB 7
+
+int sensor = A0;
+int i;
+
+void setup(){
+  pinMode(PWMA, OUTPUT);//PWM A
+  pinMode(DIRA, OUTPUT);//PWM B
+  pinMode(PWMB, OUTPUT);//PWM A
+  pinMode(DIRB, OUTPUT);//PWM B
+  
+  Serial.begin(9600);
+}
+
+void loop(){
+  i = analogRead(sensor)/8;
+  
+  digitalWrite(DIRA, HIGH);
+  //analogWrite(PWMA, 127);
+  analogWrite(PWMA, i);
+  
+  Serial.println(i);
+  
+  digitalWrite(DIRB, LOW);
+  analogWrite(PWMB, i);
+}
