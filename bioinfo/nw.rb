@@ -32,13 +32,7 @@ class Needlewunsch
 	end
 
 	def max(a, b, c)
-		if(a > b && a > c)
-			return a
-		elsif(b > a && b > c)
-			return b
-		else
-			return c
-		end
+		return [a, b, c].max
 	end
 
 	def fillMatrix()
@@ -109,8 +103,6 @@ class Needlewunsch
 		self.initMatrix()
 		self.fillMatrix()
 		self.traceback()
-		self.printAlignment()
-		self.printMatrix()
 	end
 
 end
@@ -121,3 +113,4 @@ algoritmo.setSeqA("TACCCG")
 algoritmo.setSeqB("ATCCG")
 
 algoritmo.align()
+algoritmo.printAlignment()
