@@ -4,6 +4,8 @@ class Needlewunsch
 		@gap = gap
 		@mismatch = mismatch
 		@matchp = matchp
+		@seqa = ""
+		@seqb = ""
 	end
 
 	def setSeqA(seqa = "")
@@ -12,6 +14,18 @@ class Needlewunsch
 
 	def setSeqB(seqb = "")
 		@seqb = seqb
+	end
+
+	def loadFromFile(path)
+		seq = 0
+		File.open(path, "r") do |f|
+			f.each_line do |line|
+				if(line[0] != '>' && line[0] != '\r')
+					puts(" >" + line[0] + "+" + line[1] + "<")
+
+				end
+			end
+		end
 	end
 
 	def initMatrix()
@@ -99,6 +113,18 @@ class Needlewunsch
 		end
 	end
 
+	def outFile(path)
+		File.open(path, "w") do |f|
+			@resa.each do |a|
+				f.write(a)
+			end
+			f.write('\n')
+			@resb.each do |b|
+				f.write(b)
+			end
+		end
+	end
+
 	def align()
 		self.initMatrix()
 		self.fillMatrix()
@@ -109,8 +135,7 @@ end
 
 algoritmo = Needlewunsch.new
 
-algoritmo.setSeqA("TACCCG")
-algoritmo.setSeqB("ATCCG")
-
-algoritmo.align()
-algoritmo.printAlignment()
+algoritmo.loadFromFile("Teste1.txt")
+#algoritmo.align()
+#algoritmo.printAlignment()
+#algoritmo.outFile("output1.txt")
