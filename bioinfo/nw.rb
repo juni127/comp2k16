@@ -20,9 +20,11 @@ class Needlewunsch
 		seq = 0
 		File.open(path, "r") do |f|
 			f.each_line do |line|
-				if(line[0] != '>' && line[0] != '\r')
-					puts(" >" + line[0] + "+" + line[1] + "<")
-
+				if(line[0] == '>')
+					seq += 1
+				elsif(line[0].ord != 13)
+					entrada = line.delete("\n").delete("\r").delete(" ")
+					seq == 1 ? (@seqa.concat(entrada)) : (@seqb.concat(entrada))
 				end
 			end
 		end
@@ -93,6 +95,13 @@ class Needlewunsch
 		@resb = @resb.reverse
 	end
 
+	def benchmarkAlign()
+		start = Time.now
+		self.align()
+		finish = Time.now
+		puts(finish - start)
+	end
+
 	def printAlignment()
 		print(@resa)
 		puts("")
@@ -118,7 +127,7 @@ class Needlewunsch
 			@resa.each do |a|
 				f.write(a)
 			end
-			f.write('\n')
+			f.write("\n")
 			@resb.each do |b|
 				f.write(b)
 			end
@@ -136,6 +145,13 @@ end
 algoritmo = Needlewunsch.new
 
 algoritmo.loadFromFile("Teste1.txt")
-#algoritmo.align()
-#algoritmo.printAlignment()
-#algoritmo.outFile("output1.txt")
+algoritmo.benchmarkAlign()
+algoritmo.outFile("output1.txt")
+
+algoritmo.loadFromFile("Teste2.txt")
+algoritmo.benchmarkAlign()
+algoritmo.outFile("output2.txt")
+
+algoritmo.loadFromFile("HomoSapiens_Teste.txt")
+algoritmo.benchmarkAlign()
+algoritmo.outFile("output3.txt")

@@ -4,6 +4,8 @@ class Smithwater
 		@gap = gap
 		@mismatch = mismatch
 		@matchp = matchp
+		@seqa = ""
+		@seqb = ""
 	end
 
 	def setSeqA(seqa = "")
@@ -100,6 +102,39 @@ class Smithwater
 		end
 	end
 
+	def outFile(path)
+		File.open(path, "w") do |f|
+			@resa.each do |a|
+				f.write(a)
+			end
+			f.write("\n")
+			@resb.each do |b|
+				f.write(b)
+			end
+		end
+	end
+
+	def loadFromFile(path)
+		seq = 0
+		File.open(path, "r") do |f|
+			f.each_line do |line|
+				if(line[0] == '>')
+					seq += 1
+				elsif(line[0].ord != 13)
+					entrada = line.delete("\n").delete("\r").delete(" ")
+					seq == 1 ? (@seqa.concat(entrada)) : (@seqb.concat(entrada))
+				end
+			end
+		end
+	end
+
+	def benchmarkAlign()
+		start = Time.now
+		self.align()
+		finish = Time.now
+		puts(finish - start)
+	end
+
 	def align()
 		self.initMatrix()
 		self.fillMatrix()
@@ -110,9 +145,14 @@ end
 
 algoritmo = Smithwater.new
 
-algoritmo.setSeqA("ACAA")
-algoritmo.setSeqB("GATAC")
+algoritmo.loadFromFile("Teste1.txt")
+algoritmo.benchmarkAlign()
+algoritmo.outFile("output1.txt")
 
-algoritmo.align()
-algoritmo.printAlignment()
-algoritmo.printMatrix()
+algoritmo.loadFromFile("Teste2.txt")
+algoritmo.benchmarkAlign()
+algoritmo.outFile("output2.txt")
+
+algoritmo.loadFromFile("HomoSapiens_Teste.txt")
+algoritmo.benchmarkAlign()
+algoritmo.outFile("output3.txt")
