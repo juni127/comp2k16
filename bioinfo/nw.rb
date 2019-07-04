@@ -66,10 +66,16 @@ class Needlewunsch
 
 	end
 
+	def printScore()
+		puts("Score: " + @score.to_s)
+	end
+
 	def traceback()
 
 		i = @seqa.length
 		j = @seqb.length
+
+		@score = @matrix[[i, j]]
 
 		@resa = Array.new(0)
 		@resb = Array.new(0)
@@ -99,7 +105,7 @@ class Needlewunsch
 		start = Time.now
 		self.align()
 		finish = Time.now
-		puts(finish - start)
+		puts("Tempo: " + (finish - start).to_s)
 	end
 
 	def printAlignment()
@@ -147,11 +153,4 @@ algoritmo = Needlewunsch.new
 algoritmo.loadFromFile("Teste1.txt")
 algoritmo.benchmarkAlign()
 algoritmo.outFile("output1.txt")
-
-algoritmo.loadFromFile("Teste2.txt")
-algoritmo.benchmarkAlign()
-algoritmo.outFile("output2.txt")
-
-algoritmo.loadFromFile("HomoSapiens_Teste.txt")
-algoritmo.benchmarkAlign()
-algoritmo.outFile("output3.txt")
+algoritmo.printScore()
